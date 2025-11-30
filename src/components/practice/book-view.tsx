@@ -177,6 +177,18 @@ export function BookView({
                     }
                     // Mastery checkbox: checked when mastered (>= 80%)
                     const isMastered = !isStage && avgMasteryPct >= 80;
+                    // Calculate indent level for this group (use first line's formatting)
+                    const firstLineIdx = group.lineIndices[0];
+                    const firstLine =
+                      firstLineIdx !== undefined
+                        ? lines[firstLineIdx]
+                        : undefined;
+                    const indentLevel =
+                      (firstLine as any)?.formatting?.indentLevel || 0;
+                    const hasLineBreak =
+                      (firstLine as any)?.formatting?.preserveLineBreaks ||
+                      false;
+
                     return (
                       <p
                         key={`${scene.id}-g-${gi}`}
@@ -194,8 +206,15 @@ export function BookView({
                           // Highlight current stage direction lines (yellow overlay)
                           isCurrentGroup &&
                             isStage &&
-                            "rounded-md bg-yellow-100/40 px-3 py-2"
+                            "rounded-md bg-yellow-100/40 px-3 py-2",
+                          // Add extra margin for line breaks (verse/poetry spacing)
+                          hasLineBreak && "mb-4"
                         )}
+                        style={{
+                          // Apply indentation using padding-left (1rem per level)
+                          paddingLeft:
+                            indentLevel > 0 ? `${indentLevel}rem` : undefined,
+                        }}
                         ref={isCurrentGroup ? currentGroupRef : undefined}
                       >
                         {!isStage && (

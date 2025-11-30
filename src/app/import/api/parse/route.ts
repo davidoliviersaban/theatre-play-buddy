@@ -99,6 +99,48 @@ function emitSceneEvents(
     return newScenesSeen;
 }
 
+/**
+ * T039: Detect unsupported speakers (crowd/unknown) and emit telemetry events.
+ * This helps measure the frequency of unsupported cases for future prioritization.
+ */
+function detectUnsupportedSpeakers(
+    partial: DeepPartial<Playbook>,
+    knownCharacterIds: Set<string>,
+    controller: ReadableStreamDefaultController,
+    unsupportedSeen: Set<string>
+) {
+    if (!partial.acts) return;
+
+    for (const act of partial.acts) {
+        if (!act?.scenes) continue;
+        for (const scene of act.scenes) {
+            if (!scene?.lines) continue;
+            for (const line of scene.lines) {
+                if (!line || line.type !== "dialogue") continue;
+
+                // Check if dialogue has no valid character attribution
+                const hasValidAttribution =
+                    (line.characterId && knownCharacterIds.has(line.characterId)) ||
+                    (line.characterIdArray && line.characterIdArray.some(id => id && knownCharacterIds.has(id)));
+
+                if (!hasValidAttribution) {
+                    // Create a unique key for this unsupported speaker case
+                    const key = `${line.characterId || 'unknown'}-${line.text?.slice(0, 50)}`;
+                    if (!unsupportedSeen.has(key)) {
+                        unsupportedSeen.add(key);
+                        sendEvent(controller, "unsupported_speaker", {
+                            kind: line.characterId?.toLowerCase().includes('crowd') ? 'crowd' : 'unknown',
+                            sample: line.text?.slice(0, 100),
+                            characterId: line.characterId,
+                            lineId: line.id
+                        });
+                    }
+                }
+            }
+        }
+    }
+}
+
 async function handleFallbackParse(
     text: string,
     llmProvider: "anthropic" | "openai",
@@ -202,6 +244,7 @@ export async function POST(req: NextRequest) {
 
                 let lastPlaybook: DeepPartial<Playbook> | null = null;
                 const charactersSeen = new Set<string>();
+                const unsupportedSeen = new Set<string>();
                 let actsSeen = 0;
                 let scenesSeen = 0;
                 let linesCompleted = 0;
@@ -250,6 +293,7 @@ export async function POST(req: NextRequest) {
                             emitCharacterEvents(partial, charactersSeen, controller);
                             actsSeen = emitActEvents(partial, actsSeen, controller);
                             scenesSeen = emitSceneEvents(partial, scenesSeen, controller);
+                            detectUnsupportedSpeakers(partial, charactersSeen, controller, unsupportedSeen);
 
                             const progress = calculateProgress(linesCompleted, estimatedTokens);
                             sendEvent(controller, "progress", {

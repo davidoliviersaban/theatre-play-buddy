@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Playbook {
+  id          String      @id @default(uuid())
+  title       String
+  author      String
+  year        Int?
+  genre       String?
+  description String?
+  coverImage  String?
+  
+  characters  Character[]
+  acts        Act[]
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  @@index([title])
+  @@index([author])
+}
+
+model Character {
+  id             String   @id @default(uuid())
+  name           String
+  description    String?
+  isFavorite     Boolean  @default(false)
+  lastSelected   Boolean  @default(false)
+  completionRate Float    @default(0)
+  
+  playbookId     String
+  playbook       Playbook @relation(fields: [playbookId], references: [id], onDelete: Cascade)
+  
+  lines          LineCharacter[]
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  @@index([playbookId])
+  @@index([name])
+}
+
+model Act {
+  id         String   @id @default(uuid())
+  title      String
+  order      Int      @default(0)
+  
+  playbookId String
+  playbook   Playbook @relation(fields: [playbookId], references: [id], onDelete: Cascade)
+  
+  scenes     Scene[]
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  @@index([playbookId])
+  @@index([playbookId, order])
+}
+
+model Scene {
+  id        String   @id @default(uuid())
+  title     String
+  order     Int      @default(0)
+  
+  actId     String
+  act       Act      @relation(fields: [actId], references: [id], onDelete: Cascade)
+  
+  lines     Line[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([actId])
+  @@index([actId, order])
+}
+
+model Line {
+  id                String           @id @default(uuid())
+  text              String           @db.Text
+  type              LineType
+  order             Int              @default(0)
+  
+  // Formatting metadata (optional)
+  indentLevel       Int?
+  preserveLineBreaks Boolean?
+  
+  // Practice tracking
+  masteryLevel      MasteryLevel?
+  rehearsalCount    Int              @default(0)
+  
+  sceneId           String
+  scene             Scene            @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+  
+  // Multi-character attribution via join table
+  characters        LineCharacter[]
+  
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  
+  @@index([sceneId])
+  @@index([sceneId, order])
+  @@index([type])
+}
+
+// Join table for many-to-many relationship between Lines and Characters
+model LineCharacter {
+  lineId      String
+  line        Line      @relation(fields: [lineId], references: [id], onDelete: Cascade)
+  
+  characterId String
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  
+  order       Int       @default(0) // Order of character in multi-speaker line
+  
+  createdAt   DateTime  @default(now())
+  
+  @@id([lineId, characterId])
+  @@index([lineId])
+  @@index([characterId])
+}
+
+enum LineType {
+  dialogue
+  stage_direction
+}
+
+enum MasteryLevel {
+  low
+  medium
+  high
+}

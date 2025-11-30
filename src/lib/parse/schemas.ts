@@ -6,12 +6,18 @@ export const CharacterSchema = z.object({
     description: z.string().optional().describe("Optional character description or role information"),
 });
 
+export const FormattingMetadataSchema = z.object({
+    indentLevel: z.number().int().min(0).max(5).optional().describe("Relative indentation level (0=none, 1-5=increasing indent). Preserves structural spacing in verse/poetry."),
+    preserveLineBreaks: z.boolean().optional().describe("Whether to preserve line breaks after this line (for paragraph/verse spacing)"),
+}).optional();
+
 export const LineSchema = z.object({
     id: z.string().describe("Unique identifier for the line (e.g., 'act1-scene1-line5')"),
     characterId: z.string().optional().describe("ID of the single character speaking this line. Use for single-speaker dialogue. Must be provided for type='dialogue' if characterIdArray is not used."),
     characterIdArray: z.array(z.string()).optional().describe("Array of character IDs for multi-speaker lines (e.g., when multiple characters speak simultaneously like 'BOTH:', 'ALL:'). Use for multi-speaker dialogue. Must be provided for type='dialogue' if characterId is not used."),
     text: z.string().describe("REQUIRED: The actual text content of the line or stage direction. This field must NEVER be omitted or empty."),
     type: z.enum(["dialogue", "stage_direction"]).describe("REQUIRED: Type of line. Must be 'dialogue' for spoken lines or 'stage_direction' for stage directions, entrances, exits, etc. This field must NEVER be omitted."),
+    formatting: FormattingMetadataSchema.describe("Optional formatting metadata for preserving structural indentation and line breaks. Only captures structural formatting (indentation, paragraph spacing), not text styling (bold/italic)."),
     //    masteryLevel: z.enum(["low", "medium", "high"]).optional().describe("User's mastery level for this line during practice"), // the model doesn't need this info
     //    rehearsalCount: z.number().int().nonnegative().optional().describe("Number of times this line has been rehearsed"), // the model doesn't need this info
 }).refine((l) => {

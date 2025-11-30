@@ -69,20 +69,20 @@ Independent test criteria: Character-specific directions appear adjacent to rela
 Goal: Preserve indentation and structural formatting. Independently testable with scripts containing varied indentation and verse.
 Independent test criteria: Relative indentation and line breaks are preserved; text styling not retained.
 
-- [ ] T036 [P] [US4] Capture formatting metadata during extraction in `src/lib/parse/extractors.ts` (indent level, line breaks)
-- [ ] T037 [P] [US4] Extend schemas to include optional formatting metadata in `src/lib/parse/schemas.ts`
-- [ ] T038 [US4] Update UI renderers to visualize indentation `src/components/practice/book-view.tsx`
+- [x] T036 [P] [US4] Capture formatting metadata during extraction in `src/lib/parse/extractors.ts` (indent level, line breaks)
+- [x] T037 [P] [US4] Extend schemas to include optional formatting metadata in `src/lib/parse/schemas.ts`
+- [x] T038 [US4] Update UI renderers to visualize indentation `src/components/practice/book-view.tsx`
 
 ## Final Phase: Polish & Cross-Cutting Concerns
 
-- [ ] T039 Add SSE `unsupported_speaker` telemetry event in `src/app/import/api/parse/route.ts` when crowd/unknown detected
+- [x] T039 Add SSE `unsupported_speaker` telemetry event in `src/app/import/api/parse/route.ts` when crowd/unknown detected
 - [x] T040 Add cancellation support for parsing (client abort + server respect) in `src/app/import/api/parse/route.ts`
 - [x] T041 Add comprehensive error messages and recovery hints in `src/components/import/parse-error-display.tsx`
 - [ ] T042 Add unit tests for extractors `tests/parse/extractors.test.ts`
 - [ ] T043 Add unit tests for schemas and refinements `tests/parse/schemas.test.ts`
 - [ ] T044 Add unit tests for multi-speaker helpers `tests/parse/multi-character.test.ts`
 - [ ] T045 Add integration test for upload→parse→persist→render `tests/parse/llm-parser.test.ts`
-- [ ] T046 Update README with import feature quickstart steps
+- [x] T046 Update README with import feature quickstart steps
 
 ## Dependencies (story completion order)
 

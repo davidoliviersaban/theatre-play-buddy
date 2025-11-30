@@ -1,0 +1,473 @@
+import { prisma } from './prisma';
+import type { Playbook as ParsedPlaybook } from '../parse/schemas';
+import type { PlayMetadata } from '../types';
+
+export type { PlayMetadata };
+
+/**
+ * Convert Prisma Playbook to ParsedPlaybook format
+ */
+async function prismaToPlaybook(prismaPlay: any): Promise<ParsedPlaybook> {
+  const characters = await prisma.character.findMany({
+    where: { playbookId: prismaPlay.id },
+    orderBy: { createdAt: 'asc' }
+  });
+
+  const acts = await prisma.act.findMany({
+    where: { playbookId: prismaPlay.id },
+    orderBy: { order: 'asc' },
+    include: {
+      scenes: {
+        orderBy: { order: 'asc' },
+        include: {
+          lines: {
+            orderBy: { order: 'asc' },
+            include: {
+              characters: {
+                orderBy: { order: 'asc' },
+                include: {
+                  character: true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  });
+
+  return {
+    id: prismaPlay.id,
+    title: prismaPlay.title,
+    author: prismaPlay.author,
+    year: prismaPlay.year || new Date().getFullYear(),
+    genre: prismaPlay.genre || 'Drama',
+    description: prismaPlay.description || '',
+    characters: characters.map(c => ({
+      id: c.id,
+      name: c.name,
+      description: c.description || undefined,
+      isFavorite: c.isFavorite || undefined,
+      lastSelected: c.lastSelected || undefined,
+      completionRate: c.completionRate || undefined
+    })),
+    acts: acts.map(act => ({
+      id: act.id,
+      title: act.title,
+      scenes: act.scenes.map(scene => ({
+        id: scene.id,
+        title: scene.title,
+        lines: scene.lines.map(line => ({
+          id: line.id,
+          text: line.text,
+          type: line.type as 'dialogue' | 'stage_direction',
+          characterId: line.characters.length === 1 ? line.characters[0].characterId : undefined,
+          characterIdArray: line.characters.length > 1 
+            ? line.characters.map(lc => lc.characterId) 
+            : undefined,
+          formatting: (line.indentLevel !== null || line.preserveLineBreaks !== null) ? {
+            indentLevel: line.indentLevel || undefined,
+            preserveLineBreaks: line.preserveLineBreaks || undefined
+          } : undefined,
+          rehearsalCount: line.rehearsalCount || undefined
+        }))
+      }))
+    }))
+  };
+}
+
+/**
+ * Create metadata from Prisma playbook
+ */
+function createMetadataFromPrisma(play: any, characterCount: number, lineCount: number): PlayMetadata {
+  return {
+    id: play.id,
+    title: play.title,
+    author: play.author,
+    genre: play.genre || 'Drama',
+    year: play.year || new Date().getFullYear(),
+    createdAt: play.createdAt.toISOString(),
+    updatedAt: play.updatedAt.toISOString(),
+    characterCount,
+    actCount: 0, // Will be counted
+    lineCount
+  };
+}
+
+/**
+ * Save a play to the database
+ */
+export async function savePlay(play: ParsedPlaybook): Promise<void> {
+  try {
+    // Check if play exists
+    const existing = await prisma.playbook.findUnique({
+      where: { id: play.id }
+    });
+
+    if (existing) {
+      // Delete existing play and cascade delete all related data
+      await prisma.playbook.delete({
+        where: { id: play.id }
+      });
+    }
+
+    // Create new playbook with all related data
+    await prisma.playbook.create({
+      data: {
+        id: play.id,
+        title: play.title,
+        author: play.author,
+        year: play.year,
+        genre: play.genre,
+        description: play.description,
+        characters: {
+          create: play.characters.map(char => ({
+            id: char.id,
+            name: char.name,
+            description: char.description,
+            isFavorite: char.isFavorite || false,
+            lastSelected: char.lastSelected || false,
+            completionRate: char.completionRate || 0
+          }))
+        },
+        acts: {
+          create: play.acts.map((act, actIdx) => ({
+            id: act.id,
+            title: act.title,
+            order: actIdx,
+            scenes: {
+              create: act.scenes.map((scene, sceneIdx) => ({
+                id: scene.id,
+                title: scene.title,
+                order: sceneIdx,
+                lines: {
+                  create: scene.lines.map((line, lineIdx) => {
+                    const characterIds = line.characterIdArray || (line.characterId ? [line.characterId] : []);
+                    
+                    return {
+                      id: line.id,
+                      text: line.text,
+                      type: line.type,
+                      order: lineIdx,
+                      indentLevel: line.formatting?.indentLevel,
+                      preserveLineBreaks: line.formatting?.preserveLineBreaks,
+                      rehearsalCount: line.rehearsalCount || 0,
+                      characters: {
+                        create: characterIds.map((charId, charIdx) => ({
+                          characterId: charId,
+                          order: charIdx
+                        }))
+                      }
+                    };
+                  })
+                }
+              }))
+            }
+          }))
+        }
+      }
+    });
+
+    console.log(`[DB] Saved play to PostgreSQL: ${play.id} (${existing ? 'updated' : 'created'})`);
+  } catch (error) {
+    console.error(`[DB] Failed to save play ${play.id}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Get a play by ID
+ */
+export async function getPlayById(playId: string): Promise<ParsedPlaybook | null> {
+  try {
+    const play = await prisma.playbook.findUnique({
+      where: { id: playId }
+    });
+
+    if (!play) {
+      return null;
+    }
+
+    return await prismaToPlaybook(play);
+  } catch (error) {
+    console.error(`[DB] Failed to get play ${playId}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Get metadata for a single play by ID
+ */
+export async function getPlayMetadataById(playId: string): Promise<PlayMetadata | null> {
+  try {
+    const play = await prisma.playbook.findUnique({
+      where: { id: playId },
+      include: {
+        _count: {
+          select: {
+            characters: true,
+            acts: true
+          }
+        }
+      }
+    });
+
+    if (!play) {
+      return null;
+    }
+
+    // Count total lines
+    const lineCount = await prisma.line.count({
+      where: {
+        scene: {
+          act: {
+            playbookId: playId
+          }
+        }
+      }
+    });
+
+    return {
+      id: play.id,
+      title: play.title,
+      author: play.author,
+      genre: play.genre || 'Drama',
+      year: play.year || new Date().getFullYear(),
+      createdAt: play.createdAt.toISOString(),
+      updatedAt: play.updatedAt.toISOString(),
+      characterCount: play._count.characters,
+      actCount: play._count.acts,
+      lineCount
+    };
+  } catch (error) {
+    console.error(`[DB] Failed to get play metadata ${playId}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Get all plays metadata (lightweight list)
+ */
+export async function getAllPlays(): Promise<PlayMetadata[]> {
+  try {
+    const plays = await prisma.playbook.findMany({
+      orderBy: { updatedAt: 'desc' },
+      include: {
+        _count: {
+          select: {
+            characters: true,
+            acts: true
+          }
+        }
+      }
+    });
+
+    // Get line counts for all plays
+    const playsWithLineCounts = await Promise.all(
+      plays.map(async (play) => {
+        const lineCount = await prisma.line.count({
+          where: {
+            scene: {
+              act: {
+                playbookId: play.id
+              }
+            }
+          }
+        });
+
+        return {
+          id: play.id,
+          title: play.title,
+          author: play.author,
+          genre: play.genre || 'Drama',
+          year: play.year || new Date().getFullYear(),
+          createdAt: play.createdAt.toISOString(),
+          updatedAt: play.updatedAt.toISOString(),
+          characterCount: play._count.characters,
+          actCount: play._count.acts,
+          lineCount
+        };
+      })
+    );
+
+    return playsWithLineCounts;
+  } catch (error) {
+    console.error('[DB] Failed to get all plays:', error);
+    throw error;
+  }
+}
+
+/**
+ * Update play metadata
+ */
+export async function updatePlayMetadata(
+  playId: string,
+  updates: Partial<Omit<PlayMetadata, 'id' | 'createdAt'>>
+): Promise<PlayMetadata | null> {
+  try {
+    const updated = await prisma.playbook.update({
+      where: { id: playId },
+      data: {
+        title: updates.title,
+        author: updates.author,
+        genre: updates.genre,
+        year: updates.year
+      },
+      include: {
+        _count: {
+          select: {
+            characters: true,
+            acts: true
+          }
+        }
+      }
+    });
+
+    const lineCount = await prisma.line.count({
+      where: {
+        scene: {
+          act: {
+            playbookId: playId
+          }
+        }
+      }
+    });
+
+    return {
+      id: updated.id,
+      title: updated.title,
+      author: updated.author,
+      genre: updated.genre || 'Drama',
+      year: updated.year || new Date().getFullYear(),
+      createdAt: updated.createdAt.toISOString(),
+      updatedAt: updated.updatedAt.toISOString(),
+      characterCount: updated._count.characters,
+      actCount: updated._count.acts,
+      lineCount
+    };
+  } catch (error) {
+    console.error(`[DB] Failed to update play metadata ${playId}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Delete a play
+ */
+export async function deletePlay(playId: string): Promise<boolean> {
+  try {
+    await prisma.playbook.delete({
+      where: { id: playId }
+    });
+
+    console.log(`[DB] Deleted play: ${playId}`);
+    return true;
+  } catch (error) {
+    console.error(`[DB] Failed to delete play ${playId}:`, error);
+    return false;
+  }
+}
+
+/**
+ * Search plays by title or author
+ */
+export async function searchPlays(query: string): Promise<PlayMetadata[]> {
+  try {
+    const plays = await prisma.playbook.findMany({
+      where: {
+        OR: [
+          { title: { contains: query, mode: 'insensitive' } },
+          { author: { contains: query, mode: 'insensitive' } }
+        ]
+      },
+      orderBy: { updatedAt: 'desc' },
+      include: {
+        _count: {
+          select: {
+            characters: true,
+            acts: true
+          }
+        }
+      }
+    });
+
+    const playsWithLineCounts = await Promise.all(
+      plays.map(async (play) => {
+        const lineCount = await prisma.line.count({
+          where: {
+            scene: {
+              act: {
+                playbookId: play.id
+              }
+            }
+          }
+        });
+
+        return {
+          id: play.id,
+          title: play.title,
+          author: play.author,
+          genre: play.genre || 'Drama',
+          year: play.year || new Date().getFullYear(),
+          createdAt: play.createdAt.toISOString(),
+          updatedAt: play.updatedAt.toISOString(),
+          characterCount: play._count.characters,
+          actCount: play._count.acts,
+          lineCount
+        };
+      })
+    );
+
+    return playsWithLineCounts;
+  } catch (error) {
+    console.error('[DB] Failed to search plays:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get database statistics
+ */
+export async function getDbStats(): Promise<{
+  totalPlays: number;
+  totalCharacters: number;
+  totalLines: number;
+  lastUpdated: string;
+}> {
+  try {
+    const [totalPlays, totalCharacters, totalLines, lastPlay] = await Promise.all([
+      prisma.playbook.count(),
+      prisma.character.count(),
+      prisma.line.count(),
+      prisma.playbook.findFirst({
+        orderBy: { updatedAt: 'desc' },
+        select: { updatedAt: true }
+      })
+    ]);
+
+    return {
+      totalPlays,
+      totalCharacters,
+      totalLines,
+      lastUpdated: lastPlay?.updatedAt.toISOString() || new Date().toISOString()
+    };
+  } catch (error) {
+    console.error('[DB] Failed to get stats:', error);
+    throw error;
+  }
+}
+
+/**
+ * Check if a play exists
+ */
+export async function playExists(playId: string): Promise<boolean> {
+  try {
+    const count = await prisma.playbook.count({
+      where: { id: playId }
+    });
+    return count > 0;
+  } catch (error) {
+    console.error(`[DB] Failed to check if play exists ${playId}:`, error);
+    return false;
+  }
+}
