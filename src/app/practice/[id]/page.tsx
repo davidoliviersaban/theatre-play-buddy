@@ -32,6 +32,12 @@ export default function PracticePage({
     skipToNextScene,
     skipToPreviousScene,
     togglePause,
+    lineStages,
+    showHint,
+    toggleHint,
+    markLineAsKnown,
+    getLineMastery,
+    masteryUpdateTrigger,
   } = usePracticeSession(play, characterId, start);
 
   const [viewMode, setViewMode] = React.useState<"line" | "book">(
@@ -108,11 +114,18 @@ export default function PracticePage({
       >
         {viewMode === "line" ? (
           <LineByLineView
+            key={masteryUpdateTrigger}
             lines={allLines}
             currentLineIndex={currentLineIndex}
             characterId={characterId}
             play={play}
             lineRefs={lineRefs}
+            lineStages={lineStages}
+            showHint={showHint}
+            onToggleHint={toggleHint}
+            onMarkAsKnown={markLineAsKnown}
+            onNextLine={goToNext}
+            getLineMastery={getLineMastery}
           />
         ) : (
           <BookView

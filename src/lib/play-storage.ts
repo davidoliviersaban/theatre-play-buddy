@@ -74,6 +74,8 @@ export const StorageKeys = {
   playLastRehearsalDate: (playId: string) => `${STORAGE_PREFIX}play:${playId}:lastRehearsalDate`,
   playSessionStats: (playId: string, characterId: string) =>
     `${STORAGE_PREFIX}play:${playId}:char:${characterId}:stats`,
+  lineMastery: (playId: string, characterId: string, lineId: string) =>
+    `${STORAGE_PREFIX}play:${playId}:char:${characterId}:line:${lineId}`,
 } as const;
 
 export interface SessionStats {
@@ -81,6 +83,13 @@ export interface SessionStats {
   correctLines: number;
   hintsUsed: number;
   totalSessions: number;
+}
+
+export interface LineMastery {
+  rehearsalCount: number;
+  masteryPercentage: number; // 0-100
+  hintCount: number;
+  lastPracticed: string; // ISO date string
 }
 
 /**
@@ -286,6 +295,31 @@ export function clearPlayData(playId: string): void {
       sessionStorage.removeItem(key);
     }
   }
+}
+
+/**
+ * Get mastery data for a specific line.
+ */
+export function getLineMastery(playId: string, characterId: string, lineId: string): LineMastery | null {
+  if (typeof window === 'undefined') return null;
+
+  const stored = sessionStorage.getItem(StorageKeys.lineMastery(playId, characterId, lineId));
+  if (stored) {
+    try {
+      return JSON.parse(stored) as LineMastery;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+/**
+ * Set mastery data for a specific line.
+ */
+export function setLineMastery(playId: string, characterId: string, lineId: string, mastery: LineMastery): void {
+  if (typeof window === 'undefined') return;
+  sessionStorage.setItem(StorageKeys.lineMastery(playId, characterId, lineId), JSON.stringify(mastery));
 }
 
 /**

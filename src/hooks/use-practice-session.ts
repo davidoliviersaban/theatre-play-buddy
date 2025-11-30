@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import type { Playbook, Line } from "@/lib/mock-data";
-import { getLastLineIndex, setLastLineIndex, setSessionStats as persistSessionStats, getSessionStats } from "@/lib/play-storage";
+import { getLastLineIndex, setLastLineIndex, setSessionStats as persistSessionStats, getSessionStats, getLineMastery, setLineMastery } from "@/lib/play-storage";
 
 type LineWithMetadata = Line & {
     __actId: string;
@@ -8,6 +8,9 @@ type LineWithMetadata = Line & {
     __sceneId: string;
     __sceneTitle: string;
 };
+
+// Word removal stages: 0 = full text, 1-4 = progressive removal, 5 = all hidden
+type LineStageMap = Record<string, number>; // lineId -> stage (0-5)
 
 export function usePracticeSession(play: Playbook, characterId: string, startId?: string) {
     // Flatten lines with act/scene metadata
@@ -63,6 +66,9 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
 
     const [currentLineIndex, setCurrentLineIndex] = useState(initialIndex);
     const [isPaused, setIsPaused] = useState(true);
+    const [lineStages, setLineStages] = useState<LineStageMap>({});
+    const [showHint, setShowHint] = useState(false);
+    const [masteryUpdateTrigger, setMasteryUpdateTrigger] = useState(0);
     const [sessionStats, setSessionStats] = useState(() => {
         // Only load from storage on client-side
         if (typeof window === 'undefined') {
@@ -157,8 +163,13 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
         return next;
     });
     const goToNext = () => {
-        // If this is the user's line and not yet counted, increment stats before moving
-        if (currentLine && isMyLine && !countedLineIdsRef.current.has(currentLine.id)) {
+        // If this is the user's dialogue line and not yet counted, increment stats before moving
+        if (
+            currentLine &&
+            currentLine.type === 'dialogue' &&
+            isMyLine &&
+            !countedLineIdsRef.current.has(currentLine.id)
+        ) {
             countedLineIdsRef.current.add(currentLine.id);
             setSessionStats((prev) => ({
                 ...prev,
@@ -166,6 +177,12 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
                 correctLines: prev.correctLines + 1,
             }));
         }
+
+        // Update line mastery when moving to next line (only for my dialogue lines)
+        if (currentLine && currentLine.type === 'dialogue' && isMyLine) {
+            updateLineMastery(currentLine.id);
+        }
+
         setCurrentLineIndex(prev => {
             const next = Math.min(allLines.length - 1, prev + 1);
             persistLineIndex(next);
@@ -222,6 +239,100 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
         setIsPaused(!isPaused);
     };
 
+    const toggleHint = () => {
+        if (!showHint && currentLine && isMyLine) {
+            // Increment global hint counter
+            setSessionStats((prev) => ({
+                ...prev,
+                hintsUsed: prev.hintsUsed + 1,
+            }));
+
+            // Update line mastery: increment hint count and decrease mastery by 25%
+            const existing = getLineMastery(play.id, characterId, currentLine.id);
+            const newHintCount = (existing?.hintCount || 0) + 1;
+            const currentMastery = existing?.masteryPercentage || 0;
+            const newMastery = Math.max(0, currentMastery - 25);
+
+            setLineMastery(play.id, characterId, currentLine.id, {
+                rehearsalCount: existing?.rehearsalCount || 0,
+                masteryPercentage: newMastery,
+                hintCount: newHintCount,
+                lastPracticed: new Date().toISOString(),
+            });
+
+            // Force re-render
+            setMasteryUpdateTrigger(prev => prev + 1);
+        }
+        setShowHint(!showHint);
+    };
+
+    const updateLineMastery = (lineId: string) => {
+        if (typeof window === 'undefined') return;
+
+        const existing = getLineMastery(play.id, characterId, lineId);
+        const newCount = (existing?.rehearsalCount || 0) + 1;
+        const currentMastery = existing?.masteryPercentage || 0;
+        const newPercentage = Math.min(100, currentMastery + 20);
+
+        setLineMastery(play.id, characterId, lineId, {
+            rehearsalCount: newCount,
+            masteryPercentage: newPercentage,
+            hintCount: existing?.hintCount || 0,
+            lastPracticed: new Date().toISOString(),
+        });
+
+        // Force re-render
+        setMasteryUpdateTrigger(prev => prev + 1);
+    };
+
+    const markLineAsKnown = () => {
+        if (!currentLine || !isMyLine) return;
+
+        const currentStage = lineStages[currentLine.id] || 0;
+
+        // Count words in the line
+        const wordCount = currentLine.text.trim().split(/\s+/).filter(w => w.length > 0).length;
+
+        // For lines with less than 3 words, jump directly to stage 5
+        const nextStage = wordCount < 3 ? 5 : currentStage + 1;
+
+        // Update line mastery and rehearsal count (only for dialogue lines)
+        if (currentLine.type === 'dialogue') {
+            updateLineMastery(currentLine.id);
+        }
+
+        // If moving to stage 5 or beyond, we're at the final stage
+        if (nextStage >= 5) {
+            // Set to stage 5 to show fully hidden text
+            setLineStages((prev) => ({
+                ...prev,
+                [currentLine.id]: 5,
+            }));
+            setShowHint(false);
+
+            // If we were already at stage 5, move to next line
+            if (currentStage === 5) {
+                if (!countedLineIdsRef.current.has(currentLine.id)) {
+                    countedLineIdsRef.current.add(currentLine.id);
+                    setSessionStats((prev) => ({
+                        ...prev,
+                        linesRehearsed: prev.linesRehearsed + 1,
+                        correctLines: prev.correctLines + 1,
+                    }));
+                }
+                goToNext();
+            }
+        } else {
+            // Advance to next stage (1-4)
+            setLineStages((prev) => ({
+                ...prev,
+                [currentLine.id]: nextStage,
+            }));
+            setShowHint(false);
+        }
+    };
+
+
     return {
         allLines,
         currentLineIndex,
@@ -235,5 +346,11 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
         skipToNextScene,
         skipToPreviousScene,
         togglePause,
+        lineStages,
+        showHint,
+        toggleHint,
+        markLineAsKnown,
+        getLineMastery: (lineId: string) => getLineMastery(play.id, characterId, lineId),
+        masteryUpdateTrigger,
     };
 }

@@ -3,13 +3,15 @@
 interface ProgressBarProps {
   progress: number;
   size?: "sm" | "md" | "lg";
-  showLabel?: boolean;
+  showLabel?: boolean; // shows a separate inline label next to the bar
+  labelInside?: boolean; // shows the percentage centered inside the bar
 }
 
 export function ProgressBar({
   progress,
   size = "md",
   showLabel = true,
+  labelInside = true,
 }: ProgressBarProps) {
   const widthClasses = {
     sm: "w-12",
@@ -19,31 +21,51 @@ export function ProgressBar({
 
   return (
     <div className="flex items-center gap-2">
-      <div className={`h-2 rounded-full bg-secondary ${widthClasses[size]}`}>
+      <div
+        className={`relative h-3 rounded-full bg-secondary ${widthClasses[size]}`}
+      >
         <div
-          className="h-2 rounded-full bg-green-500"
-          style={{ width: `${progress}%` }}
+          className="absolute left-0 top-0 h-3 rounded-full bg-green-500"
+          style={{ width: `${Math.max(0, Math.min(100, progress))}%` }}
         />
+        {labelInside && (
+          <span className="absolute inset-0 flex items-center justify-center text-[10px] font-medium text-foreground/70">
+            {Math.max(0, Math.min(100, progress))}%
+          </span>
+        )}
       </div>
       {showLabel && (
-        <span className="text-xs text-muted-foreground">{progress}%</span>
+        <span className="text-xs text-muted-foreground">
+          {Math.max(0, Math.min(100, progress))}%
+        </span>
       )}
     </div>
   );
 }
 
+import type { Line } from "@/lib/mock-data";
+import { getLineMastery } from "@/lib/play-storage";
+
+// Progress is merged with mastery: compute average mastery percentage across character's lines
 export function calculateProgress(
-  lines: Array<{ characterId: string; masteryLevel?: string }>,
+  lines: Array<Line>,
+  playId: string,
   characterId?: string
 ): number {
   if (!characterId) return 0;
+  if (typeof window === "undefined") return 0;
 
-  const characterLines = lines.filter((l) => l.characterId === characterId);
+  // Only consider dialogue lines belonging to the character
+  const characterLines = lines.filter(
+    (l) => l.characterId === characterId && l.type === "dialogue"
+  );
   if (characterLines.length === 0) return 0;
 
-  const masteredLines = characterLines.filter(
-    (l) => l.masteryLevel === "high"
-  ).length;
-
-  return Math.floor((masteredLines / characterLines.length) * 100);
+  let total = 0;
+  for (const line of characterLines) {
+    const mastery = getLineMastery(playId, characterId, line.id);
+    total += mastery?.masteryPercentage ?? 0;
+  }
+  const avg = total / characterLines.length;
+  return Math.round(avg);
 }

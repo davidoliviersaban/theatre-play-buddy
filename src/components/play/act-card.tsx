@@ -20,7 +20,11 @@ export function ActCard({ act, playId, activeCharacter }: ActCardProps) {
   const actLines = act.scenes.flatMap((s) =>
     s.lines.filter((l) => l.characterId === activeCharacter?.id)
   );
-  const actProgress = calculateProgress(actLines, activeCharacter?.id);
+  const actProgress = calculateProgress(
+    act.scenes.flatMap((s) => s.lines),
+    playId,
+    activeCharacter?.id
+  );
 
   return (
     <Card>
@@ -57,6 +61,7 @@ export function ActCard({ act, playId, activeCharacter }: ActCardProps) {
             );
             const sceneProgress = calculateProgress(
               scene.lines,
+              playId,
               activeCharacter?.id
             );
 
