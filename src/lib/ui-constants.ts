@@ -13,27 +13,27 @@ export const ICON_SIZES = {
  * Get mastery color based on percentage
  */
 export function getMasteryColor(percentage: number): string {
-    if (percentage >= 80) return 'bg-green-500';
-    if (percentage >= 40) return 'bg-yellow-500';
-    return 'bg-red-500';
+    if (percentage >= 80) return 'bg-mastery-high';
+    if (percentage >= 40) return 'bg-mastery-medium';
+    return 'bg-mastery-low';
 }
 
 /**
  * Get mastery text color based on percentage
  */
 export function getMasteryTextColor(percentage: number): string {
-    if (percentage >= 80) return 'text-green-500';
-    if (percentage >= 40) return 'text-yellow-500';
-    return 'text-red-500';
+    if (percentage >= 80) return 'text-mastery-high';
+    if (percentage >= 40) return 'text-mastery-medium';
+    return 'text-mastery-low';
 }
 
 /**
  * Get mastery border color based on percentage
  */
 export function getMasteryBorderColor(percentage: number): string {
-    if (percentage >= 80) return 'border-green-500';
-    if (percentage >= 40) return 'border-yellow-500';
-    return 'border-red-500';
+    if (percentage >= 80) return 'border-mastery-high';
+    if (percentage >= 40) return 'border-mastery-medium';
+    return 'border-mastery-low';
 }
 
 /**

@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import type { Character, Playbook } from "@/lib/mock-data";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import { calculateProgress } from "@/components/play/progress-bar";
+import { InlineStack } from "@/components/ui/inline-stack";
+import { OPACITY_LEVELS } from "@/lib/ui-constants";
 
 interface ActiveCharacterHeaderProps {
   play: Playbook;
@@ -43,14 +45,14 @@ export function ActiveCharacterHeader({
       aria-expanded={isSelectionOpen}
     >
       <div className="flex gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-500/10 flex-shrink-0">
-          <Star className="h-6 w-6 fill-yellow-500 text-yellow-500" />
+        <div className={cn("flex h-12 w-12 items-center justify-center rounded-full flex-shrink-0", `bg-warning/${OPACITY_LEVELS.subtle}`)}>
+          <Star className="h-6 w-6 fill-warning text-warning" />
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="text-lg font-semibold flex items-center gap-2">
             Rehearsing as {character.name}
             {mounted && (
-              <span className="inline-flex items-center gap-1">
+              <InlineStack gap={1}>
                 <CompletionIcon
                   progress={progress}
                   hasContent={true}
@@ -59,7 +61,7 @@ export function ActiveCharacterHeader({
                 <span className="text-xs font-medium text-muted-foreground">
                   {progress}%
                 </span>
-              </span>
+              </InlineStack>
             )}
           </h3>
           <p className="text-sm text-muted-foreground">

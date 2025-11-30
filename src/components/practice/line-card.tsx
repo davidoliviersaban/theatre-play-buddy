@@ -4,7 +4,7 @@ import type { Line } from "@/lib/mock-data";
 import { StructureProgressHeader } from "@/components/practice/structure-header";
 import { removeWords } from "@/lib/word-removal";
 import { Button } from "@/components/ui/button";
-import { getMasteryColor, ICON_SIZES } from "@/lib/ui-constants";
+import { getMasteryColor, ICON_SIZES, OPACITY_LEVELS } from "@/lib/ui-constants";
 
 export type LineWithMetadata = Line & {
   __actId: string;
@@ -107,7 +107,7 @@ export function LineCard({
         className={cn(
           "relative rounded-lg p-6 transition-all duration-300",
           isCurrent ? "scale-105 ring-2 ring-primary" : "opacity-50 blur-[1px]",
-          isMe ? "bg-secondary/10" : "bg-transparent"
+          isMe ? `bg-secondary/${OPACITY_LEVELS.subtle}` : "bg-transparent"
         )}
         style={{
           marginTop: headerHeight > 0 ? `${headerHeight}px` : undefined,
@@ -150,14 +150,14 @@ export function LineCard({
             className={cn(
               "inline-flex items-center rounded-full px-2 py-1 text-xs font-bold uppercase tracking-wider",
               isMe
-                ? "bg-primary/10 text-primary ring-1 ring-primary/30"
+                ? `bg-primary/${OPACITY_LEVELS.subtle} text-primary ring-1 ring-primary/30`
                 : "bg-muted text-muted-foreground"
             )}
           >
             {isMe && (
               <Star
                 className={cn(
-                  "mr-1 fill-yellow-500 text-yellow-500",
+                  "mr-1 fill-warning text-warning",
                   ICON_SIZES.xs
                 )}
               />

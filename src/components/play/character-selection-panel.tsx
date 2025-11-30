@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import { calculateProgress } from "@/components/play/progress-bar";
 import { cn } from "@/lib/utils";
+import { InlineStack } from "@/components/ui/inline-stack";
+import { OPACITY_LEVELS } from "@/lib/ui-constants";
 import type { Character, Playbook } from "@/lib/mock-data";
 import {
   getAllLines,
@@ -51,7 +53,7 @@ export function CharacterSelectionPanel({
               }}
               className={cn(
                 "flex cursor-pointer items-center justify-between rounded-lg border p-3 outline-none transition-colors hover:bg-secondary/50 focus:ring-2 focus:ring-primary",
-                isActive && "border-primary/50 bg-primary/5"
+                isActive && `border-primary/50 bg-primary/${OPACITY_LEVELS.subtle}`
               )}
             >
               <div className="flex items-start gap-3">
@@ -69,14 +71,14 @@ export function CharacterSelectionPanel({
                 <div className="flex-1 min-w-0">
                   <p className="font-medium flex items-center gap-2">
                     {char.name}
-                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground">
+                    <InlineStack gap={1} className="text-[10px] font-medium text-muted-foreground">
                       <CompletionIcon
                         progress={progress}
                         hasContent={true}
                         className="h-3.5 w-3.5"
                       />
                       {progress}%
-                    </span>
+                    </InlineStack>
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {char.description}

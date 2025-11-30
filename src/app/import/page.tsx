@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Upload, FileText, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { OPACITY_LEVELS } from "@/lib/ui-constants";
 import { IconButton } from "@/components/ui/icon-button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -40,7 +42,7 @@ export default function ImportPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div className="flex items-center space-x-4">
-                <div className="rounded-full bg-green-500/10 p-2">
+                <div className={cn("rounded-full p-2", `bg-success/${OPACITY_LEVELS.subtle}`)}>
                   <FileText className="h-5 w-5 text-green-500" />
                 </div>
                 <div>
@@ -50,7 +52,7 @@ export default function ImportPage() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center text-green-500">
+              <div className="flex items-center text-success">
                 <CheckCircle2 className="mr-2 h-4 w-4" />
                 <span className="text-sm font-medium">Ready</span>
               </div>
