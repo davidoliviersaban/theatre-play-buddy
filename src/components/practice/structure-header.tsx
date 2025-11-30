@@ -1,7 +1,6 @@
 import { ProgressBar } from "@/components/play/progress-bar";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import { cn } from "@/lib/utils";
-import React from "react";
 
 interface StructureProgressHeaderProps {
   title: string;

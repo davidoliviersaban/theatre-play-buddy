@@ -5,9 +5,13 @@ import { Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import { calculateProgress } from "@/components/play/progress-bar";
-import { getLineMastery } from "@/lib/play-storage";
 import { cn } from "@/lib/utils";
 import type { Character, Playbook } from "@/lib/mock-data";
+import {
+  getAllLines,
+  getLearnedLinesCount,
+  getTotalLinesCount,
+} from "@/lib/character-utils";
 
 interface CharacterSelectionPanelProps {
   play: Playbook;
@@ -28,23 +32,10 @@ export function CharacterSelectionPanel({
       <div className="space-y-3">
         {characters.map((char) => {
           const isActive = char.id === activeCharacterId;
-          const allLines = play.acts.flatMap((a) =>
-            a.scenes.flatMap((s) => s.lines)
-          );
+          const allLines = getAllLines(play);
           const progress = calculateProgress(allLines, play.id, char.id);
-
-          // Calculate total lines and learned lines for this character
-          const characterLines = allLines.filter(
-            (l) => l.characterId === char.id && l.type === "dialogue"
-          );
-          const totalLines = characterLines.length;
-          const learnedLines =
-            typeof window !== "undefined"
-              ? characterLines.filter((line) => {
-                  const mastery = getLineMastery(play.id, char.id, line.id);
-                  return (mastery?.masteryPercentage ?? 0) >= 80;
-                }).length
-              : 0;
+          const totalLines = getTotalLinesCount(allLines, char.id);
+          const learnedLines = getLearnedLinesCount(play.id, char.id, allLines);
 
           return (
             <div

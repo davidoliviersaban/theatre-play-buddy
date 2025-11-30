@@ -1,62 +1,20 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import { User } from "lucide-react";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import { Badge } from "@/components/ui/badge";
 import { calculateProgress } from "@/components/play/progress-bar";
-import type { Playbook, Character, Line } from "@/lib/mock-data";
+import type { Playbook } from "@/lib/mock-data";
 import {
   getCurrentCharacterStats,
   getLastRehearsalDate,
 } from "@/lib/play-storage";
+import { getAllLines, getLearnedCharacters } from "@/lib/character-utils";
+import { useClientOnly } from "@/lib/client-utils";
+import { formatTimeAgo } from "@/lib/date-utils";
 
 interface PlayCardStatsProps {
   play: Playbook;
-}
-
-const subscribe = () => () => {};
-const getSnapshot = () => true;
-const getServerSnapshot = () => false;
-
-function useClientOnly() {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-}
-
-function getAllLines(play: Playbook): Line[] {
-  return play.acts.flatMap((act) => act.scenes.flatMap((scene) => scene.lines));
-}
-
-function getLearnedCharacters(
-  play: Playbook,
-  allLines: Line[],
-  excludeCharacterId?: string
-): Character[] {
-  return play.characters
-    .map((character) => ({
-      character,
-      progress: calculateProgress(allLines, play.id, character.id),
-    }))
-    .filter(
-      ({ progress, character }) =>
-        progress === 100 && character.id !== excludeCharacterId
-    )
-    .map(({ character }) => character);
-}
-
-function formatTimeAgo(date: Date): string {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffMins < 1) return "just now";
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays === 1) return "yesterday";
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return date.toLocaleDateString();
 }
 
 export function PlayCardProgress({ play }: PlayCardStatsProps) {

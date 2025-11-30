@@ -1,14 +1,13 @@
 "use client";
+import * as React from "react";
 import Link from "next/link";
+import { useSyncExternalStore } from "react";
 import { CheckCircle2, RotateCcw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MOCK_PLAYS } from "@/lib/mock-data";
-import { useSyncExternalStore } from "react";
 import { getCurrentCharacterStats } from "@/lib/play-storage";
 import { DailyStatsTable } from "@/components/play/DailyStatsTable";
-
-import React from "react";
 
 export default function SessionSummaryPage({
   params,

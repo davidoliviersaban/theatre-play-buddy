@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { Line, Playbook } from "@/lib/mock-data";
 import { calculateProgress } from "@/components/play/progress-bar";
-import React from "react";
+import { useRef, useEffect } from "react";
 import { StructureProgressHeader } from "@/components/practice/structure-header";
 import { getLineMastery } from "@/lib/play-storage";
 import { CompletionIcon } from "@/components/ui/completion-icon";
@@ -77,9 +77,9 @@ export function BookView({
   currentLineIndex,
   viewMode,
 }: BookViewProps) {
-  const currentGroupRef = React.useRef<HTMLParagraphElement | null>(null);
+  const currentGroupRef = useRef<HTMLParagraphElement | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Scroll when current line changes or when view switches to book
     if (viewMode === "book" && currentGroupRef.current) {
       // slight delay ensures layout settled after mode switch
