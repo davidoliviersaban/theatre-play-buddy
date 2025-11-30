@@ -21,6 +21,8 @@ interface LineByLineViewProps {
   onToggleHint: () => void;
   onMarkAsKnown: () => void;
   onNextLine: () => void;
+  onPrevLine: () => void;
+
   getLineMastery: (lineId: string) => {
     rehearsalCount: number;
     masteryPercentage: number;
@@ -38,10 +40,11 @@ export function LineByLineView({
   onToggleHint,
   onMarkAsKnown,
   onNextLine,
+  onPrevLine,
   getLineMastery,
 }: LineByLineViewProps) {
   return (
-    <div className="mx-auto max-w-[70ch] mt-12">
+    <div className="mx-auto max-w-[70ch] mt-12 relative">
       {/* Script column */}
       <div className="space-y-6">
         {lines.map((line, index) => {
@@ -91,7 +94,10 @@ export function LineByLineView({
               onToggleHint={onToggleHint}
               onMarkAsKnown={onMarkAsKnown}
               onNextLine={onNextLine}
+              onPrevLine={onPrevLine}
               getLineMastery={getLineMastery}
+              canGoPrev={currentLineIndex > 0}
+              canGoNext={currentLineIndex < lines.length - 1}
             />
           );
         })}

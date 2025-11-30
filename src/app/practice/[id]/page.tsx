@@ -123,6 +123,7 @@ export default function PracticePage({
             onToggleHint={toggleHint}
             onMarkAsKnown={markLineAsKnown}
             onNextLine={goToNext}
+            onPrevLine={goToPrevious}
             getLineMastery={getLineMastery}
           />
         ) : (
