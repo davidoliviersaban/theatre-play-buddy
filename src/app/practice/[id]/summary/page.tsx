@@ -3,6 +3,8 @@ import * as React from "react";
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import { CheckCircle2, RotateCcw, Home } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { OPACITY_LEVELS } from "@/lib/ui-constants";
 import { IconButton } from "@/components/ui/icon-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatCard } from "@/components/ui/stat-card";
@@ -40,7 +42,12 @@ export default function SessionSummaryPage({
     <div className="min-h-screen bg-background p-8">
       <div className="mx-auto max-w-3xl">
         <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex rounded-full bg-green-500/10 p-4">
+          <div
+            className={cn(
+              "mb-4 inline-flex rounded-full p-4",
+              `bg-success/${OPACITY_LEVELS.subtle}`
+            )}
+          >
             <CheckCircle2 className="h-12 w-12 text-green-500" />
           </div>
           <h1 className="text-3xl font-bold tracking-tight">

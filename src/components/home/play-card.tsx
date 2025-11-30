@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { BookOpen, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { InlineStack } from "@/components/ui/inline-stack";
 import { TrophyIcon } from "@/components/ui/trophy-icon";
 import {
   Card,
@@ -68,12 +69,13 @@ export function PlayCard({ play, status }: PlayCardProps) {
           <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
             {play.genre}
           </span>
-          <span
-            className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground"
+          <InlineStack
+            gap={1}
+            className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground"
             title={`${play.characters.length} Characters`}
           >
             <Users className="h-3.5 w-3.5" /> {play.characters.length}
-          </span>
+          </InlineStack>
         </div>
       </CardContent>
       <CardFooter>

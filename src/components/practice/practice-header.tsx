@@ -6,6 +6,7 @@ import { CompletionIcon } from "@/components/ui/completion-icon";
 import { calculateProgress } from "@/components/play/progress-bar";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
+import { InlineStack } from "@/components/ui/inline-stack";
 import type { Playbook, Character } from "@/lib/mock-data";
 
 interface PracticeHeaderProps {
@@ -65,7 +66,7 @@ export function PracticeHeader({
                 Practicing as{" "}
                 <span className="font-medium">{character.name}</span>
                 {/* Play progress with checkbox icon */}
-                <span className="ml-3 inline-flex items-center gap-1 align-middle">
+                <InlineStack gap={1} className="ml-3 align-middle">
                   {(() => {
                     const allLines = play.acts.flatMap((a) =>
                       a.scenes.flatMap((s) => s.lines)
@@ -86,7 +87,7 @@ export function PracticeHeader({
                       </>
                     );
                   })()}
-                </span>
+                </InlineStack>
               </p>
             </div>
           </div>
@@ -119,14 +120,14 @@ export function PracticeHeader({
         {/* Stats row - render on client to prevent hydration mismatch */}
         {isClient && (
           <div className="mt-2 text-xs text-muted-foreground sm:text-sm">
-            <span className="inline-flex items-center gap-1 mr-3">
+            <InlineStack gap={1} className="mr-3">
               <CheckCircle className="h-3 w-3" /> {sessionStats.correctLines}{" "}
               Correct
-            </span>
-            <span className="inline-flex items-center gap-1">
+            </InlineStack>
+            <InlineStack gap={1}>
               <BarChart className="h-3 w-3" /> {sessionStats.linesRehearsed}{" "}
               Total
-            </span>
+            </InlineStack>
           </div>
         )}
       </div>

@@ -1,5 +1,7 @@
 "use client";
 
+import { useClientOnly } from "@/lib/client-utils";
+
 interface ProgressBarProps {
   progress: number;
   size?: "sm" | "md" | "lg";
@@ -13,11 +15,31 @@ export function ProgressBar({
   showLabel = true,
   labelInside = true,
 }: ProgressBarProps) {
+  const isClient = useClientOnly();
+
   const widthClasses = {
     sm: "w-12",
     md: "w-16",
     lg: "w-24",
   };
+
+  const normalizedProgress = Math.max(0, Math.min(100, progress));
+
+  // Render placeholder during SSR to prevent hydration mismatch
+  if (!isClient) {
+    return (
+      <div className="flex items-center gap-2">
+        <div
+          className={`relative h-3 rounded-full bg-secondary ${widthClasses[size]}`}
+        >
+          <div
+            className="absolute left-0 top-0 h-3 rounded-full bg-mastery-high"
+            style={{ width: "0%" }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-2">
@@ -25,18 +47,18 @@ export function ProgressBar({
         className={`relative h-3 rounded-full bg-secondary ${widthClasses[size]}`}
       >
         <div
-          className="absolute left-0 top-0 h-3 rounded-full bg-green-500"
-          style={{ width: `${Math.max(0, Math.min(100, progress))}%` }}
+          className="absolute left-0 top-0 h-3 rounded-full bg-mastery-high"
+          style={{ width: `${normalizedProgress}%` }}
         />
         {labelInside && (
           <span className="absolute inset-0 flex items-center justify-center text-[10px] font-medium text-foreground/70">
-            {Math.max(0, Math.min(100, progress))}%
+            {normalizedProgress}%
           </span>
         )}
       </div>
       {showLabel && (
         <span className="text-xs text-muted-foreground">
-          {Math.max(0, Math.min(100, progress))}%
+          {normalizedProgress}%
         </span>
       )}
     </div>

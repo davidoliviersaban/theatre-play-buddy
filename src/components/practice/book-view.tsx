@@ -5,6 +5,7 @@ import { useRef, useEffect } from "react";
 import { StructureProgressHeader } from "@/components/practice/structure-header";
 import { getLineMastery } from "@/lib/play-storage";
 import { CompletionIcon } from "@/components/ui/completion-icon";
+import { OPACITY_LEVELS } from "@/lib/ui-constants";
 
 // Extended line type used in practice session (flattened with metadata)
 type LineWithMetadata = Line & {
@@ -171,7 +172,7 @@ export function BookView({
                           // Highlight current dialogue lines (primary)
                           isCurrentGroup &&
                             !isStage &&
-                            "rounded-md bg-primary/5 ring-2 ring-primary px-3 py-2",
+                            `rounded-md bg-primary/${OPACITY_LEVELS.subtle} ring-2 ring-primary px-3 py-2`,
                           // Highlight current stage direction lines (yellow overlay)
                           isCurrentGroup &&
                             isStage &&
@@ -193,7 +194,12 @@ export function BookView({
                             )}
                             <strong>{charName}</strong>
                             {isCurrentGroup && (
-                              <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                              <span
+                                className={cn(
+                                  "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold text-primary",
+                                  `bg-primary/${OPACITY_LEVELS.subtle}`
+                                )}
+                              >
                                 Current
                               </span>
                             )}

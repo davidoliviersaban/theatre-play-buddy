@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { PlayCircle } from "lucide-react";
 import { IconButton } from "@/components/ui/icon-button";
+import { cn } from "@/lib/utils";
+import { OPACITY_LEVELS } from "@/lib/ui-constants";
 import { ProgressBar } from "./progress-bar";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import type { Scene, Character } from "@/lib/mock-data";
@@ -23,7 +25,12 @@ export function SceneListItem({
   hasCharacterLines,
 }: SceneListItemProps) {
   return (
-    <div className="flex items-center justify-between rounded-md border bg-secondary/20 p-3">
+    <div
+      className={cn(
+        "flex items-center justify-between rounded-md border p-3",
+        `bg-secondary/${OPACITY_LEVELS.light}`
+      )}
+    >
       <div className="flex items-center gap-3">
         {activeCharacter && (
           <CompletionIcon

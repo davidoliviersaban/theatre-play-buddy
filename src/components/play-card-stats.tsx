@@ -3,6 +3,7 @@
 import { User } from "lucide-react";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import { Badge } from "@/components/ui/badge";
+import { InlineStack } from "@/components/ui/inline-stack";
 import { calculateProgress } from "@/components/play/progress-bar";
 import type { Playbook } from "@/lib/mock-data";
 import {
@@ -77,14 +78,14 @@ export function PlayCardStats({ play }: PlayCardStatsProps) {
           <User className="h-3 w-3" />
           {displayText}
           {progress > 0 && (
-            <span className="ml-2 inline-flex items-center gap-1">
+            <InlineStack gap={1} className="ml-2">
               <CompletionIcon
                 progress={progress}
                 hasContent={true}
                 className="h-3.5 w-3.5"
               />
               {progress}%
-            </span>
+            </InlineStack>
           )}
         </Badge>
       )}
