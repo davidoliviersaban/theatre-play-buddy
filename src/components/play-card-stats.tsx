@@ -1,7 +1,8 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { BarChart3 } from "lucide-react";
+import { User } from "lucide-react";
+import { CompletionIcon } from "@/components/ui/completion-icon";
 import { Badge } from "@/components/ui/badge";
 import { ProgressBar, calculateProgress } from "@/components/play/progress-bar";
 import type { Playbook } from "@/lib/mock-data";
@@ -94,14 +95,31 @@ export function PlayCardStats({ play }: PlayCardStatsProps) {
   }
 
   const displayText = parts.length > 0 ? parts.join(" • ") : null;
+  // Compute progress for checkbox icon if character is selected
+  const allLines = play.acts.flatMap((act) =>
+    act.scenes.flatMap((scene) => scene.lines)
+  );
+  const progress = characterId
+    ? calculateProgress(allLines, play.id, characterId)
+    : 0;
 
   if (!displayText) return null;
 
   return (
     <div className="mt-3">
       <Badge variant="secondary" className="gap-1.5 text-xs">
-        <BarChart3 className="h-3 w-3" />
+        <User className="h-3 w-3" />
         {displayText}
+        {progress > 0 && (
+          <span className="ml-2 inline-flex items-center gap-1">
+            <CompletionIcon
+              progress={progress}
+              hasContent={true}
+              className="h-3.5 w-3.5"
+            />
+            {progress}%
+          </span>
+        )}
       </Badge>
     </div>
   );

@@ -3,16 +3,20 @@
 import * as React from "react";
 import { Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { CompletionIcon } from "@/components/ui/completion-icon";
+import { calculateProgress } from "@/components/play/progress-bar";
 import { cn } from "@/lib/utils";
-import type { Character } from "@/lib/mock-data";
+import type { Character, Playbook } from "@/lib/mock-data";
 
 interface CharacterSelectionPanelProps {
+  play: Playbook;
   characters: Character[];
   activeCharacterId?: string;
   onSelect: (characterId: string) => void;
 }
 
 export function CharacterSelectionPanel({
+  play,
   characters,
   activeCharacterId,
   onSelect,
@@ -23,6 +27,10 @@ export function CharacterSelectionPanel({
       <div className="space-y-3">
         {characters.map((char) => {
           const isActive = char.id === activeCharacterId;
+          const allLines = play.acts.flatMap((a) =>
+            a.scenes.flatMap((s) => s.lines)
+          );
+          const progress = calculateProgress(allLines, play.id, char.id);
           return (
             <div
               key={char.id}
@@ -51,14 +59,19 @@ export function CharacterSelectionPanel({
                       <Star className="h-4 w-4" />
                     </div>
                   )}
-                  {char.completionRate !== undefined && (
-                    <span className="text-[10px] font-medium text-muted-foreground">
-                      {char.completionRate}%
-                    </span>
-                  )}
                 </div>
-                <div>
-                  <p className="font-medium">{char.name}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium flex items-center gap-2">
+                    {char.name}
+                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground">
+                      <CompletionIcon
+                        progress={progress}
+                        hasContent={true}
+                        className="h-3.5 w-3.5"
+                      />
+                      {progress}%
+                    </span>
+                  </p>
                   <p className="text-xs text-muted-foreground">
                     {char.description}
                   </p>

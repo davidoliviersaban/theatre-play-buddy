@@ -3,10 +3,10 @@
 import * as React from "react";
 import { ActiveCharacterHeader } from "./active-character-header";
 import { CharacterSelectionPanel } from "./character-selection-panel";
-import type { Character, Play } from "@/lib/mock-data";
+import type { Character, Playbook } from "@/lib/mock-data";
 
 interface CharacterSelectorProps {
-  play: Play;
+  play: Playbook;
   activeCharacter?: Character;
   onCharacterSelect: (characterId: string) => void;
 }
@@ -32,6 +32,7 @@ export function CharacterSelector({
     <div className="mt-8 rounded-lg border bg-secondary/10 p-6">
       {activeCharacter ? (
         <ActiveCharacterHeader
+          play={play}
           character={activeCharacter}
           isSelectionOpen={isSelectionOpen}
           onToggleSelection={() => setIsSelectionOpen(!isSelectionOpen)}
@@ -47,6 +48,7 @@ export function CharacterSelector({
 
       {isSelectionOpen && (
         <CharacterSelectionPanel
+          play={play}
           characters={play.characters}
           activeCharacterId={activeCharacter?.id}
           onSelect={handleSelect}

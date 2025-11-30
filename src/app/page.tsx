@@ -1,17 +1,9 @@
 import Link from "next/link";
-import { Search, Plus, BookOpen } from "lucide-react";
+import { Search, Plus, BookOpen, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { MOCK_PLAYS } from "@/lib/mock-data";
-import { PlayCardStats, PlayCardProgress } from "@/components/play-card-stats";
+import { PlayGrid } from "@/components/home/play-grid";
 
 export default function Home() {
   return (
@@ -42,48 +34,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div
-        className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3"
-        suppressHydrationWarning
-      >
-        {MOCK_PLAYS.map((play) => (
-          <Card
-            key={play.id}
-            className="flex flex-col transition-all hover:border-primary/50 hover:shadow-lg"
-          >
-            <CardHeader>
-              <CardTitle className="line-clamp-1">{play.title}</CardTitle>
-              <CardDescription>
-                {play.author} • {play.year}
-              </CardDescription>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-                <PlayCardProgress play={play} />
-                <PlayCardStats play={play} />
-              </div>
-            </CardHeader>
-            <CardContent className="flex-1">
-              <p className="line-clamp-4 text-sm text-muted-foreground sm:line-clamp-3">
-                {play.description}
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2 sm:mt-4">
-                <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
-                  {play.genre}
-                </span>
-                <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
-                  {play.characters.length} Characters
-                </span>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button asChild className="w-full" variant="secondary">
-                <Link href={`/play/${play.id}`}>
-                  <BookOpen className="mr-2 h-4 w-4" /> Open Play
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+      <PlayGrid plays={MOCK_PLAYS} />
     </div>
   );
 }

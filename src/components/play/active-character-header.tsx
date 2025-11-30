@@ -3,19 +3,25 @@
 import * as React from "react";
 import { Star, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Character } from "@/lib/mock-data";
+import type { Character, Playbook } from "@/lib/mock-data";
+import { CompletionIcon } from "@/components/ui/completion-icon";
+import { calculateProgress } from "@/components/play/progress-bar";
 
 interface ActiveCharacterHeaderProps {
+  play: Playbook;
   character: Character;
   isSelectionOpen: boolean;
   onToggleSelection: () => void;
 }
 
 export function ActiveCharacterHeader({
+  play,
   character,
   isSelectionOpen,
   onToggleSelection,
 }: ActiveCharacterHeaderProps) {
+  const allLines = play.acts.flatMap((a) => a.scenes.flatMap((s) => s.lines));
+  const progress = calculateProgress(allLines, play.id, character.id);
   return (
     <div
       role="button"
@@ -35,27 +41,23 @@ export function ActiveCharacterHeader({
           <Star className="h-6 w-6 fill-yellow-500 text-yellow-500" />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
             Rehearsing as {character.name}
+            <span className="inline-flex items-center gap-1">
+              <CompletionIcon
+                progress={progress}
+                hasContent={true}
+                className="h-4 w-4"
+              />
+              <span className="text-xs font-medium text-muted-foreground">
+                {progress}%
+              </span>
+            </span>
           </h3>
           <p className="text-sm text-muted-foreground">
             {character.description}
           </p>
-          {character.completionRate !== undefined && (
-            <div className="mt-2 flex items-center gap-2">
-              <div className="h-2 w-24 rounded-full bg-secondary">
-                <div
-                  className="h-2 rounded-full bg-green-500"
-                  style={{
-                    width: `${character.completionRate}%`,
-                  }}
-                />
-              </div>
-              <span className="text-xs font-medium text-muted-foreground">
-                {character.completionRate}% Memorized
-              </span>
-            </div>
-          )}
+          {/* Progress bar removed in favor of checkbox icon + % computed from actual data */}
         </div>
       </div>
       <div className="mt-4 flex items-center justify-center gap-1 text-sm text-muted-foreground pt-3">
