@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { BarChart3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { ProgressBar, calculateProgress } from "@/components/play/progress-bar";
 import type { Play } from "@/lib/mock-data";
 import {
   getCurrentCharacterStats,
@@ -18,21 +19,51 @@ const subscribe = () => () => {};
 const getSnapshot = () => true;
 const getServerSnapshot = () => false;
 
+export function PlayCardProgress({ play }: PlayCardStatsProps) {
+  const isClient = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot
+  );
+
+  if (!isClient) return null;
+
+  const { characterId } = getCurrentCharacterStats(play.id);
+
+  // Calculate all lines for the play to pass to calculateProgress
+  const allLines = play.acts.flatMap((act) =>
+    act.scenes.flatMap((scene) => scene.lines)
+  );
+  const progress = characterId ? calculateProgress(allLines, characterId) : 0;
+
+  if (progress === 0) return null;
+
+  return (
+    <div className="mt-2">
+      <ProgressBar progress={progress} size="md" showLabel={true} />
+    </div>
+  );
+}
+
 export function PlayCardStats({ play }: PlayCardStatsProps) {
-  const isClient = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const isClient = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot
+  );
 
   if (!isClient) return null;
 
   // Get stats for currently selected character only
-  const { characterId, stats } = getCurrentCharacterStats(play.id);
+  const { characterId } = getCurrentCharacterStats(play.id);
   const lastDate = getLastRehearsalDate(play.id);
-  
+
   if (!characterId && !lastDate) {
     return null;
   }
 
   const parts: string[] = [];
-  
+
   // Add character name if available
   if (characterId) {
     const character = play.characters.find((c) => c.id === characterId);
@@ -40,12 +71,7 @@ export function PlayCardStats({ play }: PlayCardStatsProps) {
       parts.push(character.name);
     }
   }
-  
-  // Add lines rehearsed for this specific character
-  if (stats && stats.linesRehearsed > 0) {
-    parts.push(`${stats.linesRehearsed} lines`);
-  }
-  
+
   // Add last rehearsal time
   if (lastDate) {
     const now = new Date();
@@ -61,7 +87,7 @@ export function PlayCardStats({ play }: PlayCardStatsProps) {
     else if (diffDays === 1) timeText = "yesterday";
     else if (diffDays < 7) timeText = `${diffDays}d ago`;
     else timeText = lastDate.toLocaleDateString();
-    
+
     parts.push(timeText);
   }
 

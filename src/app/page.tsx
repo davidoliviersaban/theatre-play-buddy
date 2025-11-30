@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { MOCK_PLAYS } from "@/lib/mock-data";
-import { PlayCardStats } from "@/components/play-card-stats";
+import { PlayCardStats, PlayCardProgress } from "@/components/play-card-stats";
 
 export default function Home() {
   return (
@@ -56,6 +56,10 @@ export default function Home() {
               <CardDescription>
                 {play.author} • {play.year}
               </CardDescription>
+              <div className="flex items-center gap-4">
+                <PlayCardProgress play={play} />
+                <PlayCardStats play={play} />
+              </div>
             </CardHeader>
             <CardContent className="flex-1">
               <p className="line-clamp-3 text-sm text-muted-foreground">
@@ -69,7 +73,6 @@ export default function Home() {
                   {play.characters.length} Characters
                 </span>
               </div>
-              <PlayCardStats play={play} />
             </CardContent>
             <CardFooter>
               <Button asChild className="w-full" variant="secondary">
