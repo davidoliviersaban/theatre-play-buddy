@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Star, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Character } from "@/lib/mock-data";
 
