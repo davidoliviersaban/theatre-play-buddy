@@ -77,6 +77,16 @@ export const MOCK_PLAYS: Play[] = [
                             { id: "l1-2-1", characterId: "c1", text: "But soft! What light through yonder window breaks?", type: "dialogue", masteryLevel: "high", rehearsalCount: 15 },
                             { id: "l1-2-2", characterId: "c1", text: "It is the east, and Juliet is the sun.", type: "dialogue", masteryLevel: "high", rehearsalCount: 14 },
                             { id: "l1-2-3", characterId: "c2", text: "O Romeo, Romeo! wherefore art thou Romeo?", type: "dialogue", masteryLevel: "medium", rehearsalCount: 6 },
+                            // Added extended Romeo monologue (public domain) as consecutive lines to form a long paragraph in book view
+                            { id: "l1-2-4", characterId: "c1", text: "Arise, fair sun, and kill the envious moon, Who is already sick and pale with grief.", type: "dialogue", masteryLevel: "medium", rehearsalCount: 3 },
+                            { id: "l1-2-5", characterId: "c1", text: "That thou her maid art far more fair than she: Be not her maid, since she is envious.", type: "dialogue", masteryLevel: "medium", rehearsalCount: 3 },
+                            { id: "l1-2-6", characterId: "c1", text: "Her vestal livery is but sick and green And none but fools do wear it; cast it off.", type: "dialogue", masteryLevel: "low", rehearsalCount: 1 },
+                            { id: "l1-2-7", characterId: "c1", text: "It is my lady, O, it is my love! O, that she knew she were!", type: "dialogue", masteryLevel: "low", rehearsalCount: 1 },
+                            { id: "l1-2-8", characterId: "c1", text: "She speaks yet she says nothing: what of that? Her eye discourses; I will answer it.", type: "dialogue", masteryLevel: "low", rehearsalCount: 1 },
+                            { id: "l1-2-9", characterId: "c1", text: "I am too bold, 'tis not to me she speaks: Two of the fairest stars in all the heaven.", type: "dialogue", masteryLevel: "medium", rehearsalCount: 2 },
+                            { id: "l1-2-10", characterId: "c1", text: "Having some business, do entreat her eyes To twinkle in their spheres till they return.", type: "dialogue", masteryLevel: "medium", rehearsalCount: 2 },
+                            { id: "l1-2-11", characterId: "c1", text: "What if her eyes were there, they in her head? The brightness of her cheek would shame those stars.", type: "dialogue", masteryLevel: "high", rehearsalCount: 4 },
+                            { id: "l1-2-12", characterId: "c1", text: "As daylight doth a lamp; her eyes in heaven Would through the airy region stream so bright.", type: "dialogue", masteryLevel: "high", rehearsalCount: 4 },
                         ],
                     },
                     {
