@@ -65,8 +65,6 @@ export async function initializeDatabase(): Promise<void> {
                                                 text: line.text,
                                                 type: line.type,
                                                 order: lineIndex,
-                                                masteryLevel: line.masteryLevel,
-                                                rehearsalCount: line.rehearsalCount ?? 0,
                                                 // Handle character relationship
                                                 characters: line.characterId
                                                     ? {

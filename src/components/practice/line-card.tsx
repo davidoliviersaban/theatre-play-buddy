@@ -67,8 +67,7 @@ export function LineCard({
     getLineMastery && typeof window !== "undefined"
       ? getLineMastery(line.id)
       : null;
-  const rehearsalCount =
-    masteryData?.rehearsalCount || line.rehearsalCount || 0;
+  const rehearsalCount = masteryData?.rehearsalCount || 0;
   const masteryPercentage = masteryData?.masteryPercentage || 0;
 
   const derivedStage = Math.min(5, Math.floor(masteryPercentage / 20));

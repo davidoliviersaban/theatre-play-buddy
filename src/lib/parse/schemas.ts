@@ -18,8 +18,6 @@ export const LineSchema = z.object({
     text: z.string().describe("REQUIRED: The actual text content of the line or stage direction. This field must NEVER be omitted or empty."),
     type: z.enum(["dialogue", "stage_direction"]).describe("REQUIRED: Type of line. Must be 'dialogue' for spoken lines or 'stage_direction' for stage directions, entrances, exits, etc. This field must NEVER be omitted."),
     formatting: FormattingMetadataSchema.describe("Optional formatting metadata for preserving structural indentation and line breaks. Only captures structural formatting (indentation, paragraph spacing), not text styling (bold/italic)."),
-    //    masteryLevel: z.enum(["low", "medium", "high"]).optional().describe("User's mastery level for this line during practice"), // the model doesn't need this info
-    //    rehearsalCount: z.number().int().nonnegative().optional().describe("Number of times this line has been rehearsed"), // the model doesn't need this info
 }).refine((l) => {
     if (l.type === "dialogue") {
         return !!(l.characterId || (l.characterIdArray && l.characterIdArray.length));

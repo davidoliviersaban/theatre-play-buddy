@@ -78,10 +78,10 @@ Independent test criteria: Relative indentation and line breaks are preserved; t
 - [x] T039 Add SSE `unsupported_speaker` telemetry event in `src/app/import/api/parse/route.ts` when crowd/unknown detected
 - [x] T040 Add cancellation support for parsing (client abort + server respect) in `src/app/import/api/parse/route.ts`
 - [x] T041 Add comprehensive error messages and recovery hints in `src/components/import/parse-error-display.tsx`
-- [ ] T042 Add unit tests for extractors `tests/parse/extractors.test.ts`
-- [ ] T043 Add unit tests for schemas and refinements `tests/parse/schemas.test.ts`
-- [ ] T044 Add unit tests for multi-speaker helpers `tests/parse/multi-character.test.ts`
-- [ ] T045 Add integration test for upload→parse→persist→render `tests/parse/llm-parser.test.ts`
+- [x] T042 Add unit tests for extractors `tests/parse/extractors.test.ts`
+- [x] T043 Add unit tests for schemas and refinements `tests/parse/schemas.test.ts`
+- [x] T044 Add unit tests for multi-speaker helpers `tests/parse/multi-character.test.ts`
+- [x] T045 Add integration test for upload→parse→persist→render `tests/parse/llm-parser.test.ts`
 - [x] T046 Update README with import feature quickstart steps
 
 ## Dependencies (story completion order)

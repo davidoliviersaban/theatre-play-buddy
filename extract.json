@@ -1,0 +1,3284 @@
+{
+  "id": "delunealautre",
+  "title": "De l’une à l’autre",
+  "author": "Jacky Goupil",
+  "year": 0,
+  "genre": "Comedy",
+  "description": "Une comédie doublement romantique qui met en scène un trio de personnages dans une belle amitié amoureuse. C’est une comédie moderne sur la tolérance d’aimer différemment, un hymne à l’amour libre de toute contrainte qui bouscule l’idée traditionnelle du couple. Laurence aime Damien et Pauline, deux amours qu’elle veut garder sans renoncer à sa liberté.",
+  "characters": [
+    {
+      "id": "laurence",
+      "name": "Laurence",
+      "description": "Femme d’esprit jeune, élégance discrète, au caractère affirmé bien qu’éternellement indécise. Femme libre et indépendante qui aime Pauline et Damien. Fidèle à deux amours."
+    },
+    {
+      "id": "damien",
+      "name": "Damien",
+      "description": "Le premier amoureux de Laurence. Plutôt rigide, un brin coincé, raisonnable, classique. Apporte à Laurence le calme et la sécurité."
+    },
+    {
+      "id": "pauline",
+      "name": "Pauline",
+      "description": "La seconde amoureuse de Laurence. Décontractée, originale, amusante, ne se prenant pas au sérieux. Donne à Laurence l’imprévu et la fantaisie."
+    }
+  ],
+  "acts": [
+    {
+      "id": "act1",
+      "title": "Acte 1",
+      "scenes": [
+        {
+          "id": "scene1_act1",
+          "title": "Sur un côté de la scène",
+          "lines": [
+            {
+              "id": "line1_act1",
+              "characterId": "damien",
+              "text": "Mademoiselle Laurence Leclaire, voulez-vous prendre pour époux Monsieur Damien Ferrier ici présent ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line2_act1",
+              "characterId": "laurence",
+              "text": "Qu’est-ce que tu as dit ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line3_act1",
+              "characterId": "damien",
+              "text": "Laurence, veux-tu être ma femme ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line4_act1",
+              "text": "(Laurence éclate de rire) Je suis à genoux dans le restaurant, je t’offre une bague, je sens cinquante paires d’yeux braqués sur moi, s’il te plait, ne rigole pas !",
+              "characterId": "damien",
+              "type": "dialogue"
+            },
+            {
+              "id": "line5_act1",
+              "characterId": "laurence",
+              "text": "Excuse-moi... je suis surprise... (elle regarde autour d’elle) C’est un gag ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line6_act1",
+              "characterId": "damien",
+              "text": "J’ai le désagréable sentiment d’être ridicule... Pourrais-tu avoir l’amabilité de répondre “oui”, de prendre la bague et de m’embrasser afin je retourne m’assoir en toute discrétion ? (embarrassé, à la cantonade) Ne vous inquiétez pas, tout va bien... elle réfléchit... (à Laurence) Alors ? Oui ? Non ? Rien ? Même si je te dis que j’ai mal aux genoux ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line7_act1",
+              "characterId": "laurence",
+              "text": "Je voudrais bien ne pas rire, mais je ne peux pas m’en empêcher... Attends... (elle reprend sa respiration pour se calmer)",
+              "type": "dialogue"
+            },
+            {
+              "id": "line8_act1",
+              "characterId": "damien",
+              "text": "OK, tu ne veux pas. Je n’insiste pas. (il se relève, range la bague dans sa poche. Abattu) J’étais persuadé que tu accepterais...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line9_act1",
+              "characterId": "laurence",
+              "text": "Je t’ai donné cette impression ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line10_act1",
+              "characterId": "damien",
+              "text": "On se fréquente depuis trois ans, on s’entend bien, on est complices, je t’aime, tu m’aimes aussi... enfin je crois... (elle approuve avec un sourire) je pensais que c’était le moment de concrétiser notre relation...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line11_act1",
+              "characterId": "laurence",
+              "text": "Damien... pour concrétiser une relation, on n’est pas obligé de se passer la bague au doigt. On partage, on échange, on couche... Ça fait trois ans qu’on concrétise. Deux fois par semaine.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line12_act1",
+              "characterId": "damien",
+              "text": "J’ai envie de concrétiser tous les jours.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line13_act1",
+              "characterId": "laurence",
+              "text": "Je suis honorée de t’inspirer autant d’envie, mais... comment dire... je ne te prends pas en traitre... Tu sais à quel point je tiens à ma liberté... J’aime beaucoup concrétiser avec toi... vraiment beaucoup, mais je n’ai pas envie de concrétiser au quotidien.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line14_act1",
+              "characterId": "damien",
+              "text": "C’est à cause de Pauline ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line15_act1",
+              "characterId": "laurence",
+              "text": "Entre autre... Je vous aime tous les deux. Cinquante-cinquante... Pauline fait autant partie de ma vie amoureuse que toi. (Damien contrarié) Fais pas cette tête, je ne te l’ai jamais caché...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line16_act1",
+              "characterId": "damien",
+              "text": "Ça c’est sûr. “Je ne peux pas ce soir, je sors avec Pauline”. Je l’ai entendu mille fois.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line17_act1",
+              "characterId": "laurence",
+              "text": "Tu aurais préféré que je te dise que j’allais au cinéma et que je te trompe en cachette ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line18_act1",
+              "characterId": "damien",
+              "text": "Non merci, le rôle du cocu, très peu pour moi !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line19_act1",
+              "characterId": "laurence",
+              "text": "J’ai toujours joué franc-jeu n’est-ce pas ?...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line20_act1",
+              "characterId": "damien",
+              "text": "Tu ne m’aimes pas ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line21_act1",
+              "characterId": "laurence",
+              "text": "Bien sûr que si, je t’aime... un peu, beaucoup, passionnément, à la folie... mais j’aime aussi Pauline et je n’ai pas envie d’en zapper une pour ne me consacrer qu’à l’autre... Avant tu trouvais ça original, tu disais que j’étais une fille libérée...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line22_act1",
+              "characterId": "damien",
+              "text": "Tu comptes naviguer entre Pauline et moi toute ta vie ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line23_act1",
+              "characterId": "laurence",
+              "text": "J’ai envie de continuer avec toi, avec lui et toute seule. (d’un ton léger) Femme, maitresse et célibataire ! C’est chouette, non ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line24_act1",
+              "characterId": "damien",
+              "text": "Tu es une drôle de fille...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line25_act1",
+              "characterId": "laurence",
+              "text": "Plains-toi ! Tu me trouves encore drôle après trois ans, tu aurais pu te lasser.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line26_act1",
+              "characterId": "damien",
+              "text": "Je ne suis pas lassé puisque je te demande en mariage !... Pourquoi tu ne veux pas quitter Pauline ? Elle est mieux que moi ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line27_act1",
+              "characterId": "laurence",
+              "text": "Elle n’est pas mieux que toi, elle est différente.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line28_act1",
+              "characterId": "damien",
+              "text": "J’avais remarqué...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line29_act1",
+              "characterId": "laurence",
+              "text": "Néanmoins, j’avoue que ta demande ne me laisse pas insensible. Je suis flattée, très flattée. C’est une magnifique preuve d’amour qui me touche au plus haut point... Cette nuit, je vais rêver que j’entre à la mairie en robe blanche...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line30_act1",
+              "characterId": "damien",
+              "text": "La robe blanche, c’est pour les vierges, tu es loin de la mériter...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line31_act1",
+              "characterId": "laurence",
+              "text": "Je me fous des conventions, laisse-moi rêver ! Je veux une robe blanche, avec une traine de dix mètres et une douzaine de demoiselles d’honneur ! Point.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line32_act1",
+              "characterId": "damien",
+              "text": "Tope-là ! On se marie et tu as tout ça !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line33_act1",
+              "characterId": "laurence",
+              "text": "On en reparlera quand je serai vieille... Quand j’aurais des cheveux blancs, tiens ! Tu m’aimeras encore avec des cheveux blancs ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line34_act1",
+              "characterId": "damien",
+              "text": "(il hausse les épaules et sourit) On paye et on s’en va ? On partage ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line35_act1",
+              "characterId": "damien",
+              "text": "Je vais payer ! (après un court instant de réflexion, amusé) Après tout, on n’est pas sous le régime de la communauté, on partage ! Je te raccompagne ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line36_act1",
+              "characterId": "laurence",
+              "text": "Non merci. Ça va me faire du bien de marcher. Après toutes ces émotions, j’ai besoin de prendre l’air. Sans rancune ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line37_act1",
+              "characterId": "damien",
+              "text": "Je ne peux pas avoir de rancune envers toi, je t’aime !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line38_act1",
+              "characterId": "laurence",
+              "text": "Manquerait plus que ça que tu ne m’aimes pas !",
+              "type": "dialogue"
+            },
+            { "id": "line39_act1", "text": "NOIR", "type": "stage_direction" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "act2",
+      "title": "Acte 2",
+      "scenes": [
+        {
+          "id": "scene1_act2",
+          "title": "Côté opposé de la scène",
+          "lines": [
+            {
+              "id": "line1_act2",
+              "characterId": "pauline",
+              "text": "Mademoiselle Laurence Leclaire, voulez-vous prendre pour époux Mademoiselle Pauline Bocquet ici présent ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line2_act2",
+              "characterId": "laurence",
+              "text": "Encore ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line3_act2",
+              "characterId": "pauline",
+              "text": "Comment ça “encore” ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line4_act2",
+              "characterId": "laurence",
+              "text": "Non, rien. Qu’est-ce que tu as dit ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line5_act2",
+              "characterId": "pauline",
+              "text": "Laurence, veux-tu être ma femme ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line6_act2",
+              "text": "(Laurence éclate de rire) Je suis à genoux sur ton palier, je t’offre une bague, s’il te plait, ne rigole pas !",
+              "characterId": "pauline",
+              "type": "dialogue"
+            },
+            {
+              "id": "line7_act2",
+              "characterId": "laurence",
+              "text": "Excuse-moi... je suis... surprise... (elle regarde autour d’elle) C’est un gag ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line8_act2",
+              "characterId": "pauline",
+              "text": "J’ai le désagréable sentiment d’être ridicule... Pourrais-tu avoir l’amabilité de répondre “oui”, de prendre la bague et de m’embrasser. Alors ? Oui ? Non ? Rien ? Même si je te dis que j’ai mal aux genoux ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line9_act2",
+              "characterId": "laurence",
+              "text": "Attends. (elle se pince) Aïe ! Non, je ne rêve pas. (elle rigole) Je voudrais bien ne pas rire, mais je ne peux pas m’en empêcher... Attends... (elle reprend sa respiration pour se calmer)",
+              "type": "dialogue"
+            },
+            {
+              "id": "line10_act2",
+              "characterId": "pauline",
+              "text": "OK, tu ne veux pas. Je n’insiste pas. (il se relève, range la bague dans sa poche et s’assoit. Abattu) J’étais persuadée que tu accepterais...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line11_act2",
+              "characterId": "laurence",
+              "text": "Je t’ai donné cette impression ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line12_act2",
+              "characterId": "pauline",
+              "text": "On se fréquente depuis deux ans, on s’entend bien, on est complices, je t’aime, tu m’aimes aussi, enfin je crois... (Laurence approuve avec un sourire) je pensais que c’était le moment de concrétiser notre relation...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line13_act2",
+              "characterId": "laurence",
+              "text": "Ça y est, c’est confirmé, je tourne en boucle !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line14_act2",
+              "characterId": "pauline",
+              "text": "Pardon ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line15_act2",
+              "characterId": "laurence",
+              "text": "Telle que tu me vois, j’ai inventé la machine à remonter le temps ! (Pauline déconcerté) Laisse tomber... Pauline, pour concrétiser une relation, on n’est pas obligé de se passer la bague au doigt. On partage, on échange, on couche... Ça fait deux ans qu’on concrétise. Deux fois par semaine.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line16_act2",
+              "characterId": "pauline",
+              "text": "J’ai envie de concrétiser tous les jours.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line17_act2",
+              "characterId": "laurence",
+              "text": "Je savais que tu allais dire ça ! (Pauline ne comprend pas) Pas de souci, j’ai une réponse toute prête. Deux points, ouvrez les guillemets : (récitant sa leçon) Je suis honorée de t’inspirer autant d’envie, mais je ne te prends pas en traitre... Tu sais à quel point je tiens à ma liberté... J’aime beaucoup concrétiser avec toi... vraiment beaucoup, mais je n’ai pas envie de concrétiser au quotidien.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line18_act2",
+              "characterId": "pauline",
+              "text": "Tu récites ça comme si tu l’avais appris par cœur !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line19_act2",
+              "characterId": "laurence",
+              "text": "Presque, presque !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line20_act2",
+              "characterId": "pauline",
+              "text": "C’est à cause de Damien ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line21_act2",
+              "characterId": "laurence",
+              "text": "C’est ça, c’est lui qui m’a fait répéter.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line22_act2",
+              "characterId": "pauline",
+              "text": "Tu es bizarre, aujourd’hui ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line23_act2",
+              "characterId": "laurence",
+              "text": "C’est la journée qui est bizarre. Moi je suis complètement normale ! Enfin je crois... mais j’ai l’impression de voyager dans la quatrième dimension !... Je vous aime tous les deux. Cinquante-cinquante... Damien fait autant partie de ma vie amoureuse que toi, etc, etc. (Pauline contrarié) Fais pas cette tête, je ne te l’ai jamais caché...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line24_act2",
+              "characterId": "pauline",
+              "text": "Ça c’est sûr. “Je ne peux pas ce soir, je sors avec Damien”. Je l’ai entendu mille fois.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line25_act2",
+              "characterId": "laurence",
+              "text": "Tu aurais préféré que je te dise que j’allais au cinéma (réfléchissant un instant), non, pas au cinéma, je l’ai déjà dit... (Pauline étonné) pour changer, je vais aller au théâtre avec une copine... et que je te trompe en cachette ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line26_act2",
+              "characterId": "pauline",
+              "text": "Non merci, le rôle de la cocue...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line27_act2",
+              "characterId": "laurence",
+              "text": "Très peu pour toi ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line28_act2",
+              "characterId": "pauline",
+              "text": "Pardon ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line29_act2",
+              "characterId": "laurence",
+              "text": "Ce n’est pas ce que tu allais dire ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line30_act2",
+              "characterId": "pauline",
+              "text": "Non, j’allais dire que la cocue, je laisse ça aux vaudevilles.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line31_act2",
+              "characterId": "laurence",
+              "text": "Tu es sûre ? (Pauline dépassée) Bref... Ça n’a pas été le cas, j’ai été clean, Je te l’ai dit le jour où on s’est rencontrés, je ne t’ai pas prise en traitre... (elle acquiesce) Et je te rappelle que je connaissais Damien avant, s’il y en a un qui a le droit de me reprocher quelque chose, c’est lui.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line32_act2",
+              "characterId": "pauline",
+              "text": "Tu ne m’aimes pas ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line33_act2",
+              "characterId": "laurence",
+              "text": "Bien sûr que si, je t’aime... un peu, beaucoup, passionnément, à la folie... mais j’aime aussi Damien et je n’ai pas envie d’en zapper un pour ne me consacrer qu’à l’autre... Avant tu trouvais ça original, tu disais que j’étais une fille libérée...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line34_act2",
+              "characterId": "pauline",
+              "text": "Tu comptes naviguer de l’un à l’autre toute ta vie ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line35_act2",
+              "characterId": "laurence",
+              "text": "J’ai envie de continuer avec toi, avec lui et toute seule. (d’un ton léger) Femme, maitresse et célibataire ! C’est chouette, non ? (pour elle-même) C’est facile cette conversation !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line36_act2",
+              "characterId": "pauline",
+              "text": "Tu es une drôle de fille...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line37_act2",
+              "characterId": "laurence",
+              "text": "Ça fait deux fois qu’on me le dit en l’’espace de deux heures, j’ai finir par en être convaincue ! C’est bien, non ? Tu me trouves encore drôle après deux ans, tu aurais pu te lasser.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line38_act2",
+              "characterId": "pauline",
+              "text": "Je ne suis pas lassé puisque je te demande en mariage ! Pourquoi tu ne veux pas quitter Damien ? ? Il est mieux que moi ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line39_act2",
+              "characterId": "laurence",
+              "text": "Il n’est pas mieux que toi, il est différent.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line40_act2",
+              "characterId": "pauline",
+              "text": "J’avais remarqué...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line41_act2",
+              "characterId": "laurence",
+              "text": "Néanmoins, j’avoue que ta demande ne me laisse pas insensible. Je suis flattée, très flattée... C’est une magnifique preuve d’amour qui me touche au plus haut point... Cette nuit, je vais rêver que j’entre à la mairie en robe blanche. Je vérifie encore... (elle se pince) Aïe ! Je confirme, je ne suis vraiment pas en train de rêver !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line42_act2",
+              "characterId": "pauline",
+              "text": "La robe blanche, c’est pour les vierges, tu es loin de la mériter...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line43_act2",
+              "characterId": "laurence",
+              "text": "Il parait, oui... Mais laisse-moi rêver, s’il te plait ! Je veux une robe blanche, avec une traine de dix mètres et une douzaine de demoiselles d’honneur ! Et j’ajoute un rolls noire avec un chauffeur beau comme un dieu.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line44_act2",
+              "characterId": "pauline",
+              "text": "Tope-là ! On se marie et tu as tout ça !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line45_act2",
+              "characterId": "laurence",
+              "text": "On en reparlera quand je serai vieille... Quand j’aurais des cheveux blancs.... Tu m’aimeras encore avec des cheveux blancs ? (elle sourit) Pauline, il est tard, je voudrais dormir.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line46_act2",
+              "characterId": "pauline",
+              "text": "Je peux rester ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line47_act2",
+              "characterId": "laurence",
+              "text": "Je ne préfère pas... La soirée a été très très curieuse et le mot est faible. Si on passe la nuit ensemble, je risque de t’appeler Damien et ça va te vexer. (elle l’embrasse) Sans rancune ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line48_act2",
+              "characterId": "pauline",
+              "text": "Je ne peux pas avoir de rancune envers toi, je t’aime !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line49_act2",
+              "characterId": "laurence",
+              "text": "Manquerait plus que ça que tu ne m’aimes pas !",
+              "type": "dialogue"
+            },
+            { "id": "line50_act2", "text": "NOIR", "type": "stage_direction" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "act3",
+      "title": "Acte 3",
+      "scenes": [
+        {
+          "id": "scene1_act3",
+          "title": "Fin de journée sur la terrasse",
+          "lines": [
+            {
+              "id": "line1_act3",
+              "characterId": "laurence",
+              "text": "Deux demandes en mariage coup sur coup, même la reine d’Angleterre n’a pas connu ça ! La conversation a été surréaliste. Pauline m’a dit mot pour mot ce que Damien m’avait dit deux heures avant !... Ils n’ont pas pu se consulter, ils ne se connaissent pas !... Tu connais le film “Un jour sans fin” ? Pareil, c’était “Un mariage sans fin” !... Bref, je leur ai dit qu’on en reparlerait quand j’aurais des cheveux blancs !... Et hier, devine ce que je vois ?... (elle prend les deux cheveux posés sur la table) Non, pas un cheveu blanc, deux cheveux blancs !... D’accord, c’est pas grave, mais deux aujourd’hui, c’est dix demain, cinquante dans une semaine et dans six mois, je suis comme le père Noël !... Sans la barbe !... (elle repose les cheveux) Je commence à me demander si je ne dois pas me marier avant d’être bonne pour la casse !... Pas compliqué ? T’es marrante, toi ! Déjà que j’ai du mal à choisir entre une robe bleue et une robe jaune, comment je vais faire entre Pauline et Damien ? Pour construire un couple, il n’y a pas de ticket de caisse pour échanger... Ils viennent tous les deux diner ce soir... (on sonne) Tiens, ça sonne, c’est mon harem qui arrive. Bisous ma grande. (elle raccroche. Elle prend ses deux cheveux blancs) C’est à cause de vous, tout ça ! (on sonne à nouveau. Elle repose les cheveux) J’arrive, j’arrive !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line2_act3",
+              "characterId": "laurence",
+              "text": "C’est qui ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line3_act3",
+              "characterId": "damien",
+              "text": "Damien !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line4_act3",
+              "characterId": "laurence",
+              "text": "Damien qui ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line5_act3",
+              "characterId": "damien",
+              "text": "Déconne pas Laurence, tu sais bien que c’est moi !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line6_act3",
+              "characterId": "laurence",
+              "text": "On peut rigoler, non ?! Pauline est arrivée ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line7_act3",
+              "characterId": "damien",
+              "text": "Attends, je regarde sous le paillasson... Non, elle n’est pas là.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line8_act3",
+              "characterId": "laurence",
+              "text": "Tu l’attends ? J’ai envie que vous entriez ensemble.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line9_act3",
+              "characterId": "damien",
+              "text": "Je ne vais pas poireauter sur le palier, je vais avoir l’air idiot si un voisin passe.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line10_act3",
+              "characterId": "laurence",
+              "text": "Même sans voisin tu sais...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line11_act3",
+              "characterId": "damien",
+              "text": "Qu’est-ce que tu dis ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line12_act3",
+              "characterId": "laurence",
+              "text": "Rien !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line13_act3",
+              "characterId": "damien",
+              "text": "Ouvre, ça caille dans l’escalier...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line14_act3",
+              "characterId": "laurence",
+              "text": "Ça ne sera pas long.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line15_act3",
+              "text": "DAMIEN off bougon. T’es chiante !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line16_act3",
+              "characterId": "laurence",
+              "text": "Je sais.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line17_act3",
+              "text": "Laurence s’accoude à la rambarde du balcon et regarde dans la rue. On sonne.",
+              "type": "stage_direction"
+            },
+            {
+              "id": "line18_act3",
+              "characterId": "laurence",
+              "text": "Pauline est arrivée ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line19_act3",
+              "characterId": "damien",
+              "text": "Oui, je suis là...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line20_act3",
+              "characterId": "laurence",
+              "text": "Tu crois que je ne reconnais pas ta voix, Damien ?!",
+              "type": "dialogue"
+            },
+            {
+              "id": "line21_act3",
+              "characterId": "damien",
+              "text": "Non, ce n’est pas Damien...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line22_act3",
+              "text": "(Laurence retourne sur le transat. Voix normale) Laurence, ouvre, c’est pénible !... OK, je m’en vais ! Au revoir, Laurence, je rentre chez moi... je m’en vais... (un temps. Lassé) Laurence !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line23_act3",
+              "characterId": "laurence",
+              "text": "Je savais que tu ne partirais pas. Je te connais, tu n’es pas du genre à lâcher le morceau facilement.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line24_act3",
+              "text": "(on sonne) Quoi encore ?",
+              "type": "stage_direction"
+            },
+            {
+              "id": "line25_act3",
+              "characterId": "damien",
+              "text": "Il y a une nana qui sonne à ta porte.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line26_act3",
+              "characterId": "laurence",
+              "text": "Mais oui, c’est ça !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line27_act3",
+              "characterId": "pauline",
+              "text": "Li madame il veut un aspirateur ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line28_act3",
+              "characterId": "laurence",
+              "text": "Pauline ! J’arrive ! (elle va ouvrir)",
+              "type": "dialogue"
+            }
+          ]
+        },
+        {
+          "id": "scene2_act3",
+          "title": "Sur la terrasse",
+          "lines": [
+            {
+              "id": "line1_scene2_act3",
+              "characterIdArray": ["laurence", "pauline", "damien"],
+              "text": "Laurence, Pauline et Damien reviennent sur la terrasse.",
+              "type": "stage_direction"
+            },
+            {
+              "id": "line2_scene2_act3",
+              "characterId": "damien",
+              "text": "Je suis gelé avec ton histoire !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line3_scene2_act3",
+              "characterId": "laurence",
+              "text": "Mon petit chéri est tout frigorifié ! Viens que je te réchauffe ! (elle le prend dans ses bras)",
+              "type": "dialogue"
+            },
+            {
+              "id": "line4_scene2_act3",
+              "characterId": "damien",
+              "text": "C’est sa faute, si elle n’était pas arrivée en retard, je n’aurais pas eu froid !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line5_scene2_act3",
+              "characterId": "laurence",
+              "text": "J’aurais dû te prévenir, Pauline est toujours en retard...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line6_scene2_act3",
+              "characterId": "damien",
+              "text": "Le retard c'est le pouvoir des faibles. C'est le seul moyen qu'ils ont pour se croire supérieur aux autres.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line7_scene2_act3",
+              "characterId": "pauline",
+              "text": "Monsieur est psychologue ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line8_scene2_act3",
+              "characterId": "damien",
+              "text": "Monsieur est énervé !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line9_scene2_act3",
+              "characterId": "pauline",
+              "text": "Un psychologue énervé, la soirée s’annonce cordiale !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line10_scene2_act3",
+              "characterId": "laurence",
+              "text": "Vous n’allez pas vous prendre le chou comme des gamins ! (elle imite façon enfant) “Toi, t’es pas gentil heu !”, “Toi, t’es méchante, heu !”. On enterre le calumet de la paix et on fume la hache de guerre, d’accord ? (pas de réponse. Elle insiste) D’accord ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line11_scene2_act3",
+              "characterId": "pauline",
+              "text": "Cent pour cent d’accord !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line12_scene2_act3",
+              "characterId": "laurence",
+              "text": "Damien ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line13_scene2_act3",
+              "characterId": "damien",
+              "text": "D’accord.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line14_scene2_act3",
+              "characterId": "laurence",
+              "text": "Eh bien voilà !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line15_scene2_act3",
+              "characterId": "damien",
+              "text": "C’est toujours autant la galère pour stationner dans ce quartier !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line16_scene2_act3",
+              "characterId": "laurence",
+              "text": "Tu es garé où ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line17_scene2_act3",
+              "characterId": "damien",
+              "text": "Dans la rue derrière. Le coupe-gorge où on m’a pété mon pare-brise.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line18_scene2_act3",
+              "characterId": "laurence",
+              "text": "Ça t’est arrivé une fois il y’a deux ans, c’est pas Bagdad !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line19_scene2_act3",
+              "characterId": "pauline",
+              "text": "C’est pire que Bagdad, on m’a crevé les quatre pneus dans cette rue. Et pas crevé genre petit trou, crevé grande balafre, large comme ça ! (elle montre trente centimètres). Les quatre boudins déboudinnés. Ce soir, je ne risque rien, je suis face au commissariat. (en confidence) J’ai glissé un billet au vigile pour qu’il jette un œil à mon automobile.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line20_scene2_act3",
+              "characterId": "damien",
+              "text": "C’est vrai ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line21_scene2_act3",
+              "characterId": "pauline",
+              "text": "Tu ne connais pas la combine ? Ils sont payés à coups de lance-pierre, tu leur glisses vingt sacs et ils font tout ce que tu veux. Surveiller ta bagnole, surveiller ta femme, t’acheter une demi-baguette, tout !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line22_scene2_act3",
+              "characterId": "damien",
+              "text": "Aaah ouais... C’est une connerie ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line23_scene2_act3",
+              "characterId": "pauline",
+              "text": "Devine ! (à Laurence) Il est futé, ton copain ! Toi, t’as jamais de problème avec ta bagnole ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line24_scene2_act3",
+              "characterId": "laurence",
+              "text": "Jamais... puisque je me déplace en trottinette !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line25_scene2_act3",
+              "characterId": "pauline",
+              "text": "Ah oui... C’est une bonne raison. Bon, tu nous présentes !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line26_scene2_act3",
+              "characterId": "laurence",
+              "text": "Pour quoi faire ? Vous n’avez pas compris qui vous étiez en vous rencontrant sur le palier ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line27_scene2_act3",
+              "characterId": "pauline",
+              "text": "Pour le principe, tu dois nous présenter. (elle imagine) “Damien, je te présente Pauline. Enchanté Pauline, quel plaisir de faire ta connaissance, Laurence m’a tellement dit que tu étais épatante, exquise, adorable, tellement intelligente...”",
+              "type": "dialogue"
+            },
+            {
+              "id": "line28_scene2_act3",
+              "characterId": "laurence",
+              "text": "J’ai dit tout ça, moi ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line29_scene2_act3",
+              "characterId": "pauline",
+              "text": "Tu aurais dû.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line30_scene2_act3",
+              "characterId": "laurence",
+              "text": "Donc, Damien, je te présente Pauline...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line31_scene2_act3",
+              "characterId": "damien",
+              "text": "Enchanté Pauline.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line32_scene2_act3",
+              "characterId": "pauline",
+              "text": "Enchantée. Et toi, tu es ?...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line33_scene2_act3",
+              "characterId": "damien",
+              "text": "Elle le fait exprès ? (il serre la main de Pauline) Je suis Damien bien sûr.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line34_scene2_act3",
+              "characterId": "pauline",
+              "text": "C’est loin !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line35_scene2_act3",
+              "characterId": "damien",
+              "text": "Pardon ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line36_scene2_act3",
+              "characterId": "pauline",
+              "text": "Tu dis que tu es d’Amiens... Amiens, c’est joli mais c’est loin.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line37_scene2_act3",
+              "characterId": "damien",
+              "text": "OK, d’accord, madame pratique les vannes avariées.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line38_scene2_act3",
+              "characterId": "pauline",
+              "text": "OK, d’accord, monsieur n’aime pas l’humour.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line39_scene2_act3",
+              "characterId": "damien",
+              "text": "Aaaah, c’était de l’humour ? Fallait prévenir. La prochaine fois, sors une pancarte. (il mime) “Humour” !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line40_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je sens que vous allez vous entendre.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line41_scene2_act3",
+              "characterId": "damien",
+              "text": "C’est évident, nous avons une foule de points communs.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line42_scene2_act3",
+              "characterId": "laurence",
+              "text": "Vous en avez au moins un...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line43_scene2_act3",
+              "characterId": "damien",
+              "text": "Je serais curieux de savoir lequel ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line44_scene2_act3",
+              "characterId": "laurence",
+              "text": "Moi. Je suis votre point commun.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line45_scene2_act3",
+              "characterId": "pauline",
+              "text": "Toi, tu n’es pas un point commun, tu es un point exceptionnel.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line46_scene2_act3",
+              "characterId": "laurence",
+              "text": "C’est gentil, ça.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line47_scene2_act3",
+              "characterId": "damien",
+              "text": "C’est pas gentil, c’est bidon !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line48_scene2_act3",
+              "characterId": "pauline",
+              "text": "Il vaut mieux une phrase bidon gentille qu’une phrase intelligente méchante.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line49_scene2_act3",
+              "characterId": "laurence",
+              "text": "On boit un verre ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line50_scene2_act3",
+              "characterId": "pauline",
+              "text": "Pour moi, ce sera une liqueur d’Amiens !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line51_scene2_act3",
+              "characterId": "damien",
+              "text": "Elle va faire des vannes sur Amiens toute la soirée ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line52_scene2_act3",
+              "characterId": "laurence",
+              "text": "Ce n’est pas impossible, c’est son genre...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line53_scene2_act3",
+              "characterId": "pauline",
+              "text": "Reconnais que tu as un prénom qui inspire le jeu de mots à la con ! Ils l’ont fait exprès, tes parents ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line54_scene2_act3",
+              "characterId": "laurence",
+              "text": "Tu sers, Damien ? (elle tend la main vers Pauline pour lui laisser la parole. Voyant qu’elle ne comprend pas) Tu ne dis rien ? (Pauline fait non) Je m’attendais à ce que tu dises un truc genre “servir depuis Amiens, ça fait loin !”",
+              "type": "dialogue"
+            },
+            {
+              "id": "line55_scene2_act3",
+              "characterId": "pauline",
+              "text": "Je n’y ai pas pensé.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line56_scene2_act3",
+              "characterId": "laurence",
+              "text": "Tu vieillis, mon Pauline d’amour... (à Damien) Attrape les bouteilles s’il te plait.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line57_scene2_act3",
+              "characterId": "damien",
+              "text": "Je suppose que vous voulez savoir pourquoi je vous ai fait venir tous les deux ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line58_scene2_act3",
+              "characterId": "damien",
+              "text": "Pour que je découvre son humour pourri ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line59_scene2_act3",
+              "characterId": "pauline",
+              "text": "Pour que j’apprécie ses sarcasmes frelatés ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line60_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je vous ai fait venir à cause de ça. (ils regardent puis se regardent peu convaincus) Deux cheveux...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line61_scene2_act3",
+              "characterId": "damien",
+              "text": "Rouge ou rosé ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line62_scene2_act3",
+              "characterId": "laurence",
+              "text": "Blancs !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line63_scene2_act3",
+              "characterId": "damien",
+              "text": "Y’a pas de blanc. Rouge ou rosé ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line64_scene2_act3",
+              "characterId": "laurence",
+              "text": "Blancs, les cheveux.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line65_scene2_act3",
+              "characterId": "damien",
+              "text": "Et pour le vin ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line66_scene2_act3",
+              "characterId": "laurence",
+              "text": "Rouge.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line67_scene2_act3",
+              "characterId": "laurence",
+              "text": "Non rosé... (Damien change de bouteille) Non rouge... (idem) Oh, j’en sais rien ! Comme tu veux.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line68_scene2_act3",
+              "characterId": "pauline",
+              "text": "Mets-lui moitié-moitié.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line69_scene2_act3",
+              "characterId": "damien",
+              "text": "Ce sera rouge. Donc, tu disais, un cheveu ?... (à Pauline) Rouge ou rosé ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line70_scene2_act3",
+              "characterId": "pauline",
+              "text": "Elle t’a dit blanc ! (regard atterré de Damien qui attend la réponse) Blanc les cheveux, rouge le vin ! Ça va, tu comprends ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line71_scene2_act3",
+              "characterId": "damien",
+              "text": "Ça ne fait même pas dix minutes que je la connais, elle m’a déjà épuisé !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line72_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je disais donc : deux cheveux blancs !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line73_scene2_act3",
+              "characterId": "damien",
+              "text": "Et deux verres de rouge !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line74_scene2_act3",
+              "characterIdArray": ["pauline", "damien"],
+              "text": "Pauline et Damien restent tous deux faussement ébahis devant cette nouvelle qui les laisse indifférents. Damien lève son verre.",
+              "type": "stage_direction"
+            },
+            {
+              "id": "line75_scene2_act3",
+              "characterId": "damien",
+              "text": "Tchin ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line76_scene2_act3",
+              "characterId": "pauline",
+              "text": "Tchin !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line77_scene2_act3",
+              "characterId": "laurence",
+              "text": "(ils tendent leurs verres à Laurence qui ne réagit pas) Laurence ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line78_scene2_act3",
+              "characterId": "laurence",
+              "text": "C’est tout l’effet que ça vous fait ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line79_scene2_act3",
+              "characterId": "pauline",
+              "text": "Si si, oh la la, des cheveux blancs, c’est... pfffou !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line80_scene2_act3",
+              "characterId": "laurence",
+              "text": "C’est la catastrophe !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line81_scene2_act3",
+              "characterIdArray": ["pauline", "damien"],
+              "text": "Ils se précipitent pour la consoler.",
+              "type": "stage_direction"
+            },
+            {
+              "id": "line82_scene2_act3",
+              "characterId": "damien",
+              "text": "Ce n’est pas grave...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line83_scene2_act3",
+              "characterId": "pauline",
+              "text": "T’en auras d’autres...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line84_scene2_act3",
+              "characterId": "laurence",
+              "text": "À force de passer des années à me croire jeune, ce sont les années qui ont passé et je ne le suis plus.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line85_scene2_act3",
+              "characterId": "damien",
+              "text": "Qu’est-ce qu’elle veut dire ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line86_scene2_act3",
+              "characterId": "pauline",
+              "text": "Qu’elle est vieille et qu’elle ne le savait pas.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line87_scene2_act3",
+              "characterId": "laurence",
+              "text": "Si ça se trouve, j’ai déjà une place réservée dans une maison de retraite. Je vais gagater dans un fauteuil en matant le petit cul rond de l’infirmière et les pectoraux du toubib...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line88_scene2_act3",
+              "characterId": "pauline",
+              "text": "Te plains pas, il y a des maisons de retraite où le toubib pèse un quintal et l’infirmière a des moustaches !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line89_scene2_act3",
+              "characterId": "damien",
+              "text": "Tout le monde a des cheveux blancs, c’est normal, c’est la vie. Ça veut dire que... ça veut dire que... (à Pauline) Aide-moi, toi !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line90_scene2_act3",
+              "characterId": "pauline",
+              "text": "Ça veut dire que tu vas devenir une vieille chose toute fripée. Mais je t’aimerai quand même !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line91_scene2_act3",
+              "characterId": "laurence",
+              "text": "Toute fripée ? (grosses larmes)",
+              "type": "dialogue"
+            },
+            {
+              "id": "line92_scene2_act3",
+              "characterId": "damien",
+              "text": "Excellent, Pauline ! Tu devrais travailler à “SOS Détresse Amitié”, tu as le profil idéal... pour pousser les gens au suicide !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line93_scene2_act3",
+              "characterId": "pauline",
+              "text": "Si tu te suicides, je te promets que j’irai à ton enterrement.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line94_scene2_act3",
+              "characterId": "damien",
+              "text": "Elle est abominable cette gonzesse ! Comment peut-on rire d’un sujet aussi grave que la mort ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line95_scene2_act3",
+              "characterId": "pauline",
+              "text": "“Vivons heureux en attendant la mort” a dit Pierre Desproges. Tu en conviendras, Desproges, c’était loin d’être un con !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line96_scene2_act3",
+              "characterId": "laurence",
+              "text": "Arrêtez de vous chamailler...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line97_scene2_act3",
+              "characterId": "pauline",
+              "text": "On ne se chamaille pas, on rigole ! (à Damien) Hein Damien qu’on rigole ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line98_scene2_act3",
+              "characterId": "damien",
+              "text": "Oh la la, oui, qu’est-ce qu’on rigole ! (faux rire) Ha ha ha !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line99_scene2_act3",
+              "characterIdArray": ["pauline", "damien"],
+              "text": "Ils embrassent chacun Laurence sur une joue.",
+              "type": "stage_direction"
+            },
+            {
+              "id": "line100_scene2_act3",
+              "characterId": "pauline",
+              "text": "Bois un coup. (elle boit, se calme) Ça va mieux ?... (elle acquiesce) Je suis là, mon cœur...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line101_scene2_act3",
+              "characterId": "damien",
+              "text": "On est là !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line102_scene2_act3",
+              "characterId": "pauline",
+              "text": "Sauf que moi, c’est différent, parce que... (à Laurence) Je lui annonce la grande nouvelle ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line103_scene2_act3",
+              "characterId": "damien",
+              "text": "Elle te quitte ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line104_scene2_act3",
+              "characterId": "pauline",
+              "text": "Pourquoi tu dis ça ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line105_scene2_act3",
+              "characterId": "damien",
+              "text": "Une grande nouvelle, pour moi, c’est si elle te quitte !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line106_scene2_act3",
+              "characterId": "pauline",
+              "text": "Raté, mec ! C’est toi qu’elle va quitter : j’ai demandé Laurence en mariage et elle m’a dit qu’elle accepterait quand elle aurait des cheveux blancs. C’est fait !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line107_scene2_act3",
+              "characterId": "damien",
+              "text": "Pardon ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line108_scene2_act3",
+              "characterId": "pauline",
+              "text": "J’ai demandé Laurence en mariage !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line109_scene2_act3",
+              "characterId": "damien",
+              "text": "Mais...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line110_scene2_act3",
+              "characterId": "pauline",
+              "text": "Y’a pas de mais !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line111_scene2_act3",
+              "characterId": "damien",
+              "text": "Si y’a un mais ! (il sort l’écrin de la bague de sa poche. Sur le même ton) Moi aussi j’ai demandé Laurence en mariage !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line112_scene2_act3",
+              "characterId": "pauline",
+              "text": "Oh le con ! Quand ça ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line113_scene2_act3",
+              "characterId": "damien",
+              "text": "Samedi !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line114_scene2_act3",
+              "characterId": "pauline",
+              "text": "Oh le con ! À quelle heure ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line115_scene2_act3",
+              "characterId": "damien",
+              "text": "Vingt-deux heures quinze !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line116_scene2_act3",
+              "characterId": "pauline",
+              "text": "Oh le con ! Où ça ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line117_scene2_act3",
+              "characterId": "laurence",
+              "text": "On s’en fout de où quand comment ! Vous m’avez tous les deux demandée en mariage, presque au même moment ! C’est pour ça que vous êtes ici... (elle lève son verre) À l’amour ? (ils trinquent. Damien et Pauline sourient à Laurence et se font une grimace entre eux )",
+              "type": "dialogue"
+            },
+            {
+              "id": "line118_scene2_act3",
+              "characterIdArray": ["damien", "pauline"],
+              "text": "À l’amour !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line119_scene2_act3",
+              "characterId": "damien",
+              "text": "Tu nous as réunis pour nous dire qui était le gagnant ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line120_scene2_act3",
+              "characterId": "pauline",
+              "text": "Ou le perdant !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line121_scene2_act3",
+              "characterId": "damien",
+              "text": "Ça revient au même !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line122_scene2_act3",
+              "characterId": "pauline",
+              "text": "Question de point de vue... Si je suis la gagnante, effectivement, pour moi ça revient au même que tu sois le perdant !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line123_scene2_act3",
+              "characterId": "damien",
+              "text": "Laurence, quand je t’ai demandée en mariage, tu m’as dit que tu voulais garder ta liberté...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line124_scene2_act3",
+              "characterId": "pauline",
+              "text": "Elle t’a dit ça pour accepter ma proposition !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line125_scene2_act3",
+              "characterId": "laurence",
+              "text": "Laisse-le parler !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line126_scene2_act3",
+              "characterId": "damien",
+              "text": "Et aujourd’hui, tu changes d’avis parce tu as un cheveu blanc...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line127_scene2_act3",
+              "characterId": "pauline",
+              "text": "Deux cheveux blancs ! (regard appuyé de Laurence pour lui signifier de se taire)",
+              "type": "dialogue"
+            },
+            {
+              "id": "line128_scene2_act3",
+              "characterId": "damien",
+              "text": "Pénible, elle ! (à Pauline) Tu sais que tu es pénible ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line129_scene2_act3",
+              "characterId": "pauline",
+              "text": "Ça veut dire quoi pénible ? C’est un mot de la même famille que péniche, pénis, pénitencier ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line130_scene2_act3",
+              "characterId": "damien",
+              "text": "Tu disais, Laurence ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line131_scene2_act3",
+              "characterId": "laurence",
+              "text": "Vos sympathiques demandes ont soulevé des interrogations, lesquelles ont été confortées par un cheveu blanc.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line132_scene2_act3",
+              "characterId": "pauline",
+              "text": "Deux cheveux blancs !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line133_scene2_act3",
+              "characterIdArray": ["laurence", "damien"],
+              "text": "LA FERME !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line134_scene2_act3",
+              "characterId": "laurence",
+              "text": "C’est pour ça que je voulais vous voir, pour m’aider à prendre une décision...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line135_scene2_act3",
+              "characterId": "damien",
+              "text": "C’est-à-dire ?... Soit c’est elle, soit c’est moi ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line136_scene2_act3",
+              "characterId": "pauline",
+              "text": "On dirait, oui. La période d’essai est terminée, l’un de nous deux va signer un CDI ! (à Damien) Tu flippes ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line137_scene2_act3",
+              "characterId": "damien",
+              "text": "Bonjour la compétition !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line138_scene2_act3",
+              "characterId": "laurence",
+              "text": "Il n’est pas question de compétition, je veux m’éclaircir les idées. Ça vous pose un problème ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line139_scene2_act3",
+              "characterId": "pauline",
+              "text": "Ça lui en pose surement un, il va perdre !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line140_scene2_act3",
+              "characterId": "laurence",
+              "text": "Continues sur ce registre, tu vas être éliminé direct !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line141_scene2_act3",
+              "characterId": "damien",
+              "text": "Hé hé hé ! (il lève son verre, narquois) À l’amour !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line142_scene2_act3",
+              "characterId": "laurence",
+              "text": "Et toi aussi si tu n’abandonnes pas ton air triomphant !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line143_scene2_act3",
+              "characterId": "pauline",
+              "text": "Hé hé hé ! (même jeu) À l’amour !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line144_scene2_act3",
+              "characterId": "damien",
+              "text": "Je n’en reviens pas que tu te remettes en question tes convictions pour un misérable cheveu blanc...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line145_scene2_act3",
+              "characterId": "pauline",
+              "text": "J’ai rien dit !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line146_scene2_act3",
+              "characterId": "laurence",
+              "text": "Vous trouviez ça faisait partie de mon charme de ne jamais aller là où on m’attend ! Il n’y a que les imbéciles qui ne changent pas d’avis et je ne veux pas être une imbécile. (Ils la regardent, silencieux) Dites quelque chose, sinon je vais croire que vous pensez que j’en suis une !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line147_scene2_act3",
+              "characterId": "pauline",
+              "text": "Une quoi ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line148_scene2_act3",
+              "characterId": "damien",
+              "text": "Une imbécile, imbécile !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line149_scene2_act3",
+              "characterId": "pauline",
+              "text": "Ah oui ! Ah non ! Je veux dire, “Ah oui, j’ai compris” et “Ah non, t’en es pas une”.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line150_scene2_act3",
+              "characterId": "laurence",
+              "text": "J’ai réfléchi aux années passées. (à Damien) Trois avec toi, (à Pauline) deux avec toi...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line151_scene2_act3",
+              "characterId": "pauline",
+              "text": "Ça fait cinq. (regard atterré de Damien) Ben quoi ? Trois plus deux, ça fait bien cinq ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line152_scene2_act3",
+              "characterId": "damien",
+              "text": "J’ai pas peur, il n’est pas chargé !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line153_scene2_act3",
+              "characterId": "laurence",
+              "text": "J’ai adoré ces années passées avec vous deux... Je souhaite à toutes les femmes de connaitre le bonheur d’être aimée, vraiment aimée comme je l’ai été. Vous avez été formidables.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line154_scene2_act3",
+              "characterId": "damien",
+              "text": "On avait pas le choix... si nous n’avions pas été à la hauteur, je suppose que tu nous aurais quittés...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line155_scene2_act3",
+              "characterId": "laurence",
+              "text": "J’ai dû manquer d’amour dans mon enfance, j’avais besoin d’une double dose. Vous me l’avez donnée. Merci.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line156_scene2_act3",
+              "characterId": "damien",
+              "text": "Tu n’en as plus besoin maintenant ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line157_scene2_act3",
+              "characterId": "laurence",
+              "text": "Vous n’en avez pas marre ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line158_scene2_act3",
+              "characterId": "pauline",
+              "text": "Marre de toi ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line159_scene2_act3",
+              "characterId": "damien",
+              "text": "Elle est folle !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line160_scene2_act3",
+              "characterId": "laurence",
+              "text": "Marre de me partager ! Vous m’avez demandée en mariage parce que vous voulez m’avoir rien que pour vous ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line161_scene2_act3",
+              "characterId": "damien",
+              "text": "C’est évident !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line162_scene2_act3",
+              "characterId": "pauline",
+              "text": "Ce n’est pas une question d’exclusivité, c’est une envie d’avoir une relation complète avec toi...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line163_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je connais le pain complet, le riz complet, je ne connaissais pas les relations complètes...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line164_scene2_act3",
+              "characterId": "damien",
+              "text": "Cela dit, je ne regrette rien, c’était amusant notre petit jeu à la “Jules et Jim”...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line165_scene2_act3",
+              "characterId": "pauline",
+              "text": "C’est qui ceux-là ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line166_scene2_act3",
+              "characterId": "damien",
+              "text": "“Jules et Jim”, un film, avec Jeanne Moreau. Tu connais Jeanne Moreau ou ta culture se limite à Oui-Oui chez les nudistes ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line167_scene2_act3",
+              "characterId": "pauline",
+              "text": "Bien sûr que je la connais, je l’ai vue dans “Bienvenue chez les Chtis”. (Damien et Laurence ébahis) Je déconne ! Dans “Les Chtis”, c’est Simone Signoret ! (elle rigole)",
+              "type": "dialogue"
+            },
+            {
+              "id": "line168_scene2_act3",
+              "characterId": "damien",
+              "text": "Je ne sais pas comment tu as pu t’habituer à son humour ? Tu mérites une médaille ! Bref, dans ce film, la délicieuse Jeanne Moreau est amoureuse",
+              "type": "dialogue"
+            },
+            {
+              "id": "line169_scene2_act3",
+              "characterId": "pauline",
+              "text": "D’un homme et d’une femme ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line170_scene2_act3",
+              "characterId": "damien",
+              "text": "De deux hommes, mais ça ne change rien au principe. Deux hommes qui s’appellent ?... (il invite d’un mouvement de tête Pauline à lui donner les noms)",
+              "type": "dialogue"
+            },
+            {
+              "id": "line171_scene2_act3",
+              "characterId": "pauline",
+              "text": "Ils s’appellent par téléphone ? (elle rigole)",
+              "type": "dialogue"
+            },
+            {
+              "id": "line172_scene2_act3",
+              "characterId": "damien",
+              "text": "Je ne te promets pas de supporter ses vannes toute la soirée !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line173_scene2_act3",
+              "characterId": "pauline",
+              "text": "Humour ! Oh la la ! J’avais compris. Ils s’appellent Jim et Jules ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line174_scene2_act3",
+              "characterId": "damien",
+              "text": "Presque ! Bravo Madame Cinéma !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line175_scene2_act3",
+              "characterId": "laurence",
+              "text": "Tu veux en venir où ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line176_scene2_act3",
+              "characterId": "damien",
+              "text": "Au fait que c’était sympa, drôle et original de te partager, mais insatisfaisant. Et comme tout ce qui est insatisfaisant, cette situation ne pouvait pas durer éternellement.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line177_scene2_act3",
+              "characterId": "pauline",
+              "text": "Je valide ! J’ai souvent eu le cafard de ne pas être avec toi.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line178_scene2_act3",
+              "characterId": "laurence",
+              "text": "Vous n’avez pas eu d’autres relations amoureuses depuis qu’on est ensemble ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line179_scene2_act3",
+              "characterId": "damien",
+              "text": "Je n’en avais pas envie.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line180_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je l’aurais accepté.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line181_scene2_act3",
+              "characterId": "pauline",
+              "text": "Moi j’en ai rencontré une, mais on s’est séparés assez vite. (à Laurence) Je t’en avais parlé, tu t’en souviens ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line182_scene2_act3",
+              "characterId": "laurence",
+              "text": "Celle qui a découpé tes fringues en lamelles quand tu l’as quittée ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line183_scene2_act3",
+              "characterId": "pauline",
+              "text": "Voilà ! Ce final est un parfait résumé de ce que fut notre relation... (ironiquement) Apaisante et pacifique... Ah la vache, elle m’a tout fait, cette tarée !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line184_scene2_act3",
+              "characterId": "laurence",
+              "text": "Raconte-lui, ça va le faire rire !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line185_scene2_act3",
+              "characterId": "pauline",
+              "text": "Tu aimes les films d’horreur ? Assieds-toi. Je me limite au top 3. Un : elle a tondu mon chat. On aurait dit le crâne de Bruce Willis, avec des pattes.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line186_scene2_act3",
+              "characterId": "damien",
+              "text": "Mignon !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line187_scene2_act3",
+              "characterId": "pauline",
+              "text": "Deux : elle a planqué un essaim d’abeilles sous le siège de ma voiture...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line188_scene2_act3",
+              "characterId": "damien",
+              "text": "Ça fait mal ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line189_scene2_act3",
+              "characterId": "pauline",
+              "text": "Elephant man pendant six semaines !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line190_scene2_act3",
+              "characterId": "laurence",
+              "text": "Sa tête faisait penser à un chou-fleur...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line191_scene2_act3",
+              "characterId": "pauline",
+              "text": "Trois : Elle a mis le feu à ma guitare...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line192_scene2_act3",
+              "characterId": "damien",
+              "text": "Comparé au reste, ce n’est pas trop méchant.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line193_scene2_act3",
+              "characterId": "pauline",
+              "text": "Elle a mis le feu à ma guitare... dans mon salon. Le feu s’est étendu à la moquette, tout l’appartement a cramé.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line194_scene2_act3",
+              "characterId": "damien",
+              "text": "Qu’est-ce que tu lui avais fait ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line195_scene2_act3",
+              "characterId": "pauline",
+              "text": "Des trucs insignifiants qu’elle transformait en apocalypse... Moi qui aime les relations paisibles, je ne me suis pas ennuyé ! (à Laurence) Heureusement que tu étais là pour m’apporter un peu de sérénité de temps en temps. Merci ma Laurence.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line196_scene2_act3",
+              "characterId": "laurence",
+              "text": "Voilà ce qu’elle faisait de son temps libre quand j’étais avec toi ! Elle couchait avec Attila !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line197_scene2_act3",
+              "characterId": "damien",
+              "text": "Elle s’appelait Attila ?!",
+              "type": "dialogue"
+            },
+            {
+              "id": "line198_scene2_act3",
+              "characterId": "pauline",
+              "text": "Non, Anita. Attila, c’est le petit nom d’amour que je lui ai donné le jour où elle a détruit ma collection de vinyles...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line199_scene2_act3",
+              "characterId": "damien",
+              "text": "Je ne regrette pas de t’être resté fidèle, personne n’a tondu mon chat.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line200_scene2_act3",
+              "characterId": "laurence",
+              "text": "Surtout que tu n’as pas de chat !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line201_scene2_act3",
+              "characterId": "damien",
+              "text": "Vive la liberté !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line202_scene2_act3",
+              "characterId": "laurence",
+              "text": "À propos de liberté, ça ne vous fait pas peur de perdre la vôtre en vous mariant avec moi ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line203_scene2_act3",
+              "characterId": "damien",
+              "text": "Avec toi, les chaines seront des colliers de fleurs, mon amour...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line204_scene2_act3",
+              "characterId": "pauline",
+              "text": "Si tu promets de ne pas bruler ma nouvelle guitare, je signe les yeux fermés",
+              "type": "dialogue"
+            },
+            {
+              "id": "line205_scene2_act3",
+              "characterId": "laurence",
+              "text": "Moi, ça me fout la trouille !... J’ai deux amours adorables, pourquoi je dois en perdre un pour avoir l’autre ? En plus, je suppose que je devrais vous être fidèle ? Adieu jolis mâles ! Goodbye charmantes demoiselles ! La bague au doigt c’est le boulet au pied.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line206_scene2_act3",
+              "characterId": "pauline",
+              "text": "Je me demande si j’ai encore envie de me marier...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line207_scene2_act3",
+              "characterId": "damien",
+              "text": "Te force pas, moi je suis toujours d’accord.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line208_scene2_act3",
+              "characterId": "laurence",
+              "text": "On va faire un test. Donnez-moi des bonnes raisons de passer devant le monsieur le maire ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line209_scene2_act3",
+              "characterId": "damien",
+              "text": "Parce que tu m’aimes !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line210_scene2_act3",
+              "characterId": "pauline",
+              "text": "Parce que je suis gentille !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line211_scene2_act3",
+              "characterId": "damien",
+              "text": "Parce que je te ferai plein de cadeaux !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line212_scene2_act3",
+              "characterId": "pauline",
+              "text": "Parce que je te ferai rire !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line213_scene2_act3",
+              "characterId": "damien",
+              "text": "Parce que ça emmerde Pauline !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line214_scene2_act3",
+              "characterId": "pauline",
+              "text": "Parce que je vais lui casser la gueule !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line215_scene2_act3",
+              "characterId": "laurence",
+              "text": "Stop, je me suis mal exprimée ! Je ne parle pas des raisons de me marier avec toi ou avec toi, je parle des raisons valables de me marier tout court. Avec vous ou un autre...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line216_scene2_act3",
+              "characterId": "damien",
+              "text": "Oh non, pas un autre !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line217_scene2_act3",
+              "characterId": "pauline",
+              "text": "Ni une autre !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line218_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je vous écoute. Vous devez avoir des arguments pour me convaincre de me marier ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line219_scene2_act3",
+              "characterId": "damien",
+              "text": "Pour que tu ne finisses pas ta vie seule au milieu d’une demi-douzaine de chats.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line220_scene2_act3",
+              "characterId": "laurence",
+              "text": "Argument moyen...Entre un mari et un chat, pas sûr que je choisisse le mari...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line221_scene2_act3",
+              "characterId": "pauline",
+              "text": "Pour ne pas passer la Saint Valentin seule devant ta télé.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line222_scene2_act3",
+              "characterId": "laurence",
+              "text": "Aucun risque. Les soirs de Saint Valentin, je suis avec toi ou avec Damien. Chacun son tour...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line223_scene2_act3",
+              "characterId": "damien",
+              "text": "La prochaine fois, c’est moi, n’oublie pas !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line224_scene2_act3",
+              "characterId": "laurence",
+              "text": "C’est noté à l’encre rouge sur mon calendrier : Da-mien.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line225_scene2_act3",
+              "characterId": "pauline",
+              "text": "Le mariage c’est super pour regarder main dans la main dans la même direction !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line226_scene2_act3",
+              "characterId": "laurence",
+              "text": "Cliché numéro un, c’est fait !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line227_scene2_act3",
+              "characterId": "damien",
+              "text": "Pour échanger un petit bisou le matin avant d’aller au boulot. C’est agréable le petit bisou du matin, pas vrai ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line228_scene2_act3",
+              "characterId": "pauline",
+              "text": "Je t’en ferai des gros !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line229_scene2_act3",
+              "characterId": "laurence",
+              "text": "Argument séduisant... Sauf les jours de grippe, d’herpès purulent ou en cas d’haleine de chacal !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line230_scene2_act3",
+              "characterId": "pauline",
+              "text": "Avec moi, tu ne risques rien, je me brosse les dents trois fois par jour.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line231_scene2_act3",
+              "characterId": "laurence",
+              "text": "Tu as entendu, Damien ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line232_scene2_act3",
+              "characterId": "damien",
+              "text": "Quoi ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line233_scene2_act3",
+              "characterId": "laurence",
+              "text": "Pauline... (elle mime le geste de se brosser les dents) trois fois par jour !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line234_scene2_act3",
+              "characterId": "damien",
+              "text": "Moi aussi...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line235_scene2_act3",
+              "characterId": "laurence",
+              "text": "T’es sûr ? Change de dentifrice alors, parce que... bref... passons.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line236_scene2_act3",
+              "characterId": "damien",
+              "text": "C’est bas, ce que tu fais, Laurence ! Tu me fous la honte devant Pauline !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line237_scene2_act3",
+              "characterId": "pauline",
+              "text": "T’inquiète, pas besoin que Laurence en parle, j’avais remarqué... (Damien pas content). Je blague... de toute façon, je n’ai pas d’odorat !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line238_scene2_act3",
+              "characterId": "laurence",
+              "text": "Pour l’instant, vous ne m’avez pas convaincue...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line239_scene2_act3",
+              "characterId": "damien",
+              "text": "Le mariage, ça permet de prendre un petit déjeuner au lit à deux.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line240_scene2_act3",
+              "characterId": "laurence",
+              "text": "Tu sais bien qu’au réveil, je n’ai ni envie de parler, ni envie d’avoir des miettes dans mon lit... (Damien déçu) Pour te faire plaisir, je ferais un effort un dimanche par an !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line241_scene2_act3",
+              "characterId": "pauline",
+              "text": "Et une compagne pour tondre la pelouse ? C’est pratique.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line242_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je n’ai pas de jardin !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line243_scene2_act3",
+              "characterId": "pauline",
+              "text": "Quand tu seras mariée, t’en auras un ! C’est dans le lot : mariage, enfants et pavillon avec jardin et tondeuse.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line244_scene2_act3",
+              "characterId": "laurence",
+              "text": "Le rêve absolu !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line245_scene2_act3",
+              "characterId": "damien",
+              "text": "Un mari, c’est aussi très pratique pour changer une roue, déboucher les chiottes, sortir les poubelles...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line246_scene2_act3",
+              "characterId": "laurence",
+              "text": "Waoh ! Un vrai couteau suisse ! Sauf que moi, je sais me débrouiller sans homme. C’est fini l’époque où madame était tellement nunuche qu’elle ne savait pas changer une ampoule.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line247_scene2_act3",
+              "characterId": "pauline",
+              "text": "Et pour écraser les araignées ? T’es contente que je sois là pour écraser les vilaines bêbêtes velues qui veulent te dévorer toute crue ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line248_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je réfléchis... Je me marie pour les araignées ou j’achète de l’insecticide ?... Argument suivant !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line249_scene2_act3",
+              "characterId": "pauline",
+              "text": "Pour arrêter de manger des surgelés.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line250_scene2_act3",
+              "characterId": "laurence",
+              "text": "Tu crois que je vais me mettre à la cuisine sous prétexte que je serais unie par ces sacrés liens du mariage ? Si j’habite à cent mètres de chez Picard, ce n’est pas un hasard.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line251_scene2_act3",
+              "characterId": "damien",
+              "text": "Et la vaisselle ? Hein ? C’est pas Picard qui fait la vaisselle !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line252_scene2_act3",
+              "characterId": "laurence",
+              "text": "J’ai un lave-vaisselle !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line253_scene2_act3",
+              "characterId": "pauline",
+              "text": "Il te faut quelqu’un pour vider le lave-vaisselle.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line254_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je ne le vide pas, je reprends la vaisselle propre dedans au fur et à mesure que j’en ai besoin !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line255_scene2_act3",
+              "characterId": "pauline",
+              "text": "Elle a réponse à tout !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line256_scene2_act3",
+              "characterId": "damien",
+              "text": "Tu dois te marier pour contredire ton père qui est persuadé que tu vieilliras seule comme une vieille chaussette au fond d’un tiroir !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line257_scene2_act3",
+              "characterId": "laurence",
+              "text": "Bon point, ça me plait de donner tort à mon père.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line258_scene2_act3",
+              "characterId": "damien",
+              "text": "J’ai un autre argument : pour que tu ne regardes plus la télé toute seule !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line259_scene2_act3",
+              "characterId": "pauline",
+              "text": "Tu sais faire rêver les femmes, toi ! “Le journal de vingt heures, à deux c’est du bonheur !”",
+              "type": "dialogue"
+            },
+            {
+              "id": "line260_scene2_act3",
+              "characterId": "laurence",
+              "text": "Le journal, d’accord, mais le reste, qui décide ? Foot ou film du dimanche soir ? Cruel dilemme !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line261_scene2_act3",
+              "characterId": "damien",
+              "text": "Je te promets que je te laisserai regarder tous les films que tu veux.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line262_scene2_act3",
+              "characterId": "laurence",
+              "text": "T’es fou, toi, je préfère le foot !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line263_scene2_act3",
+              "characterId": "damien",
+              "text": "Je ne savais pas !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line264_scene2_act3",
+              "characterId": "laurence",
+              "text": "Normal, les soirs de match je les passe avec Pauline.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line265_scene2_act3",
+              "characterId": "pauline",
+              "text": "Soirées foot-pizzas-bière, c’est notre péché mignon. On mange, on crie, on boit, on rote !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line266_scene2_act3",
+              "characterId": "damien",
+              "text": "Pourquoi on n’a jamais regardé le foot tous les deux ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line267_scene2_act3",
+              "characterId": "laurence",
+              "text": "Parce que tu n’aimes pas le foot !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line268_scene2_act3",
+              "characterId": "damien",
+              "text": "Je peux aimer !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line269_scene2_act3",
+              "characterId": "pauline",
+              "text": "Parce que tu ne sais pas roter !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line270_scene2_act3",
+              "characterId": "damien",
+              "text": "Je peux apprendre !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line271_scene2_act3",
+              "characterId": "pauline",
+              "text": "Au prochain match, on t’invite. On fera un concours de rot. T’as intérêt à t’entraîner avant, elle est très forte ! La dernière fois, elle a pété deux carreaux !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line272_scene2_act3",
+              "characterId": "laurence",
+              "text": "Vos arguments n’ont pas beaucoup fait avancer le schmilblick... Je ne suis pas arrivée.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line273_scene2_act3",
+              "characterId": "damien",
+              "text": "Arrête de réfléchir et épouse-moi ! J’ai des tonnes de projets pour nous deux.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line274_scene2_act3",
+              "characterId": "pauline",
+              "text": "Son problème, ce n’est pas de manquer de projets, c’est de savoir si elle a envie d’en avoir à deux ! Si elle savait, elle n’aurait plus de souci pour se décider à se marie avec moi.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line275_scene2_act3",
+              "characterId": "damien",
+              "text": "Alors toi, tu achètes d’abord un gâteau et après tu te demandes si tu as envie de le manger ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line276_scene2_act3",
+              "characterId": "pauline",
+              "text": "Si le gâteau c’est Laurence, oui.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line277_scene2_act3",
+              "characterId": "laurence",
+              "text": "Gourmande !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line278_scene2_act3",
+              "characterId": "pauline",
+              "text": "C’est vrai que tu es appétissante ! Miam-miam...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line279_scene2_act3",
+              "characterId": "laurence",
+              "text": "Tu préfères quoi, Laurence ? (se désignant elle-même) Un délicieux fondant au chocolat agrémenté de sa crème glacée à la vanille saupoudré de poudre de chocolat amer ? (désignant Damien) ou une part de quatre-quarts trop cuit ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line280_scene2_act3",
+              "characterId": "damien",
+              "text": "Pour quelle raison je serais un quatre-quarts ? Je veux être une Charlotte à la fraise ! Laurence adore les fraises... (à Laurence) Alors ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line281_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je prends une part de chaque, vous savez bien que je suis une incorrigible gourmande !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line282_scene2_act3",
+              "characterId": "damien",
+              "text": "J’ai une idée ! On va te montrer la bague qu’on a achetée, tu jugeras celle que tu préfères...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line283_scene2_act3",
+              "characterId": "pauline",
+              "text": "C’est une idée d’une élégance folle ! On présente le ticket de caisse avec, pour que ça soit plus raffiné ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line284_scene2_act3",
+              "characterId": "damien",
+              "text": "Oublions le prix, ça ne serait pas équitable, je ne pense pas que tu aies fait péter le livret de Caisse d’épargne... En supposant que tu en aies un, naturellement...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line285_scene2_act3",
+              "characterId": "laurence",
+              "text": "Pourquoi tu dis ça, Pauline n’est pas radine.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line286_scene2_act3",
+              "characterId": "damien",
+              "text": "Je ne dis pas qu’elle est radine... fauchée par contre, ça ne fait aucun doute. D’accord pour comparer les bagues ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line287_scene2_act3",
+              "characterId": "pauline",
+              "text": "No souçaille !. (elle se lève, main près de sa poche, comme un cow-boy qui va dégainer) T’es prêt, Lucky Luke ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line288_scene2_act3",
+              "characterId": "damien",
+              "text": "Ton heure est venue, Billy ze kid, je suis l’homme qui dégaine les bagues plus vite que son ombre !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line289_scene2_act3",
+              "characterIdArray": ["damien", "pauline"],
+              "text": "Ils se scrutent comme dans un western spaghetti.",
+              "type": "stage_direction"
+            },
+            {
+              "id": "line290_scene2_act3",
+              "characterId": "laurence",
+              "text": "Attendez ! (ils tournent ensemble la tête vers elle, comme au ralenti) Sans musique, vous avez l’air ridicule. (Elle chantonne une musique genre “Il était une fois dans l’ouest”. Ils se regardent en plissant les yeux. Elle arrête) La musique ne change rien, vous êtes ridicules !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line291_scene2_act3",
+              "characterIdArray": ["damien", "pauline"],
+              "text": "Ils dégainent en même temps l’écrin qu’ils ouvrent d’un coup de pouce en bruitant un coup de feu, puis soufflent dans le canon de leur révolver imaginaire. Ils regardent chacun la bague de l’autre.",
+              "type": "stage_direction"
+            },
+            {
+              "id": "line292_scene2_act3",
+              "characterIdArray": ["damien", "pauline"],
+              "text": "C’est la même !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line293_scene2_act3",
+              "characterId": "damien",
+              "text": "L’enfoiré de bijoutier ! Il m’a dit que c’était une pièce unique !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line294_scene2_act3",
+              "characterId": "pauline",
+              "text": "Pareil !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line295_scene2_act3",
+              "characterId": "laurence",
+              "text": "Deuxième point commun !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line296_scene2_act3",
+              "characterId": "damien",
+              "text": "Je vais le voir demain, ce quincailler, je vais lui coller un point commun, un bon coup de poing commun !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line297_scene2_act3",
+              "characterId": "pauline",
+              "text": "On lui fera bouffer ses bagouzes. Paf, paf ! Une dans chaque trou de nez !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line298_scene2_act3",
+              "characterId": "laurence",
+              "text": "Attention ! Si y’a plus de bague, y’a plus de demande en mariage !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line299_scene2_act3",
+              "characterIdArray": ["damien", "pauline"],
+              "text": "Damien et Pauline se regardent un instant puis mettent tous les deux un genou à terre et lui offrent la bague.",
+              "type": "stage_direction"
+            },
+            {
+              "id": "line300_scene2_act3",
+              "characterIdArray": ["damien", "pauline"],
+              "text": "Veux-tu m’épouser ? (ils se regardent) Non moi !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line301_scene2_act3",
+              "characterId": "laurence",
+              "text": "J’aime mieux ça !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line302_scene2_act3",
+              "characterId": "pauline",
+              "text": "Tu es décidée à te marier ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line303_scene2_act3",
+              "characterId": "laurence",
+              "text": "On s’attend à ce qu’elle réponde oui. Non !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line304_scene2_act3",
+              "characterIdArray": ["damien", "pauline"],
+              "text": "Damien et Pauline se relèvent et rangent la bague dans leur poche avec un grognement.",
+              "type": "stage_direction"
+            },
+            {
+              "id": "line305_scene2_act3",
+              "characterId": "pauline",
+              "text": "Tu veux qu’on se batte ? Tu choisiras le plus fort.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line306_scene2_act3",
+              "characterId": "damien",
+              "text": "Appelle le Samu, Laurence ! Je vais en faire de la bouillie de la mère supérieure ! (à Pauline) Ceinture noire de karaté, troisième dan !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line307_scene2_act3",
+              "characterId": "pauline",
+              "text": "Appelle la morgue, Laurence ! Je vais en faire de la compote du Stallone en carton ! (à Damien) Ceinture noire de coups de pied dans les couilles, septième dan !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line308_scene2_act3",
+              "characterId": "laurence",
+              "text": "C’est lourd, vos combats de coqs !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line309_scene2_act3",
+              "characterId": "damien",
+              "text": "Elle me cherche !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line310_scene2_act3",
+              "characterId": "pauline",
+              "text": "Je ne te cherche pas, je t’ai trouvé !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line311_scene2_act3",
+              "characterId": "laurence",
+              "text": "C’est étrange, séparément, vous êtes adorables, mais ensemble, vous n’êtes pas comme d’habitude...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line312_scene2_act3",
+              "characterId": "pauline",
+              "text": "Pas comme d’habitude en mieux ou pas comme d’habitude en pas mieux ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line313_scene2_act3",
+              "characterId": "laurence",
+              "text": "Pas comme d’habitude en pénible ! Vous allez me faire regretter d’avoir organisé cette soirée.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line314_scene2_act3",
+              "characterId": "pauline",
+              "text": "Désolée, ma chérie. Promis, je vais être cool. Lui, je ne sais pas s’il en est capable.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line315_scene2_act3",
+              "characterId": "damien",
+              "text": "Je ne relève même pas... (à Laurence) J’ai une idée ludique et efficace à te proposer.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line316_scene2_act3",
+              "characterId": "damien",
+              "text": "(il montre une pièce)",
+              "type": "stage_direction"
+            },
+            {
+              "id": "line317_scene2_act3",
+              "characterId": "laurence",
+              "text": "Tu m’achètes ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line318_scene2_act3",
+              "characterId": "pauline",
+              "text": "Quelle admirable conception de l’amour ! Un euro ? Et généreux avec ça !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line319_scene2_act3",
+              "characterId": "damien",
+              "text": "Pile ou face, c’est pratique quand on n’arrive pas à se décider.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line320_scene2_act3",
+              "characterId": "laurence",
+              "text": "Le hasard, c’est au-dessus de mes compétences. Je me connais, si ça tombe sur face, je vais regretter que ça ne soit pas pile...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line321_scene2_act3",
+              "characterId": "pauline",
+              "text": "Prends pile, tu ne perdras pas la face ! (elle rigole. Sourire de Laurence et mimique atterrée de Damien)",
+              "type": "dialogue"
+            },
+            {
+              "id": "line322_scene2_act3",
+              "characterId": "damien",
+              "text": "Soyons plus pragmatique : comparons nos qualités et nos défauts.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line323_scene2_act3",
+              "characterId": "pauline",
+              "text": "Encore une idée qui fait rêver. C’est un poète, ce mec ! Apporte le paperboard, on va mettre des notes sur dix. (elle mime) La douceur de la peau, le nombre de carries, la couleur du slip... Méfie-toi, à ce petit jeu, tu risques de perdre.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line324_scene2_act3",
+              "characterId": "damien",
+              "text": "T’es sûre ? Laurence m’a raconté quelques trucs sur toi... pas piqués des hannetons...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line325_scene2_act3",
+              "characterId": "pauline",
+              "text": "C’est de la triche !... Même si j’ai très peu de défauts, soit dit en passant.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line326_scene2_act3",
+              "characterId": "laurence",
+              "text": "Rassure-toi, j’ai également parlé de tes qualités...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line327_scene2_act3",
+              "characterId": "damien",
+              "text": "Mais ça a été très rapide... (il rigole)",
+              "type": "dialogue"
+            },
+            {
+              "id": "line328_scene2_act3",
+              "characterId": "pauline",
+              "text": "Moins rapide que tout ce qu’elle m’a dit de toi, je suppose... Très drôle entre parenthèses... (elle éclate de rire)",
+              "type": "dialogue"
+            },
+            {
+              "id": "line329_scene2_act3",
+              "characterId": "damien",
+              "text": "Qu’est-ce que tu lui as dit ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line330_scene2_act3",
+              "characterId": "laurence",
+              "text": "Tu ne vois pas qu’elle en rajoute exprès pour t’énerver ! (à Pauline) Ce n’est pas sympa, Pauline !!!",
+              "type": "dialogue"
+            },
+            {
+              "id": "line331_scene2_act3",
+              "characterId": "pauline",
+              "text": "Mais oui, j’en rajoute, flippe pas ! Je peux quand même éclater de rire ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line332_scene2_act3",
+              "characterId": "damien",
+              "text": "Elle m’énerve ! Qu’est-ce qu’elle m’énerve ! Je m’en fous, les défauts c’est très relatif...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line333_scene2_act3",
+              "characterId": "pauline",
+              "text": "Les qualités aussi...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line334_scene2_act3",
+              "characterId": "laurence",
+              "text": "À un moment, je m’imaginais vivre avec chacun de vous pendant quelques jours. Je vous aurais rendu la vie insupportable et j’aurais épousé celui ou celle qui aurait tenu le coup le plus longtemps.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line335_scene2_act3",
+              "characterId": "damien",
+              "text": "Rien n’est insupportable, avec toi. Tu es la perfection incarnée !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line336_scene2_act3",
+              "characterId": "pauline",
+              "text": "Faut pas exagérer ! Laurence trimballe son colis comme tout le monde.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line337_scene2_act3",
+              "characterId": "damien",
+              "text": "Tu entends comment elle parle de toi ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line338_scene2_act3",
+              "characterId": "laurence",
+              "text": "Elle a raison, je ne suis pas parfaite, j’ai quelques défauts.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line339_scene2_act3",
+              "characterId": "pauline",
+              "text": "Quelques ? Ne sois pas si modeste !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line340_scene2_act3",
+              "characterId": "damien",
+              "text": "Pourquoi tu veux l’épouser ? Tu ne vas pas gâcher ta vie avec une nana bourrée de défauts ? C’est du masochisme. Oublie le mariage, je me sacrifie pour toi.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line341_scene2_act3",
+              "characterId": "pauline",
+              "text": "Je n’ai pas dit que ça me dérangeait, j’ai dit qu’elle avait des défauts. Ça ne m’empêche pas de l’aimer avec... ou malgré. Je ne vais pas jouer l’autruche et faire comme si je ne les voyais pas. Je prends le lot. Le positif et le négatif. Emballé c’est pesé !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line342_scene2_act3",
+              "characterId": "laurence",
+              "text": "Avec les années, c’est peut-être moi qui ne pourrais plus vous supporter.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line343_scene2_act3",
+              "characterId": "damien",
+              "text": "Depuis le temps qu’on se pratique, tu sais à quoi t’attendre...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line344_scene2_act3",
+              "characterId": "laurence",
+              "text": "Pas sûr. Partager des moments éparpillés, ça n’a rien à voir avec la routine quotidienne. Par exemple, tu prends ta douche. Ton slip sale, tu les mets où ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line345_scene2_act3",
+              "characterId": "damien",
+              "text": "Dans mon sac ! Ne viens pas me dire que tu en as déjà vu trainer !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line346_scene2_act3",
+              "characterId": "laurence",
+              "text": "C’est vrai, mais tu n’es pas chez toi, donc tu fais des efforts. Mais “chez nous”, tu le mets où ton vieux slip ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line347_scene2_act3",
+              "characterId": "damien",
+              "text": "Je ne sais pas...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line348_scene2_act3",
+              "characterId": "laurence",
+              "text": "Eh bien voilà ! Je ne veux pas me marier avec tes slips !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line349_scene2_act3",
+              "characterId": "pauline",
+              "text": "Promis, ma chérie, je ne mettrais plus de culotte !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line350_scene2_act3",
+              "characterId": "damien",
+              "text": "Tu ferais mieux de te baser sur des critères évidents, ça serait plus simple. Le physique, par exemple...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line351_scene2_act3",
+              "characterId": "pauline",
+              "text": "Comment veux-tu comparer physiquement un homme et une femme ? T’as des plus gros biceps, j’ai des plus gros nichons. T’as un truc qui pendouille entre les jambes, j’ai des neurones...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line352_scene2_act3",
+              "characterId": "damien",
+              "text": "À chaque fois que je propose une idée, paf, la vanne ! Fatiguant ! Tu fais un complexe ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line353_scene2_act3",
+              "characterId": "pauline",
+              "text": "Je ne fais que voir la réalité en face !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line354_scene2_act3",
+              "characterId": "damien",
+              "text": "Elle va tomber de haut, ta réalité, Laurence m’a toujours dit qu’elle me trouvait beau !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line355_scene2_act3",
+              "characterId": "pauline",
+              "text": "Ah oui ? Eh bien moi, elle m’appelle Aphrodite, déesse de la beauté, tu connais ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line356_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je ne t’ai jamais appelé Aphrodite !!!",
+              "type": "dialogue"
+            },
+            {
+              "id": "line357_scene2_act3",
+              "characterId": "pauline",
+              "text": "C’est tout comme !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line358_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je m’en fous du physique. Je ne vous aime pas pour votre tête, je vous aime pour ce qu’il y a dedans. Quoiqu’aujourd’hui, j’ai l’impression qu’il n’y a pas grand-chose. Ça a pu arriver un jour que je vous dise que je vous trouvais beaux, quand on aime, on dit n’importe quoi !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line359_scene2_act3",
+              "characterId": "pauline",
+              "text": "Merci !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line360_scene2_act3",
+              "characterId": "laurence",
+              "text": "Pauline, tu me plais, ça me suffit, je m’en fiche que tu sois moche ou belle !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line361_scene2_act3",
+              "characterId": "damien",
+              "text": "Et boum sur la pin-up des superettes !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line362_scene2_act3",
+              "characterId": "laurence",
+              "text": "Et toi pareil, Casanova d’occasion !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line363_scene2_act3",
+              "characterId": "pauline",
+              "text": "Et boum sur le don juan des parkings !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line364_scene2_act3",
+              "characterId": "damien",
+              "text": "OK, on va oublier le physique. Passons à un autre point de comparaison : le compte en banque.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line365_scene2_act3",
+              "characterId": "laurence",
+              "text": "Tu crois que je t’aime pour tes petits sous ? Tu es le maillon faible, éliminé ! Tu as une piètre opinion de moi !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line366_scene2_act3",
+              "characterId": "damien",
+              "text": "C’est quand même l’argent qui nous a permis de partir quinze jours aux Maldives ! Tu étais bien aux Maldives ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line367_scene2_act3",
+              "characterId": "laurence",
+              "text": "C’est vrai, c’était génial... Mais le camping sauvage en Auvergne avec Pauline, c’était génial aussi.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line368_scene2_act3",
+              "characterId": "damien",
+              "text": "La prochaine fois qu’on ira aux Maldives, je coucherai à l’hôtel et tu dormiras sur la plage dans un sac de couchage !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line369_scene2_act3",
+              "characterId": "pauline",
+              "text": "Je viendrais dormir avec toi !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line370_scene2_act3",
+              "characterId": "damien",
+              "text": "On élimine le fric, on élimine le physique, qu’est-ce qu’il reste comme critères ? L’intelligence ? Faisons un test. C’est important l’intelligence pour faire réviser les leçons des enfants !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line371_scene2_act3",
+              "characterId": "laurence",
+              "text": "Hop-hop-hop, oublie le sujet enfants, on n’en est pas encore là !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line372_scene2_act3",
+              "characterId": "pauline",
+              "text": "D’autant que connaitre sa table de deux ou la mort de Louis XVI, ça n’empêche pas d’être bête comme un balai à chiottes...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line373_scene2_act3",
+              "characterId": "damien",
+              "text": "De toute façon, pour toi et Laurence, la question des enfants ne se pose pas.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line374_scene2_act3",
+              "characterId": "pauline",
+              "text": "Faut qu’il sorte de sa caverne, le pithécanthrope, il apprendra des nouveaux mots ! Adoption, PMA, ça te parle ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line375_scene2_act3",
+              "characterId": "damien",
+              "text": "Ce n’est pas la même chose que de faire un vrai enfant !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line376_scene2_act3",
+              "characterId": "pauline",
+              "text": "Un vrai enfant ? Tu veux dire, avec des bras et des oreilles ? Ah non, on n’a pas le droit quand on est deux femmes, on doit se contenter des enfants en plastique ! Remarque, c’est pratique : pas de couche à changer, pas de pleurs au milieu de la nuit et quand la nounou est malade, hop, dans le sac à main ! C’est le gros avantage sur les vrais enfants ! Dis donc, petit malin, puisqu’on est dans le sujet, il y a un autre critère qui a son importance dans un couple...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line377_scene2_act3",
+              "characterId": "damien",
+              "text": "Nous vous écoutons, professeur, pardon, professeuse...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line378_scene2_act3",
+              "characterId": "pauline",
+              "text": "Le sexe !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line379_scene2_act3",
+              "characterId": "damien",
+              "text": "Comment ça le sexe ? Tu veux dire, la taille ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line380_scene2_act3",
+              "characterId": "pauline",
+              "text": "Il est rigolo, lui, il veut faire le concours de celui qui a la plus grande ! Tu n’as pas l’impression de partir avec un petit avantage ? (amusée) J’ai bien dit “petit”...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line381_scene2_act3",
+              "characterId": "damien",
+              "text": "Tu veux voir si c’est “petit” ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line382_scene2_act3",
+              "characterId": "pauline",
+              "text": "Non merci, jamais entre les repas, ça me coupe l’appétit. Juste par curiosité, Laurence... (amusée) Petit ou pas petit ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line383_scene2_act3",
+              "characterId": "damien",
+              "text": "Laurence, tais-toi, c’est personnel !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line384_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je ne dis rien ! (elle fait un geste “moyen” de la main en rigolant)",
+              "type": "dialogue"
+            },
+            {
+              "id": "line385_scene2_act3",
+              "characterId": "damien",
+              "text": "Merci ! Si tu fais un complexe, Pauline, t’avais qu’à être un mec !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line386_scene2_act3",
+              "characterId": "pauline",
+              "text": "Très peu pour moi ! Je préfère grandement être une femme. Et je peux affirmer que si Laurence est amoureuse de moi, c’est parce que je ne suis pas un mec. Un seul lui suffit, pas vrai, Laurence ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line387_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je confirme !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line388_scene2_act3",
+              "characterId": "pauline",
+              "text": "Je voulais parler de la sexualité. (à Laurence) Il y en a bien un de nous deux avec qui c’est mieux ? Quand tu dis : “C’est bon ! Encore ! Encore !...”",
+              "type": "dialogue"
+            },
+            {
+              "id": "line389_scene2_act3",
+              "characterId": "laurence",
+              "text": "Un chouïa de discrétion, c’est envisageable ou tu comptes entrer dans les détails ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line390_scene2_act3",
+              "characterId": "damien",
+              "text": "Les détails, les détails, les détails !... (regard noir de Laurence) Je déconne !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line391_scene2_act3",
+              "characterId": "pauline",
+              "text": "Tu lui dis aussi des trucs comme ça ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line392_scene2_act3",
+              "characterId": "laurence",
+              "text": "Ça ne te regarde pas !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line393_scene2_act3",
+              "characterId": "damien",
+              "text": "Tu as les boules parce qu’il y a des choses que je fais que tu ne pourras jamais lui faire !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line394_scene2_act3",
+              "characterId": "pauline",
+              "text": "Mon petit Damien, sache qu’une femme peut donner à une autre femme des plaisirs que tu n’imagines même pas ! Tu sais pourquoi ? Parce que jamais tu ne comprendras le corps de Laurence comme moi je peux le comprendre...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line395_scene2_act3",
+              "characterId": "laurence",
+              "text": "C’est pas faux !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line396_scene2_act3",
+              "characterId": "damien",
+              "text": "Quand même, je te fais des trucs...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line397_scene2_act3",
+              "characterId": "laurence",
+              "text": "Des trucs, oui... mais tout...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line398_scene2_act3",
+              "characterId": "pauline",
+              "text": "Mon grand-père disait que la réussite d’un couple reposait à 90 % sur l’entente sexuelle ! Je dis ça, je ne dis rien.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line399_scene2_act3",
+              "characterId": "damien",
+              "text": "Il l’a réussie sa vie de couple, pépé Pauline ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line400_scene2_act3",
+              "characterId": "pauline",
+              "text": "Il a été marié cinquante ans... avec cinq femmes différentes. Dix ans chacune. Pas de jalouse.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line401_scene2_act3",
+              "characterId": "damien",
+              "text": "Tu es sure que c’est une bonne idée de te marier avec une nana dont le grand-père a collectionné les divorces ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line402_scene2_act3",
+              "characterId": "pauline",
+              "text": "Oh le coup bas ! Et ton pépé, c’est quoi son curriculum vitae ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line403_scene2_act3",
+              "characterId": "damien",
+              "text": "Toute sa vie avec ma grand-mère. Noces de platine ça s’appelle. C’est solide, le platine, tu peux me faire confiance...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line404_scene2_act3",
+              "characterId": "laurence",
+              "text": "C’est vrai, je peux te faire confiance ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line405_scene2_act3",
+              "characterId": "damien",
+              "text": "Garanti !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line406_scene2_act3",
+              "characterId": "laurence",
+              "text": "Parfait, on va manger !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line407_scene2_act3",
+              "characterId": "damien",
+              "text": "Je ne vois pas le rapport ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line408_scene2_act3",
+              "characterId": "laurence",
+              "text": "Tu vas mettre la table, je verrais si tu n’oublies rien.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line409_scene2_act3",
+              "characterId": "damien",
+              "text": "Pourquoi tu ne lui demandes pas d’aider, à elle ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line410_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je la connais, elle va en oublier la moitié. Va chercher la vaisselle, je prépare le miam-miam. Je vous préviens, je n’ai rien cuisiné, c’est repas grignote.",
+              "type": "dialogue"
+            },
+            {
+              "id": "line411_scene2_act3",
+              "characterId": "pauline",
+              "text": "Tu vois l’avantage d’être tête en l’air ? On ne me confie pas de missions de confiance ! (elle s’allonge sur le transat) Je suis peinarde...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line412_scene2_act3",
+              "characterId": "damien",
+              "text": "Ça ne me dérange pas que Laurence me fasse confiance... C’est important dans un couple...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line413_scene2_act3",
+              "characterId": "damien",
+              "text": "(il sort dans le salon)",
+              "type": "stage_direction"
+            },
+            {
+              "id": "line414_scene2_act3",
+              "characterId": "pauline",
+              "text": "Je vais t’aider ! (off) Tu vas voir si on ne peut pas me faire confiance ! Efficace pour tout ! Travaux ménagers, vaisselle, cuisine... Tadam-tadam, voilà Super-Pauline ! Je prends les assiettes ! (On entend un bruit de vaisselle qui tombe) Oh purée ! (Pauline ressort sur la pointe des pieds et retourne sur le transat comme si elle n’en avait pas bougé)",
+              "type": "dialogue"
+            },
+            {
+              "id": "line415_scene2_act3",
+              "characterId": "laurence",
+              "text": "Qu’est-ce que tu as foutu ? (Pauline écoute avec un sourire amusé) Les assiettes de ma grand-mère ! Damien, c’est pas vrai !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line416_scene2_act3",
+              "characterId": "damien",
+              "text": "Mais j’ai pas... c’est...",
+              "type": "dialogue"
+            },
+            {
+              "id": "line417_scene2_act3",
+              "characterId": "laurence",
+              "text": "Je me suis trompée, on ne peut pas te faire confiance. Ça sera assiettes en plastique. J’aurais mieux fait de demander à Pauline ! (Pauline contente) le résultat n’aurait pas été pire. (Elle revient sur la terrasse avec trois assiettes plastiques de trois couleurs différentes)",
+              "type": "dialogue"
+            },
+            {
+              "id": "line418_scene2_act3",
+              "characterId": "damien",
+              "text": "Elle ne casse rien, Super-Pauline ?",
+              "type": "dialogue"
+            },
+            {
+              "id": "line419_scene2_act3",
+              "characterId": "laurence",
+              "text": "Si, elle casse. Beaucoup. Mais comme je sais qu’elle est maladroite, je lui confie de la vaisselle incassable, je ne prends pas de risque !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line420_scene2_act3",
+              "characterId": "damien",
+              "text": "Je vais ramasser !",
+              "type": "dialogue"
+            },
+            {
+              "id": "line421_scene2_act3",
+              "characterId": "pauline",
+              "text": "Tu veux un coup de main ?",
+              "type": "dialogue"
+            },
+            { "id": "line422_scene2_act3", "characterId": "damien" }
+          ]
+        }
+      ]
+    }
+  ]
+}

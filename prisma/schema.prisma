@@ -20,6 +20,8 @@ model Playbook {
   
   characters  Character[]
   acts        Act[]
+  userCharacterProgress UserCharacterProgress[]
+  userLineProgress UserLineProgress[]
   
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -40,6 +42,8 @@ model Character {
   playbook       Playbook @relation(fields: [playbookId], references: [id], onDelete: Cascade)
   
   lines          LineCharacter[]
+  userCharacterProgress UserCharacterProgress[]
+  userLineProgress UserLineProgress[]
   
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -92,15 +96,12 @@ model Line {
   indentLevel       Int?
   preserveLineBreaks Boolean?
   
-  // Practice tracking
-  masteryLevel      MasteryLevel?
-  rehearsalCount    Int              @default(0)
-  
   sceneId           String
   scene             Scene            @relation(fields: [sceneId], references: [id], onDelete: Cascade)
   
   // Multi-character attribution via join table
   characters        LineCharacter[]
+  userProgress      UserLineProgress[]
   
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
@@ -127,13 +128,75 @@ model LineCharacter {
   @@index([characterId])
 }
 
+
+model UserCharacterProgress {
+  id             String       @id @default(uuid())
+  
+  // User identification (placeholder for future auth)
+  userId         String       @default("default-user") // Will be replaced with actual user ID when auth is implemented
+  
+  // Character reference
+  characterId    String
+  character      Character    @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  
+  // Play reference for easier querying
+  playbookId     String
+  playbook       Playbook     @relation(fields: [playbookId], references: [id], onDelete: Cascade)
+  
+  // Practice metrics
+  totalLines     Int          @default(0)     // Total number of lines for the character
+  masteredLines Int          @default(0)     // Number of lines mastered
+  
+  // Timestamps
+  firstPracticedAt DateTime   @default(now())
+  lastPracticedAt  DateTime   @updatedAt
+  
+  @@unique([userId, characterId])
+  @@index([userId])
+  @@index([characterId])
+  @@index([playbookId])
+  @@index([userId, playbookId])
+}
+
+
+// User practice progress tracking for individual lines
+model UserLineProgress {
+  id             String       @id @default(uuid())
+  
+  // User identification (placeholder for future auth)
+  userId         String       @default("default-user") // Will be replaced with actual user ID when auth is implemented
+  
+  // Line reference
+  lineId         String
+  line           Line         @relation(fields: [lineId], references: [id], onDelete: Cascade)
+  
+  // Character being practiced
+  characterId    String
+  character      Character    @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  
+  // Play reference for easier querying
+  playbookId     String
+  playbook       Playbook     @relation(fields: [playbookId], references: [id], onDelete: Cascade)
+  
+  // Practice metrics
+  rehearsalCount Int          @default(0)     // Number of times the line was rehearsed
+  hintCount      Int          @default(0)     // Number of times user asked for a hint
+  progressPercent Int         @default(0)     // Progress percentage (0-100)
+  
+  // Timestamps
+  firstPracticedAt DateTime   @default(now())
+  lastPracticedAt  DateTime   @updatedAt
+  
+  @@unique([userId, lineId, characterId])
+  @@index([userId])
+  @@index([lineId])
+  @@index([characterId])
+  @@index([playbookId])
+  @@index([userId, playbookId])
+  @@index([userId, characterId])
+}
+
 enum LineType {
   dialogue
   stage_direction
-}
-
-enum MasteryLevel {
-  low
-  medium
-  high
 }

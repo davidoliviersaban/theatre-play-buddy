@@ -20,7 +20,6 @@ interface GroupedParagraph {
   characterId: string;
   text: string;
   lineIndices: number[]; // underlying line indexes from global flattened list
-  masteryLevel?: Line["masteryLevel"]; // worst (lowest) mastery among grouped lines
 }
 
 function groupLinesByCharacterWithIndices(
@@ -46,21 +45,11 @@ function groupLinesByCharacterWithIndices(
     if (last && last.characterId === currentCharId) {
       last.text = `${last.text} ${line.text}`.trim();
       last.lineIndices.push(globalIndex);
-      // update mastery: choose the lowest fidelity (low < medium < high)
-      if (last.masteryLevel === "high" && line.masteryLevel !== "high") {
-        last.masteryLevel = line.masteryLevel;
-      } else if (
-        last.masteryLevel === "medium" &&
-        line.masteryLevel === "low"
-      ) {
-        last.masteryLevel = line.masteryLevel;
-      }
     } else {
       groups.push({
         characterId: currentCharId,
         text: line.text,
         lineIndices: [globalIndex],
-        masteryLevel: line.masteryLevel,
       });
     }
   }

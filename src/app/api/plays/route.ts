@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAllPlays, getDbStats } from "../../../lib/db/plays-db";
+import { getAllPlays, getDbStats } from "../../../lib/db/plays-db-prisma";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

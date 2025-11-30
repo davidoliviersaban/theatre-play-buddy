@@ -71,10 +71,6 @@ export type Line = {
     text: string;
     /** Type of line: dialogue or stage direction */
     type: "dialogue" | "stage_direction";
-    /** User's mastery level for this line in practice mode */
-    masteryLevel?: MasteryLevel;
-    /** Number of times this line has been rehearsed */
-    rehearsalCount?: number;
 };
 
 // ============================================================================
@@ -82,9 +78,34 @@ export type Line = {
 // ============================================================================
 
 /**
- * User's mastery level for a line
+ * User practice progress for a specific line
  */
-export type MasteryLevel = "low" | "medium" | "high";
+export type UserLineProgress = {
+    id: string;
+    userId: string;
+    lineId: string;
+    characterId: string;
+    playbookId: string;
+    rehearsalCount: number;
+    hintCount: number;
+    progressPercent: number;
+    firstPracticedAt: Date;
+    lastPracticedAt: Date;
+};
+
+/**
+ * User practice progress for a character
+ */
+export type UserCharacterProgress = {
+    id: string;
+    userId: string;
+    characterId: string;
+    playbookId: string;
+    totalLines: number;
+    masteredLines: number;
+    firstPracticedAt: Date;
+    lastPracticedAt: Date;
+};
 
 /**
  * Practice session configuration
@@ -106,7 +127,6 @@ export type CharacterPracticeStats = {
     totalLines: number;
     rehearsedLines: number;
     completionRate: number;
-    averageMasteryLevel: number;
     lastPracticed?: Date;
 };
 
@@ -132,7 +152,6 @@ export type PracticeViewMode = "line-by-line" | "book";
  */
 export type LineFilter = {
     characterIds?: string[];
-    masteryLevels?: MasteryLevel[];
     includeStageDirections?: boolean;
     minRehearsalCount?: number;
     maxRehearsalCount?: number;
