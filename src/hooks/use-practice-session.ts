@@ -51,7 +51,8 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
             if (actFirstIndex !== null) return actFirstIndex;
             return 0;
         }
-        if (characterId) {
+        // Only access sessionStorage on client-side
+        if (typeof window !== 'undefined' && characterId) {
             const stored = getLastLineIndex(play.id, characterId);
             if (stored !== null && stored >= 0 && stored < allLines.length) {
                 return stored;
@@ -63,6 +64,15 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
     const [currentLineIndex, setCurrentLineIndex] = useState(initialIndex);
     const [isPaused, setIsPaused] = useState(true);
     const [sessionStats, setSessionStats] = useState(() => {
+        // Only load from storage on client-side
+        if (typeof window === 'undefined') {
+            return {
+                linesRehearsed: 0,
+                correctLines: 0,
+                hintsUsed: 0,
+                totalSessions: 1,
+            };
+        }
         // Load existing stats or start fresh
         if (characterId) {
             const stored = getSessionStats(play.id, characterId);
@@ -98,8 +108,35 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
     // We intentionally avoid a follow-up effect to reset currentLineIndex when startId changes.
     // In normal navigation, the hook is re-mounted with a new initialIndex.
 
-    // Simulate "Reading" other lines
-    // Removed automatic progression: user advances manually.
+    // Auto-advance for non-user lines when not paused
+    useEffect(() => {
+        if (isPaused) {
+            return;
+        }
+
+        const currentLine = allLines[currentLineIndex];
+        const isMyLine = currentLine?.characterId === characterId;
+
+        if (isMyLine) {
+            // console.log('[Auto-advance] IS MY LINE - waiting for manual advance');
+            // return; // Don't auto-advance on user's lines
+        }
+
+        // console.log('[Auto-advance] NOT MY LINE - setting 2s timer');
+        const timer = setTimeout(() => {
+            setCurrentLineIndex(prev => {
+                const next = Math.min(allLines.length - 1, prev + 1);
+                if (characterId) {
+                    setLastLineIndex(play.id, characterId, next);
+                }
+                return next;
+            });
+        }, 2000); // 2 seconds per line
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [currentLineIndex, isPaused, allLines, characterId, play.id]);
 
     const persistLineIndex = (index: number) => {
         if (characterId) {
@@ -180,7 +217,10 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
         persistLineIndex(0);
     };
 
-    const togglePause = () => setIsPaused(!isPaused);
+    const togglePause = () => {
+        console.log('[togglePause] Current isPaused:', isPaused, 'Setting to:', !isPaused);
+        setIsPaused(!isPaused);
+    };
 
     return {
         allLines,
