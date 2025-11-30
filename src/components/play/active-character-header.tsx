@@ -18,12 +18,24 @@ export function ActiveCharacterHeader({
   onToggleSelection,
 }: ActiveCharacterHeaderProps) {
   return (
-    <div className="flex items-start justify-between">
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={onToggleSelection}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onToggleSelection();
+        }
+      }}
+      className="flex flex-col cursor-pointer rounded-lg p-2 -m-6 transition-colors hover:bg-secondary/30 outline-none focus:ring-2 focus:ring-primary"
+      aria-expanded={isSelectionOpen}
+    >
       <div className="flex gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-500/10">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-500/10 flex-shrink-0">
           <Star className="h-6 w-6 fill-yellow-500 text-yellow-500" />
         </div>
-        <div>
+        <div className="flex-1 min-w-0">
           <h3 className="text-lg font-semibold">
             Rehearsing as {character.name}
           </h3>
@@ -47,21 +59,15 @@ export function ActiveCharacterHeader({
           )}
         </div>
       </div>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={onToggleSelection}
-        className="text-muted-foreground hover:text-foreground"
-        aria-expanded={isSelectionOpen}
-      >
-        {isSelectionOpen ? "Hide" : "Change"}{" "}
+      <div className="mt-4 flex items-center justify-center gap-1 text-sm text-muted-foreground pt-3">
+        <span>{isSelectionOpen ? "Hide" : "Change"}</span>
         <ChevronDown
           className={cn(
-            "ml-2 h-4 w-4 transition-transform",
+            "h-4 w-4 transition-transform",
             isSelectionOpen && "rotate-180"
           )}
         />
-      </Button>
+      </div>
     </div>
   );
 }

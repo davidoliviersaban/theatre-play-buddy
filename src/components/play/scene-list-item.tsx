@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PlayCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProgressBar } from "./progress-bar";
+import { CompletionIcon } from "@/components/ui/completion-icon";
 import type { Scene, Character } from "@/lib/mock-data";
 
 interface SceneListItemProps {
@@ -24,6 +25,12 @@ export function SceneListItem({
   return (
     <div className="flex items-center justify-between rounded-md border bg-secondary/20 p-3">
       <div className="flex items-center gap-3">
+        {activeCharacter && (
+          <CompletionIcon
+            progress={sceneProgress}
+            hasContent={hasCharacterLines}
+          />
+        )}
         <div>
           <span className="font-medium">{scene.title}</span>
           <span className="ml-2 text-xs text-muted-foreground">

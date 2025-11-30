@@ -1,5 +1,5 @@
-import { Check } from "lucide-react";
 import { ProgressBar } from "@/components/play/progress-bar";
+import { CompletionIcon } from "@/components/ui/completion-icon";
 import { cn } from "@/lib/utils";
 import React from "react";
 
@@ -22,8 +22,6 @@ export function StructureProgressHeader({
   showSeparator = true,
   className,
 }: StructureProgressHeaderProps) {
-  const mastered = typeof progress === "number" && progress === 100;
-
   return (
     <div
       className={cn(
@@ -32,22 +30,11 @@ export function StructureProgressHeader({
         className
       )}
     >
-      <span
-        className={cn(
-          "flex h-5 w-5 items-center justify-center rounded-full shadow ring-2",
-          mastered
-            ? "bg-green-500 text-white ring-green-600"
-            : "bg-muted text-muted-foreground ring-border"
-        )}
-        title={
-          mastered
-            ? `${type === "act" ? "Act" : "Scene"} mastered`
-            : `${type === "act" ? "Act" : "Scene"} in progress`
-        }
-        aria-label={mastered ? `${type} mastered` : `${type} in progress`}
-      >
-        {mastered && <Check className="h-3 w-3" />}
-      </span>
+      <CompletionIcon
+        progress={progress ?? 0}
+        hasContent={true}
+        className="h-5 w-5"
+      />
       <span
         className={cn(
           "inline-flex items-center rounded bg-muted px-2 py-1 font-medium",

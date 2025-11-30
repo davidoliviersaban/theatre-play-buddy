@@ -18,7 +18,7 @@ export function CharacterSelectionPanel({
   onSelect,
 }: CharacterSelectionPanelProps) {
   return (
-    <div className="mt-6 border-t pt-6">
+    <div className="mt-6 pt-6">
       <h4 className="mb-4 text-base font-semibold">Character Selection</h4>
       <div className="space-y-3">
         {characters.map((char) => {

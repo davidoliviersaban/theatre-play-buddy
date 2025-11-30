@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SceneListItem } from "./scene-list-item";
 import { ProgressBar, calculateProgress } from "./progress-bar";
+import { CompletionIcon } from "@/components/ui/completion-icon";
 import type { Act, Character } from "@/lib/mock-data";
 
 interface ActCardProps {
@@ -25,6 +26,12 @@ export function ActCard({ act, playId, activeCharacter }: ActCardProps) {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div className="flex items-center gap-3">
+          {activeCharacter && (
+            <CompletionIcon
+              progress={actProgress}
+              hasContent={actLines.length > 0}
+            />
+          )}
           <CardTitle className="text-lg">{act.title}</CardTitle>
           {activeCharacter && actLines.length > 0 && (
             <ProgressBar progress={actProgress} size="md" />

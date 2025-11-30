@@ -35,6 +35,9 @@ export function LineCard({
   sceneProgress,
   lineRef,
 }: LineCardProps) {
+  // Calculate top margin based on headers
+  const headerHeight = isActStart ? 60 : isSceneStart ? 36 : 0;
+
   return (
     <div
       ref={lineRef}
@@ -43,11 +46,17 @@ export function LineCard({
         isCurrent ? "scale-105 ring-2 ring-primary" : "opacity-50 blur-[1px]",
         isMe ? "bg-secondary/10" : "bg-transparent"
       )}
+      style={{
+        marginTop: headerHeight > 0 ? `${headerHeight}px` : undefined,
+      }}
     >
       {/* Scene/Act breaks */}
       {(isActStart || isSceneStart) && (
-        <div className="absolute -top-10 left-0 right-0 mb-4">
-          <div className="mb-1 flex flex-col gap-1 text-[11px] text-muted-foreground">
+        <div
+          className="absolute left-0 right-0"
+          style={{ top: `-${headerHeight}px` }}
+        >
+          <div className="flex flex-col gap-1 text-[11px] text-muted-foreground">
             {isActStart && (
               <StructureProgressHeader
                 title={line.__actTitle}

@@ -38,6 +38,41 @@ export default function PracticePage({
     mode === "book" ? "book" : "line"
   );
 
+  // Auto-hide header/footer after inactivity
+  const [uiHidden, setUiHidden] = React.useState(false);
+  const inactivityRef = React.useRef<number | null>(null);
+
+  const resetInactivityTimer = React.useCallback(() => {
+    setUiHidden(false);
+    if (inactivityRef.current) {
+      window.clearTimeout(inactivityRef.current);
+    }
+    inactivityRef.current = window.setTimeout(() => {
+      setUiHidden(true);
+    }, 3000); // 3s of no interaction -> hide chrome
+  }, []);
+
+  React.useEffect(() => {
+    // Consider a range of interactions to reset timer
+    const events = [
+      "mousemove",
+      "mousedown",
+      "keypress",
+      "touchstart",
+      "scroll",
+    ];
+    events.forEach((ev) =>
+      window.addEventListener(ev, resetInactivityTimer, { passive: true })
+    );
+    resetInactivityTimer();
+    return () => {
+      events.forEach((ev) =>
+        window.removeEventListener(ev, resetInactivityTimer)
+      );
+      if (inactivityRef.current) window.clearTimeout(inactivityRef.current);
+    };
+  }, [resetInactivityTimer]);
+
   // Ensure centering scroll happens when switching back to line view
   React.useEffect(() => {
     if (viewMode === "line" && lineRefs.current[currentLineIndex]) {
@@ -57,12 +92,20 @@ export default function PracticePage({
         character={character}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
-        isPaused={isPaused}
-        onTogglePause={togglePause}
         sessionStats={sessionStats}
+        isHidden={uiHidden}
       />
 
-      <div className="flex-1 overflow-y-auto p-4 sm:p-8">
+      <div
+        className="flex-1 overflow-y-auto p-4 sm:p-8"
+        style={{
+          paddingTop: currentLineIndex === 0 ? "120px" : "16px",
+          paddingBottom:
+            currentLineIndex === allLines.length - 1 ? "200px" : "16px",
+        }}
+        onClick={resetInactivityTimer}
+        onTouchStart={resetInactivityTimer}
+      >
         {viewMode === "line" ? (
           <LineByLineView
             lines={allLines}
@@ -89,6 +132,11 @@ export default function PracticePage({
         onNext={goToNext}
         onSkipScene={skipToNextScene}
         onSkipPreviousScene={skipToPreviousScene}
+        isHidden={uiHidden}
+        onUserInteract={resetInactivityTimer}
+        playId={play.id}
+        isPaused={isPaused}
+        onTogglePause={togglePause}
       />
     </div>
   );
