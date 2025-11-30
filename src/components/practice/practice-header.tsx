@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { ArrowLeft, Play, Pause, CheckCircle, BarChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Play as PlayType, Character } from "@/lib/mock-data";
+import type { Playbook, Character } from "@/lib/mock-data";
 
 interface PracticeHeaderProps {
-  play: PlayType;
+  play: Playbook;
   character: Character;
   viewMode: "line" | "book";
   onViewModeChange: (mode: "line" | "book") => void;

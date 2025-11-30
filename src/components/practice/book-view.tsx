@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import type { Line, Play } from "@/lib/mock-data";
+import type { Line, Playbook } from "@/lib/mock-data";
 import { calculateProgress } from "@/components/play/progress-bar";
 import React from "react";
 import { StructureProgressHeader } from "@/components/practice/structure-header";
@@ -52,7 +52,7 @@ function groupLinesByCharacterWithIndices(
 }
 
 interface BookViewProps {
-  play: Play;
+  play: Playbook;
   characterId: string;
   lines: LineWithMetadata[]; // flattened lines with metadata
   currentLineIndex: number;
