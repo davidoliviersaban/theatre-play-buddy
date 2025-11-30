@@ -250,8 +250,31 @@ export const MOCK_PLAYS: Playbook[] = [
         year: 1897,
         genre: "Romance",
         description: "A cadet in the French Army, a braggart and fearsome sword-fighter, but with a grotesquely large nose.",
-        characters: [],
-        acts: [],
+        // Marked as fully completed for all characters in fake data
+        characters: [
+            { id: "cy1", name: "Cyrano", description: "Poet and swordsman", completionRate: 100, lastSelected: true },
+            { id: "cy2", name: "Roxane", description: "Cousin of Cyrano", completionRate: 100 },
+            { id: "cy3", name: "Christian", description: "A handsome cadet", completionRate: 100 },
+            { id: "cy4", name: "Comte de Guiche", description: "A nobleman", completionRate: 100 },
+        ],
+        acts: [
+            {
+                id: "cy-a1",
+                title: "Acte unique (démo)",
+                scenes: [
+                    {
+                        id: "cy-s1",
+                        title: "Scène 1: Une place à Paris",
+                        lines: [
+                            { id: "cy-l1", characterId: "cy1", text: "Moi, c'est mon panache que je défends.", type: "dialogue", masteryLevel: "high", rehearsalCount: 10 },
+                            { id: "cy-l2", characterId: "cy2", text: "Je n'aime que l'esprit, noble et véritable.", type: "dialogue", masteryLevel: "high", rehearsalCount: 10 },
+                            { id: "cy-l3", characterId: "cy3", text: "Je voudrais des mots pour mériter son cœur.", type: "dialogue", masteryLevel: "high", rehearsalCount: 10 },
+                            { id: "cy-l4", characterId: "cy4", text: "La stratégie commande, l'amour attendra.", type: "dialogue", masteryLevel: "high", rehearsalCount: 10 },
+                        ],
+                    },
+                ],
+            },
+        ],
     },
     {
         id: "4",

@@ -21,7 +21,13 @@ export function ActiveCharacterHeader({
   onToggleSelection,
 }: ActiveCharacterHeaderProps) {
   const allLines = play.acts.flatMap((a) => a.scenes.flatMap((s) => s.lines));
-  const progress = calculateProgress(allLines, play.id, character.id);
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+  const progress = mounted
+    ? calculateProgress(allLines, play.id, character.id)
+    : 0;
   return (
     <div
       role="button"
@@ -43,16 +49,18 @@ export function ActiveCharacterHeader({
         <div className="flex-1 min-w-0">
           <h3 className="text-lg font-semibold flex items-center gap-2">
             Rehearsing as {character.name}
-            <span className="inline-flex items-center gap-1">
-              <CompletionIcon
-                progress={progress}
-                hasContent={true}
-                className="h-4 w-4"
-              />
-              <span className="text-xs font-medium text-muted-foreground">
-                {progress}%
+            {mounted && (
+              <span className="inline-flex items-center gap-1">
+                <CompletionIcon
+                  progress={progress}
+                  hasContent={true}
+                  className="h-4 w-4"
+                />
+                <span className="text-xs font-medium text-muted-foreground">
+                  {progress}%
+                </span>
               </span>
-            </span>
+            )}
           </h3>
           <p className="text-sm text-muted-foreground">
             {character.description}
