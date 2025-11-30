@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎭 Theatre Play Buddy
 
-## Getting Started
+A Next.js web application designed to help actors rehearse and memorize their lines through an interactive practice mode.
 
-First, run the development server:
+## ✨ Features
+
+- **📖 Play Import & Management** - Import and store theatre plays in a structured format
+- **🎯 Character Selection** - Choose your character and focus on your lines
+- **📝 Practice Mode** - Guided rehearsal experience that:
+  - Displays other characters' lines and stage directions
+  - Pauses at your character's lines for practice
+  - Tracks progress as you mark lines as memorized
+- **📊 Progress Tracking** - Monitor your memorization progress per scene and character
+- **🔄 Resume Practice** - Continue from where you left off in any scene
+- **🌍 French Language Support** - Initial support for French scripts with UTF-8 characters
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 20.x or higher
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/theatre-play-buddy.git
+cd theatre-play-buddy
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
 
-## Learn More
+## 🏗️ Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Framework**: [Next.js 16](https://nextjs.org/) with React 19
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4
+- **UI Components**: Radix UI primitives
+- **Icons**: Lucide React
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📁 Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/              # Next.js app router pages
+│   ├── import/       # Play import functionality
+│   ├── play/         # Play viewing and reading
+│   └── practice/     # Practice mode and sessions
+├── components/       # React components
+│   ├── play/         # Play-related components
+│   ├── practice/     # Practice mode components
+│   └── ui/           # Reusable UI components
+├── hooks/            # Custom React hooks
+└── lib/              # Utilities and data management
+```
 
-## Deploy on Vercel
+## 🎯 Roadmap
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [x] Basic play import and storage
+- [x] Character selection
+- [x] Practice mode UI (UI-only, no audio)
+- [x] Scene-level progress tracking
+- [ ] Audio-based practice with speech recognition
+- [ ] Multi-language support beyond French
+- [ ] Export/share progress reports
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📞 Support
+
+For questions or issues, please open an issue on GitHub.
