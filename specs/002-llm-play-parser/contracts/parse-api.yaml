@@ -1,0 +1,353 @@
+openapi: 3.0.3
+info:
+  title: Theatre Play Buddy - Parse API
+  description: Server-Sent Events API for streaming LLM play parsing progress
+  version: 1.0.0
+  contact:
+    name: Theatre Play Buddy
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+paths:
+  /api/import/parse:
+    post:
+      summary: Parse uploaded play file with streaming progress
+      description: |
+        Initiate LLM-powered parsing of an uploaded play file.
+        Returns a Server-Sent Events (SSE) stream with real-time progress updates.
+        
+        Event stream continues until parsing completes, fails, or client disconnects.
+        
+        **Event Types**:
+        - `progress`: Incremental parsing updates (characters found, acts extracted, etc.)
+        - `character_found`: New character discovered
+        - `act_complete`: Act parsing finished
+        - `scene_complete`: Scene parsing finished
+        - `unsupported_speaker`: Detected crowd/unknown speaker not currently supported
+        - `complete`: Entire parsing process successful
+        - `error`: Parsing failed
+        
+        **Client Implementation**:
+        ```javascript
+        const eventSource = new EventSource('/api/import/parse', {
+          method: 'POST',
+          body: JSON.stringify({ uploadId, llmProvider })
+        });
+        
+        eventSource.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          console.log(data.event, data);
+        };
+        ```
+      operationId: parsePlayFile
+      tags:
+        - Parse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParseRequest'
+            example:
+              uploadId: "550e8400-e29b-41d4-a716-446655440000"
+              llmProvider: "anthropic"
+      responses:
+        '200':
+          description: SSE stream of parsing progress
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: |
+                  Server-Sent Events stream. Each event is formatted as:
+                  ```
+                  data: {"event":"progress","percent":25,"message":"Extracted 5 characters"}\n\n
+                  ```
+              examples:
+                progressEvent:
+                  value: |
+                    data: {"event":"progress","percent":10,"message":"Extracting text from PDF..."}
+                    
+                    data: {"event":"progress","percent":25,"message":"Identified 8 characters"}
+                    
+                    data: {"event":"character_found","character":{"id":"uuid-1","name":"Hamlet"}}
+                    
+                    data: {"event":"progress","percent":50,"message":"Parsing Act 1 of 5"}
+                    
+                    data: {"event":"act_complete","act":{"title":"Act I","sceneCount":5}}
+                    
+                    data: {"event":"progress","percent":100,"message":"Validation complete"}
+                    
+                    data: {"event":"complete","playbookId":"uuid-playbook","title":"Hamlet","totalLines":3421}
+                    
+                        data: {"event":"unsupported_speaker","kind":"crowd","sample":"[They all shout in unison]"}
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalidUploadId:
+                  value:
+                    error: "Invalid upload ID"
+                    message: "Upload not found or expired"
+                    code: "INVALID_UPLOAD_ID"
+                invalidProvider:
+                  value:
+                    error: "Invalid LLM provider"
+                    message: "Provider must be 'openai' or 'anthropic'"
+                    code: "INVALID_PROVIDER"
+        '500':
+          description: Server error (sent as SSE error event)
+          content:
+            text/event-stream:
+              example: |
+                data: {"event":"error","error":"Parsing failed","message":"LLM returned invalid JSON","code":"PARSING_ERROR"}
+                
+
+components:
+  schemas:
+    ParseRequest:
+      type: object
+      required:
+        - uploadId
+      properties:
+        uploadId:
+          type: string
+          format: uuid
+          description: Upload ID from the upload endpoint
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        llmProvider:
+          type: string
+          enum:
+            - openai
+            - anthropic
+          default: anthropic
+          description: LLM provider to use for parsing
+          example: "anthropic"
+    
+    ProgressEvent:
+      type: object
+      required:
+        - event
+        - percent
+        - message
+      properties:
+        event:
+          type: string
+          enum: [progress]
+          description: Event type
+        percent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Parsing progress percentage
+          example: 45
+        message:
+          type: string
+          description: Human-readable progress message
+          example: "Parsing Act 2 of 5"
+        stage:
+          type: string
+          enum:
+            - extraction
+            - metadata
+            - structure
+            - lines
+            - validation
+          description: Current parsing stage
+          example: "structure"
+    
+    CharacterFoundEvent:
+      type: object
+      required:
+        - event
+        - character
+      properties:
+        event:
+          type: string
+          enum: [character_found]
+        character:
+          type: object
+          required:
+            - id
+            - name
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+              example: "Hamlet"
+            description:
+              type: string
+              example: "Prince of Denmark"
+    
+    ActCompleteEvent:
+      type: object
+      required:
+        - event
+        - act
+      properties:
+        event:
+          type: string
+          enum: [act_complete]
+        act:
+          type: object
+          required:
+            - title
+            - sceneCount
+          properties:
+            title:
+              type: string
+              example: "Act I"
+            sceneCount:
+              type: integer
+              example: 5
+            lineCount:
+              type: integer
+              example: 487
+    
+    SceneCompleteEvent:
+      type: object
+      required:
+        - event
+        - scene
+      properties:
+        event:
+          type: string
+          enum: [scene_complete]
+        scene:
+          type: object
+          required:
+            - title
+            - lineCount
+          properties:
+            title:
+              type: string
+              example: "Scene 1: Elsinore Castle"
+            lineCount:
+              type: integer
+              example: 142
+    
+    UnsupportedSpeakerEvent:
+      type: object
+      required:
+        - event
+        - kind
+        - sample
+      properties:
+        event:
+          type: string
+          enum: [unsupported_speaker]
+        kind:
+          type: string
+          enum: [crowd, unknown]
+          description: Type of unsupported speaker detected
+          example: crowd
+        sample:
+          type: string
+          description: Example line text where unsupported speaker was detected
+          example: "[Tous crient ensemble]"
+    
+    CompleteEvent:
+      type: object
+      required:
+        - event
+        - playbookId
+        - title
+        - totalLines
+      properties:
+        event:
+          type: string
+          enum: [complete]
+        playbookId:
+          type: string
+          format: uuid
+          description: ID of the persisted Playbook
+          example: "550e8400-e29b-41d4-a716-446655440099"
+        title:
+          type: string
+          description: Play title
+          example: "Hamlet"
+        author:
+          type: string
+          example: "William Shakespeare"
+        totalLines:
+          type: integer
+          description: Total number of lines parsed
+          example: 3421
+        characterCount:
+          type: integer
+          example: 24
+        actCount:
+          type: integer
+          example: 5
+        sceneCount:
+          type: integer
+          example: 20
+        validationWarnings:
+          type: array
+          items:
+            type: string
+          description: Non-critical validation warnings
+          example:
+            - "Act 3 numbering skips from 2 to 4"
+            - "45% of lines are stage directions (unusually high)"
+    
+    ErrorEvent:
+      type: object
+      required:
+        - event
+        - error
+        - message
+        - code
+      properties:
+        event:
+          type: string
+          enum: [error]
+        error:
+          type: string
+          description: Short error description
+          example: "Parsing failed"
+        message:
+          type: string
+          description: Detailed error message
+          example: "LLM returned invalid JSON. Please try again or use a different file format."
+        code:
+          type: string
+          enum:
+            - EXTRACTION_ERROR
+            - PARSING_ERROR
+            - VALIDATION_ERROR
+            - LLM_ERROR
+            - TIMEOUT_ERROR
+          example: "PARSING_ERROR"
+        details:
+          type: object
+          description: Additional error context (for debugging)
+          additionalProperties: true
+    
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+        - code
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+          enum:
+            - INVALID_UPLOAD_ID
+            - INVALID_PROVIDER
+            - MISSING_API_KEY
+
+tags:
+  - name: Parse
+    description: LLM parsing operations with streaming progress

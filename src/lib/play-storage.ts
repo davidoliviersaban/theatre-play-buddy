@@ -64,7 +64,10 @@ export function getDailyStatsForPlay(playId: string): Array<{
  * Uses sessionStorage for within-session persistence and falls back to query params.
  */
 
+import type { Playbook } from "./parse/schemas";
+
 const STORAGE_PREFIX = 'tpc:';
+const PLAYS_KEY = `${STORAGE_PREFIX}plays`;
 
 export const StorageKeys = {
   LAST_PLAY_ID: `${STORAGE_PREFIX}lastPlayId`,
@@ -336,4 +339,36 @@ export function clearAllData(): void {
     }
   }
   keys.forEach(key => sessionStorage.removeItem(key));
+}
+
+/**
+ * Get all imported plays from storage.
+ */
+export function getImportedPlays(): Playbook[] {
+  if (typeof window === 'undefined') return [];
+  const stored = sessionStorage.getItem(PLAYS_KEY);
+  if (!stored) return [];
+  try {
+    return JSON.parse(stored) as Playbook[];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Save an imported play to storage.
+ */
+export function saveImportedPlay(play: Playbook): void {
+  if (typeof window === 'undefined') return;
+  const existing = getImportedPlays();
+  const updated = [...existing.filter(p => p.id !== play.id), play];
+  sessionStorage.setItem(PLAYS_KEY, JSON.stringify(updated));
+}
+
+/**
+ * Get a specific play by ID.
+ */
+export function getPlayById(playId: string): Playbook | null {
+  const plays = getImportedPlays();
+  return plays.find(p => p.id === playId) || null;
 }

@@ -33,7 +33,10 @@ export type Scene = {
 
 export type Line = {
     id: string
+    // Single-speaker attribution
     characterId?: string // note: stage directions may not have a characterId
+    // Multi-speaker attribution (simultaneous speech)
+    characterIdArray?: string[]
     text: string
     type: "dialogue" | "stage_direction"
     masteryLevel?: "low" | "medium" | "high" // For practice mode

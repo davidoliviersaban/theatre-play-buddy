@@ -19,18 +19,15 @@ export function IconButton({
   // When asChild is true and children is provided, we need to clone the child
   // and inject the icon into it to maintain a single React element for Slot
   if (asChild && children) {
-    const child = React.Children.only(children);
+    const child = React.Children.only(children) as React.ReactElement<{
+      children?: React.ReactNode;
+    }>;
     const iconElement = <Icon className={`mr-2 ${ICON_SIZES[iconSize]}`} />;
 
     // Clone the child element and prepend the icon to its children
     return (
       <Button asChild {...props}>
-        {React.cloneElement(
-          child as React.ReactElement,
-          {},
-          iconElement,
-          (child as React.ReactElement).props.children
-        )}
+        {React.cloneElement(child, {}, iconElement, child.props.children)}
       </Button>
     );
   }

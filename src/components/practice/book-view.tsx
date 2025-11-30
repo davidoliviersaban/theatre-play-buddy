@@ -6,6 +6,7 @@ import { StructureProgressHeader } from "@/components/practice/structure-header"
 import { getLineMastery } from "@/lib/play-storage";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import { OPACITY_LEVELS } from "@/lib/ui-constants";
+import { getSpeakerIds } from "@/lib/parse/multi-character";
 
 // Extended line type used in practice session (flattened with metadata)
 type LineWithMetadata = Line & {
@@ -39,7 +40,10 @@ function groupLinesByCharacterWithIndices(
     }
     const globalIndex = globalLines.indexOf(line);
     const last = groups[groups.length - 1];
-    if (last && last.characterId === line.characterId) {
+    const speakerIds = getSpeakerIds(line);
+    const currentCharId = speakerIds.join(",") || "__unknown__";
+
+    if (last && last.characterId === currentCharId) {
       last.text = `${last.text} ${line.text}`.trim();
       last.lineIndices.push(globalIndex);
       // update mastery: choose the lowest fidelity (low < medium < high)
@@ -53,7 +57,7 @@ function groupLinesByCharacterWithIndices(
       }
     } else {
       groups.push({
-        characterId: line.characterId || "__unknown__",
+        characterId: currentCharId,
         text: line.text,
         lineIndices: [globalIndex],
         masteryLevel: line.masteryLevel,
@@ -131,23 +135,37 @@ export function BookView({
                     className="mb-3"
                   />
                   {grouped.map((group, gi) => {
-                    const charName =
-                      play.characters.find((c) => c.id === group.characterId)
-                        ?.name || "Narration";
                     const isStage = group.characterId === "__stage__";
+                    const speakerIds = group.characterId
+                      .split(",")
+                      .filter(Boolean);
                     const isMeGroup =
-                      !isStage && group.characterId === characterId;
+                      !isStage && speakerIds.includes(characterId);
+                    const charName = isStage
+                      ? "Narration"
+                      : speakerIds.length > 1
+                      ? speakerIds
+                          .map(
+                            (id: string) =>
+                              play.characters.find((c) => c.id === id)?.name ||
+                              "Unknown"
+                          )
+                          .join(" & ")
+                      : play.characters.find((c) => c.id === speakerIds[0])
+                          ?.name || "Unknown";
                     const isCurrentGroup =
                       group.lineIndices.includes(currentLineIndex);
                     // Aggregate mastery across this group's lines (dialogue only)
                     let avgMasteryPct = 0;
                     if (!isStage) {
+                      const primaryCharId =
+                        speakerIds.length > 0 ? speakerIds[0] : "";
                       const lineMasteries = group.lineIndices
                         .map((li) => lines[li])
                         .filter((ln) => ln.type === "dialogue")
                         .map(
                           (ln) =>
-                            getLineMastery(play.id, group.characterId, ln.id)
+                            getLineMastery(play.id, primaryCharId, ln.id)
                               ?.masteryPercentage ?? 0
                         );
                       if (lineMasteries.length > 0) {

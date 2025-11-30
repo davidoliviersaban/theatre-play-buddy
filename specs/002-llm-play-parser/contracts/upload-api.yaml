@@ -1,0 +1,151 @@
+openapi: 3.0.3
+info:
+  title: Theatre Play Buddy - File Upload API
+  description: API for uploading play script files (PDF, DOCX, TXT) for LLM parsing
+  version: 1.0.0
+  contact:
+    name: Theatre Play Buddy
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+paths:
+  /api/import/upload:
+    post:
+      summary: Upload a play script file
+      description: |
+        Upload a play script in PDF, DOCX, or TXT format for parsing.
+        File is validated for type and size before being stored temporarily.
+        Returns an uploadId to use with the parse endpoint.
+      operationId: uploadPlayFile
+      tags:
+        - Upload
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Play script file (PDF, DOCX, or TXT)
+            encoding:
+              file:
+                contentType: application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document, text/plain
+      responses:
+        '200':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+              example:
+                uploadId: "550e8400-e29b-41d4-a716-446655440000"
+                filename: "hamlet.pdf"
+                mimeType: "application/pdf"
+                size: 2458624
+                pageCount: 142
+        '400':
+          description: Invalid request (wrong file type, too large, etc.)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalidFileType:
+                  value:
+                    error: "Invalid file type"
+                    message: "Only PDF, DOCX, and TXT files are supported"
+                    code: "INVALID_FILE_TYPE"
+                fileTooLarge:
+                  value:
+                    error: "File too large"
+                    message: "File size exceeds 5MB limit"
+                    code: "FILE_TOO_LARGE"
+                tooManyPages:
+                  value:
+                    error: "Too many pages"
+                    message: "File exceeds 500 page limit"
+                    code: "TOO_MANY_PAGES"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Upload failed"
+                message: "Failed to process uploaded file"
+                code: "UPLOAD_ERROR"
+
+components:
+  schemas:
+    UploadResponse:
+      type: object
+      required:
+        - uploadId
+        - filename
+        - mimeType
+        - size
+      properties:
+        uploadId:
+          type: string
+          format: uuid
+          description: Unique identifier for this upload (use with parse endpoint)
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        filename:
+          type: string
+          description: Original filename
+          example: "romeo_and_juliet.pdf"
+        mimeType:
+          type: string
+          enum:
+            - application/pdf
+            - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+            - text/plain
+          description: MIME type of the uploaded file
+          example: "application/pdf"
+        size:
+          type: integer
+          format: int64
+          description: File size in bytes
+          example: 2458624
+        pageCount:
+          type: integer
+          description: Number of pages (PDF/DOCX) or null for TXT
+          nullable: true
+          example: 142
+    
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+        - code
+      properties:
+        error:
+          type: string
+          description: Short error description
+          example: "Invalid file type"
+        message:
+          type: string
+          description: Detailed error message for user
+          example: "Only PDF, DOCX, and TXT files are supported. Please upload a valid file."
+        code:
+          type: string
+          description: Machine-readable error code
+          enum:
+            - INVALID_FILE_TYPE
+            - FILE_TOO_LARGE
+            - TOO_MANY_PAGES
+            - MISSING_FILE
+            - UPLOAD_ERROR
+          example: "INVALID_FILE_TYPE"
+
+tags:
+  - name: Upload
+    description: File upload operations

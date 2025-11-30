@@ -1,4 +1,7 @@
 import type { Playbook, Character, Line } from "@/lib/mock-data";
+
+// Augmented line type to support multi-speaker lines without breaking existing type imports
+type LineWithMulti = Line & { characterIdArray?: string[] };
 import { calculateProgress } from "@/components/play/progress-bar";
 import { getLineMastery } from "@/lib/play-storage";
 
@@ -16,9 +19,13 @@ export function getCharacterLines(
     lines: Line[],
     characterId: string
 ): Line[] {
-    return lines.filter(
-        (line) => line.characterId === characterId && line.type === "dialogue"
-    );
+    return (lines as LineWithMulti[]).filter((line) => {
+        if (line.type !== "dialogue") return false;
+        // Support single-speaker and multi-speaker (characterIdArray)
+        if (line.characterId === characterId) return true;
+        const multi = line.characterIdArray;
+        return Array.isArray(multi) ? multi.includes(characterId) : false;
+    });
 }
 
 /**
@@ -63,4 +70,13 @@ export function getLearnedLinesCount(
  */
 export function getTotalLinesCount(lines: Line[], characterId: string): number {
     return getCharacterLines(lines, characterId).length;
+}
+
+/**
+ * Helper: return list of speaker IDs for a line (handles single and multi)
+ */
+export function getSpeakerIds(line: LineWithMulti): string[] {
+    const multi = line.characterIdArray;
+    if (Array.isArray(multi)) return multi;
+    return line.characterId ? [line.characterId] : [];
 }
