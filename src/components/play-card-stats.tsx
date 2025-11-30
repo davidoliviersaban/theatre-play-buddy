@@ -4,14 +4,14 @@ import { useSyncExternalStore } from "react";
 import { BarChart3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ProgressBar, calculateProgress } from "@/components/play/progress-bar";
-import type { Play } from "@/lib/mock-data";
+import type { Playbook } from "@/lib/mock-data";
 import {
   getCurrentCharacterStats,
   getLastRehearsalDate,
 } from "@/lib/play-storage";
 
 interface PlayCardStatsProps {
-  play: Play;
+  play: Playbook;
 }
 
 // Subscribe to a dummy external store that indicates client-side mounting

@@ -6,7 +6,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { MOCK_PLAYS, type Play, type Character } from "@/lib/mock-data";
+import { MOCK_PLAYS, type Playbook, type Character } from "@/lib/mock-data";
 import { getCurrentPlayId, getCurrentCharacterId } from "@/lib/play-storage";
 
 interface UsePlayContextOptions {
@@ -16,7 +16,7 @@ interface UsePlayContextOptions {
 }
 
 interface PlayContextResult {
-    play: Play | null;
+    play: Playbook | null;
     character: Character | null;
     playId: string | null;
     characterId: string | null;
@@ -70,14 +70,14 @@ export function usePlayContext(options: UsePlayContextOptions = {}): PlayContext
 /**
  * Get all available plays.
  */
-export function useAllPlays(): Play[] {
+export function useAllPlays(): Playbook[] {
     return MOCK_PLAYS;
 }
 
 /**
- * Get a specific play by ID.
+ * Get a play by ID.
  */
-export function usePlay(playId: string | null | undefined): Play | null {
+export function usePlay(playId: string | null | undefined): Playbook | null {
     return useMemo(() => {
         if (!playId) return null;
         return MOCK_PLAYS.find(p => p.id === playId) || null;

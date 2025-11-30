@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import type { Play, Line } from "@/lib/mock-data";
+import type { Playbook, Line } from "@/lib/mock-data";
 import { getLastLineIndex, setLastLineIndex, setSessionStats as persistSessionStats, getSessionStats } from "@/lib/play-storage";
 
 type LineWithMetadata = Line & {
@@ -9,7 +9,7 @@ type LineWithMetadata = Line & {
     __sceneTitle: string;
 };
 
-export function usePracticeSession(play: Play, characterId: string, startId?: string) {
+export function usePracticeSession(play: Playbook, characterId: string, startId?: string) {
     // Flatten lines with act/scene metadata
     const allLines = useMemo<LineWithMetadata[]>(() => {
         return play.acts.flatMap((act) =>

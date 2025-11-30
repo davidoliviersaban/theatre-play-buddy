@@ -1,6 +1,6 @@
 import { Mic, PlayCircle, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Line, Play } from "@/lib/mock-data";
+import type { Line, Playbook } from "@/lib/mock-data";
 import { calculateProgress } from "@/components/play/progress-bar";
 import { StructureProgressHeader } from "@/components/practice/structure-header";
 
@@ -126,7 +126,7 @@ interface LineByLineViewProps {
   lines: LineWithMetadata[];
   currentLineIndex: number;
   characterId: string;
-  play: Play;
+  play: Playbook;
   lineRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
 }
 

@@ -1,10 +1,10 @@
 "use client";
 
 import * as React from "react";
-import type { Play } from "@/lib/mock-data";
+import type { Playbook } from "@/lib/mock-data";
 import { getCurrentCharacterId, setCurrentCharacterId } from "@/lib/play-storage";
 
-export function useCharacterSelection(play: Play) {
+export function useCharacterSelection(play: Playbook) {
     // Initialize from sessionStorage first, fallback to default character
     const [selectedCharacterId, setSelectedCharacterId] = React.useState<
         string | undefined

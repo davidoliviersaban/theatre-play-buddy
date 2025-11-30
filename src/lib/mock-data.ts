@@ -1,4 +1,4 @@
-export type Play = {
+export type Playbook = {
     id: string
     title: string
     author: string
@@ -40,7 +40,7 @@ export type Line = {
     rehearsalCount?: number
 }
 
-export const MOCK_PLAYS: Play[] = [
+export const MOCK_PLAYS: Playbook[] = [
     {
         id: "1",
         title: "Romeo and Juliet",
