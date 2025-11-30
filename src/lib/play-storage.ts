@@ -1,3 +1,64 @@
+// Utility to get daily stats for a play
+export function getDailyStatsForPlay(playId: string): Array<{
+  date: string;
+  linesRehearsed: number;
+  correctLines: number;
+  accuracy: number;
+  hintsUsed: number;
+  totalSessions: number;
+}> {
+  if (typeof window === 'undefined') return [];
+  // We'll use ISO date strings as keys
+  const statsByDay: Record<string, {
+    linesRehearsed: number;
+    correctLines: number;
+    hintsUsed: number;
+    totalSessions: number;
+  }> = {};
+  for (let i = 0; i < sessionStorage.length; i++) {
+    const key = sessionStorage.key(i);
+    if (key?.startsWith(`${STORAGE_PREFIX}play:${playId}:char:`) && key.endsWith(':stats')) {
+      try {
+        const stored = sessionStorage.getItem(key);
+        if (stored) {
+          const stats = JSON.parse(stored) as SessionStats & { date?: string };
+          // If stats have a date, use it, else fallback to last rehearsal date
+          let dateStr = stats.date;
+          if (!dateStr) {
+            // Try to get last rehearsal date for this play
+            const dateObj = getLastRehearsalDate(playId);
+            dateStr = dateObj ? dateObj.toISOString().slice(0, 10) : undefined;
+          }
+          if (dateStr) {
+            if (!statsByDay[dateStr]) {
+              statsByDay[dateStr] = {
+                linesRehearsed: 0,
+                correctLines: 0,
+                hintsUsed: 0,
+                totalSessions: 0,
+              };
+            }
+            statsByDay[dateStr].linesRehearsed += stats.linesRehearsed || 0;
+            statsByDay[dateStr].correctLines += stats.correctLines || 0;
+            statsByDay[dateStr].hintsUsed += stats.hintsUsed || 0;
+            statsByDay[dateStr].totalSessions += stats.totalSessions || 0;
+          }
+        }
+      } catch {
+        // Skip invalid entries
+      }
+    }
+  }
+  // Format for table
+  return Object.entries(statsByDay).map(([date, s]) => ({
+    date,
+    linesRehearsed: s.linesRehearsed,
+    correctLines: s.correctLines,
+    accuracy: s.linesRehearsed > 0 ? Math.round((s.correctLines / s.linesRehearsed) * 100) : 0,
+    hintsUsed: s.hintsUsed,
+    totalSessions: s.totalSessions,
+  })).sort((a, b) => b.date.localeCompare(a.date));
+}
 /**
  * Centralized storage utilities for persisting play and character state.
  * Uses sessionStorage for within-session persistence and falls back to query params.
@@ -152,10 +213,10 @@ export function getPlayAggregatedStats(playId: string): {
   activeCharacterName: string | null;
 } | null {
   if (typeof window === 'undefined') return null;
-  
+
   let totalLinesRehearsed = 0;
   let charactersWithActivity = 0;
-  
+
   // Iterate through sessionStorage to find all character stats for this play
   for (let i = 0; i < sessionStorage.length; i++) {
     const key = sessionStorage.key(i);
@@ -172,17 +233,17 @@ export function getPlayAggregatedStats(playId: string): {
       }
     }
   }
-  
+
   // Get currently selected character name
   const currentCharacterId = getCurrentCharacterId(playId);
   let activeCharacterName: string | null = null;
-  
+
   if (currentCharacterId && typeof window !== 'undefined') {
     // We need to pass the full play object to get character name
     // For now, return the character ID and let the component resolve the name
     activeCharacterName = currentCharacterId;
   }
-  
+
   return {
     totalCharacters: charactersWithActivity,
     totalLinesRehearsed,
@@ -199,12 +260,12 @@ export function getCurrentCharacterStats(playId: string): {
   stats: SessionStats | null;
 } {
   if (typeof window === 'undefined') return { characterId: null, stats: null };
-  
+
   const characterId = getCurrentCharacterId(playId);
   if (!characterId) {
     return { characterId: null, stats: null };
   }
-  
+
   const stats = getSessionStats(playId, characterId);
   return { characterId, stats };
 }
