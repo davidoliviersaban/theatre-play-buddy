@@ -28,20 +28,27 @@ export function CharacterSelector({
     [onCharacterSelect]
   );
 
-  if (!activeCharacter) return null;
-
   return (
     <div className="mt-8 rounded-lg border bg-secondary/10 p-6">
-      <ActiveCharacterHeader
-        character={activeCharacter}
-        isSelectionOpen={isSelectionOpen}
-        onToggleSelection={() => setIsSelectionOpen(!isSelectionOpen)}
-      />
+      {activeCharacter ? (
+        <ActiveCharacterHeader
+          character={activeCharacter}
+          isSelectionOpen={isSelectionOpen}
+          onToggleSelection={() => setIsSelectionOpen(!isSelectionOpen)}
+        />
+      ) : (
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold">Choose a character</h3>
+          <p className="text-sm text-muted-foreground">
+            Select a character to begin rehearsing.
+          </p>
+        </div>
+      )}
 
       {isSelectionOpen && (
         <CharacterSelectionPanel
           characters={play.characters}
-          activeCharacterId={activeCharacter.id}
+          activeCharacterId={activeCharacter?.id}
           onSelect={handleSelect}
         />
       )}

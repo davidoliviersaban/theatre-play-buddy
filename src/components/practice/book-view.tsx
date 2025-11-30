@@ -25,6 +25,15 @@ function groupLinesByCharacterWithIndices(
 ): GroupedParagraph[] {
   const groups: GroupedParagraph[] = [];
   for (const line of lines) {
+    // Stage directions are kept as independent groups for distinct styling
+    if (line.type === "stage_direction") {
+      groups.push({
+        characterId: "__stage__",
+        text: line.text,
+        lineIndices: [globalLines.indexOf(line)],
+      });
+      continue;
+    }
     const globalIndex = globalLines.indexOf(line);
     const last = groups[groups.length - 1];
     if (last && last.characterId === line.characterId) {
@@ -116,8 +125,10 @@ export function BookView({
                   {grouped.map((group, gi) => {
                     const charName =
                       play.characters.find((c) => c.id === group.characterId)
-                        ?.name || "Unknown";
-                    const isMeGroup = group.characterId === characterId;
+                        ?.name || "Narration";
+                    const isStage = group.characterId === "__stage__";
+                    const isMeGroup =
+                      !isStage && group.characterId === characterId;
                     const isCurrentGroup =
                       group.lineIndices.includes(currentLineIndex);
                     const mastery = group.masteryLevel;
@@ -126,43 +137,52 @@ export function BookView({
                         key={`${scene.id}-g-${gi}`}
                         className={cn(
                           "relative leading-relaxed transition-colors",
-                          isMeGroup
+                          isStage
+                            ? "italic text-muted-foreground"
+                            : isMeGroup
                             ? "text-foreground"
                             : "text-muted-foreground",
                           isCurrentGroup &&
+                            !isStage &&
                             "rounded-md bg-primary/5 ring-2 ring-primary px-3 py-2"
                         )}
                         ref={isCurrentGroup ? currentGroupRef : undefined}
                       >
-                        <span className="mr-2 font-semibold flex items-center gap-2">
-                          {charName} —
-                          {isMeGroup && mastery && (
-                            <span
-                              className={cn(
-                                "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ring-1",
-                                mastery === "high" &&
-                                  "bg-green-500/10 text-green-600 ring-green-600/30",
-                                mastery === "medium" &&
-                                  "bg-yellow-500/10 text-yellow-600 ring-yellow-600/30",
-                                mastery === "low" &&
-                                  "bg-red-500/10 text-red-600 ring-red-600/30"
-                              )}
-                              title={`Mastery: ${mastery}`}
-                            >
-                              {mastery === "high"
-                                ? "Mastered"
-                                : mastery === "medium"
-                                ? "Learning"
-                                : "Practice"}
-                            </span>
-                          )}
-                          {isCurrentGroup && (
-                            <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
-                              Current
-                            </span>
-                          )}
-                        </span>
-                        {group.text}
+                        {!isStage && (
+                          <span className="mr-2 font-semibold flex items-center gap-2">
+                            {charName} —
+                            {isMeGroup && mastery && (
+                              <span
+                                className={cn(
+                                  "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ring-1",
+                                  mastery === "high" &&
+                                    "bg-green-500/10 text-green-600 ring-green-600/30",
+                                  mastery === "medium" &&
+                                    "bg-yellow-500/10 text-yellow-600 ring-yellow-600/30",
+                                  mastery === "low" &&
+                                    "bg-red-500/10 text-red-600 ring-red-600/30"
+                                )}
+                                title={`Mastery: ${mastery}`}
+                              >
+                                {mastery === "high"
+                                  ? "Mastered"
+                                  : mastery === "medium"
+                                  ? "Learning"
+                                  : "Practice"}
+                              </span>
+                            )}
+                            {isCurrentGroup && (
+                              <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                                Current
+                              </span>
+                            )}
+                          </span>
+                        )}
+                        {isStage ? (
+                          <span className="text-sm">{group.text}</span>
+                        ) : (
+                          group.text
+                        )}
                       </p>
                     );
                   })}

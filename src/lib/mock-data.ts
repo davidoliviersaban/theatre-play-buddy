@@ -33,7 +33,7 @@ export type Scene = {
 
 export type Line = {
     id: string
-    characterId: string
+    characterId?: string // note: stage directions may not have a characterId
     text: string
     type: "dialogue" | "stage_direction"
     masteryLevel?: "low" | "medium" | "high" // For practice mode
@@ -252,5 +252,50 @@ export const MOCK_PLAYS: Playbook[] = [
         description: "A cadet in the French Army, a braggart and fearsome sword-fighter, but with a grotesquely large nose.",
         characters: [],
         acts: [],
+    },
+    {
+        id: "4",
+        title: "Une entrée fracassante",
+        author: "Jean-Pierre Martinez",
+        year: 2025,
+        genre: "Comédie",
+        description: "Deux personnages entrent avec des déambulateurs pour réaliser une entrée fracassante, mais à leur manière...",
+        characters: [
+            { id: "f1", name: "Un", description: "Premier personnage" },
+            { id: "f2", name: "Deux", description: "Second personnage" },
+        ],
+        acts: [
+            {
+                id: "fa1",
+                title: "Acte 1",
+                scenes: [
+                    {
+                        id: "fs1-1",
+                        title: "Scène 1",
+                        lines: [
+                            { id: "fl1", text: "La scène est vide. Musique rythmée évoquant un film d'action.", type: "stage_direction" },
+                            { id: "fl2", text: "Un personnage entre en marchant lentement avec un déambulateur.", type: "stage_direction" },
+                            { id: "fl3", text: "Quand il a atteint le milieu de la scène, un autre personnage entre, également avec un déambulateur, et l’interpelle.", type: "stage_direction" },
+                            { id: "fl4", characterId: "f1", text: "Eh ! Attends-moi !", type: "dialogue", masteryLevel: "low", rehearsalCount: 0 },
+                            { id: "fl5", characterId: "f2", text: "Quoi ?", type: "dialogue", masteryLevel: "low", rehearsalCount: 0 },
+                            { id: "fl6", characterId: "f1", text: "Attends-moi, je te dis !", type: "dialogue", masteryLevel: "low", rehearsalCount: 0 },
+                            { id: "fl7", characterId: "f2", text: "Je ne fais que ça, de t’attendre.", type: "dialogue", masteryLevel: "low", rehearsalCount: 0 },
+                            { id: "fl8", characterId: "f1", text: "Si tu allais moins vite, aussi.", type: "dialogue", masteryLevel: "low", rehearsalCount: 0 },
+                            { id: "fl9", characterId: "f2", text: "Le metteur en scène nous a dit : une entrée fracassante.", type: "dialogue", masteryLevel: "low", rehearsalCount: 0 },
+                            { id: "fl10", characterId: "f1", text: "Bon...", type: "dialogue", masteryLevel: "low", rehearsalCount: 0 },
+                            { id: "fl11", characterId: "f1", text: "Il accélère soudain et passe devant l’autre, avant de reprendre son rythme de tortue.", type: "stage_direction" },
+                            { id: "fl12", characterId: "f2", text: "Qu’est-ce qui te prend ?", type: "dialogue", masteryLevel: "low", rehearsalCount: 0 },
+                            { id: "fl13", characterId: "f1", text: "Tu m’as dit de me dépêcher.", type: "dialogue", masteryLevel: "low", rehearsalCount: 0 },
+                            { id: "fl14", characterId: "f2", text: "Mais je ne t’ai pas dit de passer devant moi !", type: "dialogue", masteryLevel: "low", rehearsalCount: 0 },
+                            { id: "fl15", characterId: "f1", text: "Eh ben maintenant... rattrape-moi si tu peux. Une entrée fracassante...", type: "dialogue", masteryLevel: "low", rehearsalCount: 0 },
+                            { id: "fl16", characterId: "f1", text: "Il continue à marcher lentement jusqu’à sortir de l’autre côté de la scène.", type: "stage_direction" },
+                            { id: "fl17", characterId: "f2", text: "Attends-moi... Attends-moi, je te dis ! Il n’a pas dit une sortie fracassante...", type: "dialogue", masteryLevel: "low", rehearsalCount: 0 },
+                            { id: "fl18", characterId: "f2", text: "Il se hâte lentement et sort à son tour.", type: "stage_direction" },
+                            { id: "fl19", text: "Noir.", type: "stage_direction" },
+                        ],
+                    },
+                ],
+            },
+        ],
     },
 ]

@@ -109,12 +109,25 @@ export function LineCard({
         )}
       </div>
 
-      <p className={cn("text-lg leading-relaxed", isCurrent && "font-medium")}>
-        {line.text}
-      </p>
+      {line.type === "stage_direction" ? (
+        <p
+          className={cn(
+            "text-sm italic leading-relaxed text-muted-foreground",
+            isCurrent && "font-medium"
+          )}
+        >
+          {line.text}
+        </p>
+      ) : (
+        <p
+          className={cn("text-lg leading-relaxed", isCurrent && "font-medium")}
+        >
+          {line.text}
+        </p>
+      )}
 
-      {/* Status Indicator for Current Line */}
-      {isCurrent && (
+      {/* Status Indicator for Current Line (dialogue only) */}
+      {isCurrent && line.type === "dialogue" && (
         <div className="mt-4 flex items-center gap-2 text-sm font-medium text-primary animate-pulse">
           {isMe ? (
             <>
@@ -154,8 +167,10 @@ export function LineByLineView({
           const isCurrent = index === currentLineIndex;
           const isMe = line.characterId === characterId;
           const characterName =
-            play.characters.find((c) => c.id === line.characterId)?.name ||
-            "Unknown";
+            line.type === "stage_direction"
+              ? "Stage direction"
+              : play.characters.find((c) => c.id === line.characterId)?.name ||
+                "Unknown speaker";
 
           const isSceneStart =
             index === 0 || lines[index - 1].__sceneId !== line.__sceneId;
