@@ -5,6 +5,7 @@ import { ArrowLeft, CheckCircle, BarChart, List, BookOpen } from "lucide-react";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import { calculateProgress } from "@/components/play/progress-bar";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import type { Playbook, Character } from "@/lib/mock-data";
 
 interface PracticeHeaderProps {
@@ -48,11 +49,16 @@ export function PracticeHeader({
         <div className="flex items-center justify-between">
           {/* Left: Back + Title/Character */}
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="icon" className="h-10 w-10" asChild>
-              <Link href={`/play/${play.id}`}>
-                <ArrowLeft className="h-4 w-4" />
-              </Link>
-            </Button>
+            <IconButton
+              variant="outline"
+              size="icon"
+              icon={ArrowLeft}
+              iconSize="sm"
+              className="h-10 w-10"
+              asChild
+            >
+              <Link href={`/play/${play.id}`} aria-label="Back to play" />
+            </IconButton>
             <div>
               <h1 className="text-xl font-bold sm:text-2xl">{play.title}</h1>
               <p className="text-sm text-muted-foreground">

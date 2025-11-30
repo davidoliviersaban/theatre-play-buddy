@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Users, Clock, BookOpen, Play as PlayIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import type { Playbook } from "@/lib/mock-data";
 import { getCurrentCharacterId, getLastLineIndex } from "@/lib/play-storage";
 import { useSyncExternalStore } from "react";
@@ -32,11 +32,11 @@ export function PlayMetadata({ play, resumeOnly }: PlayMetadataProps) {
 
   if (resumeOnly) {
     return canResume ? (
-      <Button asChild size="lg">
+      <IconButton icon={PlayIcon} size="lg" asChild>
         <Link href={`/practice/${play.id}?character=${characterId}`}>
-          <PlayIcon className="mr-2 h-4 w-4" /> Resume Practice
+          Resume Practice
         </Link>
-      </Button>
+      </IconButton>
     ) : null;
   }
 

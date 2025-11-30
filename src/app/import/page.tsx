@@ -1,17 +1,16 @@
 import Link from "next/link";
 import { Upload, FileText, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function ImportPage() {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="mx-auto max-w-2xl">
-        <Button variant="ghost" asChild className="mb-8">
-          <Link href="/">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Library
-          </Link>
-        </Button>
+        <IconButton icon={ArrowLeft} variant="ghost" className="mb-8" asChild>
+          <Link href="/">Back to Library</Link>
+        </IconButton>
 
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">Import Play</h1>

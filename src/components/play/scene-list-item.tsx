@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { PlayCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { ProgressBar } from "./progress-bar";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import type { Scene, Character } from "@/lib/mock-data";
@@ -41,7 +41,13 @@ export function SceneListItem({
           <ProgressBar progress={sceneProgress} size="sm" />
         )}
       </div>
-      <Button size="sm" variant="ghost" asChild disabled={!activeCharacter}>
+      <IconButton
+        icon={PlayCircle}
+        size="sm"
+        variant="ghost"
+        disabled={!activeCharacter}
+        asChild
+      >
         <Link
           href={
             activeCharacter
@@ -49,9 +55,9 @@ export function SceneListItem({
               : "#"
           }
         >
-          <PlayCircle className="mr-2 h-4 w-4" /> Start
+          Start
         </Link>
-      </Button>
+      </IconButton>
     </div>
   );
 }

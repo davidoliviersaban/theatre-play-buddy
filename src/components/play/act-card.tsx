@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { PlayCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SceneListItem } from "./scene-list-item";
 import { ProgressBar, calculateProgress } from "./progress-bar";
@@ -41,7 +41,12 @@ export function ActCard({ act, playId, activeCharacter }: ActCardProps) {
             <ProgressBar progress={actProgress} size="md" />
           )}
         </div>
-        <Button size="sm" asChild disabled={!activeCharacter}>
+        <IconButton
+          icon={PlayCircle}
+          size="sm"
+          disabled={!activeCharacter}
+          asChild
+        >
           <Link
             href={
               activeCharacter
@@ -49,9 +54,9 @@ export function ActCard({ act, playId, activeCharacter }: ActCardProps) {
                 : "#"
             }
           >
-            <PlayCircle className="mr-2 h-4 w-4" /> Rehearse Act
+            Rehearse Act
           </Link>
-        </Button>
+        </IconButton>
       </CardHeader>
       <CardContent>
         <div className="grid gap-2">

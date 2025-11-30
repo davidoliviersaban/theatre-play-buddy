@@ -4,6 +4,7 @@ import type { Line } from "@/lib/mock-data";
 import { StructureProgressHeader } from "@/components/practice/structure-header";
 import { removeWords } from "@/lib/word-removal";
 import { Button } from "@/components/ui/button";
+import { getMasteryColor, ICON_SIZES } from "@/lib/ui-constants";
 
 export type LineWithMetadata = Line & {
   __actId: string;
@@ -85,7 +86,7 @@ export function LineCard({
             onClick={onPrevLine}
             className="rounded-full shadow-lg hover:shadow-xl transition-shadow"
           >
-            <ChevronUp className="h-6 w-6" />
+            <ChevronUp className={ICON_SIZES.md} />
           </Button>
         </div>
       )}
@@ -97,7 +98,7 @@ export function LineCard({
             onClick={onNextLine}
             className="rounded-full shadow-lg hover:shadow-xl transition-shadow"
           >
-            <ChevronDown className="h-6 w-6" />
+            <ChevronDown className={ICON_SIZES.md} />
           </Button>
         </div>
       )}
@@ -138,11 +139,7 @@ export function LineCard({
           <div
             className={cn(
               "absolute -left-3 top-6 h-6 w-1 rounded-full",
-              masteryPercentage >= 80
-                ? "bg-green-500"
-                : masteryPercentage >= 40
-                ? "bg-yellow-500"
-                : "bg-red-500"
+              getMasteryColor(masteryPercentage)
             )}
             title={`Mastery: ${masteryPercentage}%`}
           />
@@ -158,7 +155,12 @@ export function LineCard({
             )}
           >
             {isMe && (
-              <Star className="mr-1 h-3 w-3 fill-yellow-500 text-yellow-500" />
+              <Star
+                className={cn(
+                  "mr-1 fill-yellow-500 text-yellow-500",
+                  ICON_SIZES.xs
+                )}
+              />
             )}
             {characterName}
           </span>
@@ -205,7 +207,7 @@ export function LineCard({
                 onClick={onToggleHint}
                 className="flex-1"
               >
-                <Eye className="mr-2 h-4 w-4" />
+                <Eye className={cn("mr-2", ICON_SIZES.sm)} />
                 {showHint ? "Hide" : "Show"} Hint
               </Button>
               <Button
@@ -220,7 +222,7 @@ export function LineCard({
                 }}
                 className="flex-1"
               >
-                <CheckCircle className="mr-2 h-4 w-4" />
+                <CheckCircle className={cn("mr-2", ICON_SIZES.sm)} />
                 {effectiveStage < 5 ? "I Know It" : "Next Line"}
               </Button>
             </div>
@@ -246,7 +248,7 @@ export function LineCard({
                 onClick={onNextLine}
                 className="flex-1"
               >
-                <CheckCircle className="mr-2 h-4 w-4" />
+                <CheckCircle className={cn("mr-2", ICON_SIZES.sm)} />
                 Next Line
               </Button>
             </div>

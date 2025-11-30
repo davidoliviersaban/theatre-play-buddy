@@ -3,8 +3,9 @@ import * as React from "react";
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import { CheckCircle2, RotateCcw, Home } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { IconButton } from "@/components/ui/icon-button";
+import { Card, CardContent } from "@/components/ui/card";
+import { StatCard } from "@/components/ui/stat-card";
 import { MOCK_PLAYS } from "@/lib/mock-data";
 import { getCurrentCharacterStats } from "@/lib/play-storage";
 import { DailyStatsTable } from "@/components/play/DailyStatsTable";
@@ -51,45 +52,21 @@ export default function SessionSummaryPage({
         </div>
 
         <div className="grid gap-6 sm:grid-cols-3">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Lines Rehearsed
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{linesRehearsed}</div>
-              <p className="text-xs text-muted-foreground">
-                Sessions: {totalSessions}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Accuracy
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{accuracy}%</div>
-              <p className="text-xs text-muted-foreground">
-                Correct: {correctLines}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Hints Used
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{hintsUsed}</div>
-              <p className="text-xs text-muted-foreground">
-                Active Character: {currentStats.characterId ?? "None"}
-              </p>
-            </CardContent>
-          </Card>
+          <StatCard
+            title="Lines Rehearsed"
+            value={linesRehearsed}
+            subtitle={`Sessions: ${totalSessions}`}
+          />
+          <StatCard
+            title="Accuracy"
+            value={`${accuracy}%`}
+            subtitle={`Correct: ${correctLines}`}
+          />
+          <StatCard
+            title="Hints Used"
+            value={hintsUsed}
+            subtitle={`Active Character: ${currentStats.characterId ?? "None"}`}
+          />
         </div>
 
         <div className="mt-8">
@@ -102,16 +79,12 @@ export default function SessionSummaryPage({
         </div>
 
         <div className="mt-8 flex justify-center gap-4">
-          <Button variant="outline" asChild>
-            <Link href="/">
-              <Home className="mr-2 h-4 w-4" /> Back to Library
-            </Link>
-          </Button>
-          <Button asChild>
-            <Link href={`/practice/${resolvedParams.id}`}>
-              <RotateCcw className="mr-2 h-4 w-4" /> Practice Again
-            </Link>
-          </Button>
+          <IconButton variant="outline" icon={Home} asChild>
+            <Link href="/">Back to Library</Link>
+          </IconButton>
+          <IconButton icon={RotateCcw} asChild>
+            <Link href={`/practice/${resolvedParams.id}`}>Practice Again</Link>
+          </IconButton>
         </div>
       </div>
     </div>
