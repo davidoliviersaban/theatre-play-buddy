@@ -1,0 +1,67 @@
+"use client";
+
+import * as React from "react";
+import { Star, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import type { Character } from "@/lib/mock-data";
+
+interface ActiveCharacterHeaderProps {
+  character: Character;
+  isSelectionOpen: boolean;
+  onToggleSelection: () => void;
+}
+
+export function ActiveCharacterHeader({
+  character,
+  isSelectionOpen,
+  onToggleSelection,
+}: ActiveCharacterHeaderProps) {
+  return (
+    <div className="flex items-start justify-between">
+      <div className="flex gap-4">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-500/10">
+          <Star className="h-6 w-6 fill-yellow-500 text-yellow-500" />
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold">
+            Rehearsing as {character.name}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {character.description}
+          </p>
+          {character.completionRate !== undefined && (
+            <div className="mt-2 flex items-center gap-2">
+              <div className="h-2 w-24 rounded-full bg-secondary">
+                <div
+                  className="h-2 rounded-full bg-green-500"
+                  style={{
+                    width: `${character.completionRate}%`,
+                  }}
+                />
+              </div>
+              <span className="text-xs font-medium text-muted-foreground">
+                {character.completionRate}% Memorized
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={onToggleSelection}
+        className="text-muted-foreground hover:text-foreground"
+        aria-expanded={isSelectionOpen}
+      >
+        {isSelectionOpen ? "Hide" : "Change"}{" "}
+        <ChevronDown
+          className={cn(
+            "ml-2 h-4 w-4 transition-transform",
+            isSelectionOpen && "rotate-180"
+          )}
+        />
+      </Button>
+    </div>
+  );
+}
