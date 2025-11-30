@@ -13,10 +13,10 @@ export default function PracticePage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ character: string; mode?: string }>;
+  searchParams: Promise<{ character: string; mode?: string; start?: string }>;
 }) {
   const { id } = React.use(params);
-  const { character: characterParam, mode } = React.use(searchParams);
+  const { character: characterParam, mode, start } = React.use(searchParams);
   const play = MOCK_PLAYS.find((p) => p.id === id) || MOCK_PLAYS[0];
   const characterId = characterParam || play.characters[0]?.id;
   const character = play.characters.find((c) => c.id === characterId);
@@ -32,7 +32,7 @@ export default function PracticePage({
     skipToNextScene,
     skipToPreviousScene,
     togglePause,
-  } = usePracticeSession(play, characterId);
+  } = usePracticeSession(play, characterId, start);
 
   const [viewMode, setViewMode] = React.useState<"line" | "book">(
     mode === "book" ? "book" : "line"

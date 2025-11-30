@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import type { Play, Line } from "@/lib/mock-data";
+import { getLastLineIndex, setLastLineIndex } from "@/lib/play-storage";
 
 type LineWithMetadata = Line & {
     __actId: string;
@@ -8,7 +9,7 @@ type LineWithMetadata = Line & {
     __sceneTitle: string;
 };
 
-export function usePracticeSession(play: Play, characterId: string) {
+export function usePracticeSession(play: Play, characterId: string, startId?: string) {
     // Flatten lines with act/scene metadata
     const allLines = useMemo<LineWithMetadata[]>(() => {
         return play.acts.flatMap((act) =>
@@ -24,8 +25,43 @@ export function usePracticeSession(play: Play, characterId: string) {
         );
     }, [play]);
 
-    const [currentLineIndex, setCurrentLineIndex] = useState(0);
-    const [isPaused, setIsPaused] = useState(false);
+    // Determine initial index: priority order -> explicit startId (act/scene) > resume from sessionStorage > 0
+    const initialIndex = useMemo(() => {
+        if (startId) {
+            let sceneMatchIndex: number | null = null;
+            let actFirstIndex: number | null = null;
+            for (let i = 0; i < allLines.length; i++) {
+                const line = allLines[i];
+                if (line.__sceneId === startId) {
+                    if (sceneMatchIndex === null) sceneMatchIndex = i;
+                    if (line.characterId === characterId) {
+                        sceneMatchIndex = i;
+                        break;
+                    }
+                }
+                if (line.__actId === startId) {
+                    if (actFirstIndex === null) actFirstIndex = i;
+                    if (line.characterId === characterId && actFirstIndex !== null) {
+                        actFirstIndex = i;
+                        break;
+                    }
+                }
+            }
+            if (sceneMatchIndex !== null) return sceneMatchIndex;
+            if (actFirstIndex !== null) return actFirstIndex;
+            return 0;
+        }
+        if (characterId) {
+            const stored = getLastLineIndex(play.id, characterId);
+            if (stored !== null && stored >= 0 && stored < allLines.length) {
+                return stored;
+            }
+        }
+        return 0;
+    }, [allLines, startId, characterId, play.id]);
+
+    const [currentLineIndex, setCurrentLineIndex] = useState(initialIndex);
+    const [isPaused, setIsPaused] = useState(true);
     const [sessionStats, setSessionStats] = useState({
         linesRehearsed: 0,
         correctLines: 0,
@@ -34,6 +70,9 @@ export function usePracticeSession(play: Play, characterId: string) {
 
     const currentLine = allLines[currentLineIndex];
     const isMyLine = currentLine?.characterId === characterId;
+
+    // Track which line ids have been counted toward stats to avoid double counting on manual navigation
+    const countedLineIdsRef = useRef<Set<string>>(new Set());
 
     // Auto-scroll to current line
     const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -47,33 +86,40 @@ export function usePracticeSession(play: Play, characterId: string) {
         }
     }, [currentLineIndex]);
 
+    // If startId changes during the session (unlikely but defensive), reposition
+    // We intentionally avoid a follow-up effect to reset currentLineIndex when startId changes.
+    // In normal navigation, the hook is re-mounted with a new initialIndex.
+
     // Simulate "Reading" other lines
-    useEffect(() => {
-        if (!isPaused && !isMyLine && currentLineIndex < allLines.length) {
-            const timeout = setTimeout(() => {
-                setCurrentLineIndex((prev) => prev + 1);
-            }, 2000);
-            return () => clearTimeout(timeout);
-        }
-    }, [currentLineIndex, isPaused, isMyLine, allLines.length]);
+    // Removed automatic progression: user advances manually.
 
-    // Simulate completing my line
-    useEffect(() => {
-        if (!isPaused && isMyLine) {
-            const timeout = setTimeout(() => {
-                setSessionStats((prev) => ({
-                    ...prev,
-                    linesRehearsed: prev.linesRehearsed + 1,
-                    correctLines: prev.correctLines + 1,
-                }));
-                setCurrentLineIndex((prev) => prev + 1);
-            }, 3000);
-            return () => clearTimeout(timeout);
+    const persistLineIndex = (index: number) => {
+        if (characterId) {
+            setLastLineIndex(play.id, characterId, index);
         }
-    }, [currentLineIndex, isPaused, isMyLine]);
+    };
 
-    const goToPrevious = () => setCurrentLineIndex(Math.max(0, currentLineIndex - 1));
-    const goToNext = () => setCurrentLineIndex(Math.min(allLines.length - 1, currentLineIndex + 1));
+    const goToPrevious = () => setCurrentLineIndex(prev => {
+        const next = Math.max(0, prev - 1);
+        persistLineIndex(next);
+        return next;
+    });
+    const goToNext = () => {
+        // If this is the user's line and not yet counted, increment stats before moving
+        if (currentLine && isMyLine && !countedLineIdsRef.current.has(currentLine.id)) {
+            countedLineIdsRef.current.add(currentLine.id);
+            setSessionStats((prev) => ({
+                ...prev,
+                linesRehearsed: prev.linesRehearsed + 1,
+                correctLines: prev.correctLines + 1,
+            }));
+        }
+        setCurrentLineIndex(prev => {
+            const next = Math.min(allLines.length - 1, prev + 1);
+            persistLineIndex(next);
+            return next;
+        });
+    };
     const skipToNextScene = () => {
         const current = allLines[currentLineIndex];
         if (!current) return;
@@ -86,6 +132,7 @@ export function usePracticeSession(play: Play, characterId: string) {
             }
         }
         setCurrentLineIndex(nextIndex);
+        persistLineIndex(nextIndex);
     };
 
     const skipToPreviousScene = () => {
@@ -109,11 +156,13 @@ export function usePracticeSession(play: Play, characterId: string) {
                     }
                 }
                 setCurrentLineIndex(firstIndex);
+                persistLineIndex(firstIndex);
                 return;
             }
         }
         // If no previous scene found, go to very beginning
         setCurrentLineIndex(0);
+        persistLineIndex(0);
     };
 
     const togglePause = () => setIsPaused(!isPaused);
