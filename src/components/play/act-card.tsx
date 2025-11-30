@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SceneListItem } from "./scene-list-item";
 import { ProgressBar, calculateProgress } from "./progress-bar";
 import { CompletionIcon } from "@/components/ui/completion-icon";
-import type { Act, Character } from "@/lib/mock-data";
+import type { Act, Character } from "@/lib/types";
 
 interface ActCardProps {
   act: Act;

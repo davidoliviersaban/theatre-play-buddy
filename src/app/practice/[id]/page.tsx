@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { MOCK_PLAYS } from "@/lib/mock-data";
+import { fetchPlayById } from "@/lib/api/plays";
+import type { Playbook } from "@/lib/types";
 import { usePracticeSession } from "@/hooks/use-practice-session";
 import { PracticeHeader } from "@/components/practice/practice-header";
 import { LineByLineView } from "@/components/practice/line-by-line-view";
@@ -17,7 +18,55 @@ export default function PracticePage({
 }) {
   const { id } = React.use(params);
   const { character: characterParam, mode, start } = React.use(searchParams);
-  const play = MOCK_PLAYS.find((p) => p.id === id) || MOCK_PLAYS[0];
+  const [play, setPlay] = React.useState<Playbook | null>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    fetchPlayById(id)
+      .then(setPlay)
+      .catch((error) => {
+        console.error("Failed to fetch play:", error);
+      })
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!play) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Play not found
+      </div>
+    );
+  }
+
+  return (
+    <PracticePageContent
+      play={play}
+      characterParam={characterParam}
+      mode={mode}
+      start={start}
+    />
+  );
+}
+
+function PracticePageContent({
+  play,
+  characterParam,
+  mode,
+  start,
+}: {
+  play: Playbook;
+  characterParam: string;
+  mode?: string;
+  start?: string;
+}) {
   const characterId = characterParam || play.characters[0]?.id;
   const character = play.characters.find((c) => c.id === characterId);
 

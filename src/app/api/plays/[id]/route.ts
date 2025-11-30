@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPlayById, deletePlay } from "../../../../lib/db/plays-db";
+import { getPlayById, deletePlay, getPlayMetadataById } from "../../../../lib/db/plays-db";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,6 +13,8 @@ export async function GET(
 ) {
     try {
         const { id } = await params;
+        const includeMetadata = req.nextUrl.searchParams.get('meta') === 'true'
+            || req.nextUrl.searchParams.get('include') === 'metadata';
         const play = await getPlayById(id);
 
         if (!play) {
@@ -22,6 +24,12 @@ export async function GET(
             );
         }
 
+        if (includeMetadata) {
+            const metadata = await getPlayMetadataById(id);
+            return NextResponse.json({ play, metadata });
+        }
+
+        // Backward compatible: return raw play object
         return NextResponse.json(play);
     } catch (error) {
         console.error(`[API /plays/${(await params).id}] Error:`, error);

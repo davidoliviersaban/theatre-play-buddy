@@ -1,47 +1,4 @@
-export type Playbook = {
-    id: string
-    title: string
-    author: string
-    year: number
-    genre: string
-    description: string
-    coverImage?: string
-    characters: Character[]
-    acts: Act[]
-}
-
-export type Character = {
-    id: string
-    name: string
-    description: string
-    isFavorite?: boolean
-    lastSelected?: boolean
-    completionRate?: number
-}
-
-export type Act = {
-    id: string
-    title: string
-    scenes: Scene[]
-}
-
-export type Scene = {
-    id: string
-    title: string
-    lines: Line[]
-}
-
-export type Line = {
-    id: string
-    // Single-speaker attribution
-    characterId?: string // note: stage directions may not have a characterId
-    // Multi-speaker attribution (simultaneous speech)
-    characterIdArray?: string[]
-    text: string
-    type: "dialogue" | "stage_direction"
-    masteryLevel?: "low" | "medium" | "high" // For practice mode
-    rehearsalCount?: number
-}
+import type { Playbook } from './types';
 
 export const MOCK_PLAYS: Playbook[] = [
     {

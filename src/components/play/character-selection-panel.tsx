@@ -8,7 +8,7 @@ import { calculateProgress } from "@/components/play/progress-bar";
 import { cn } from "@/lib/utils";
 import { InlineStack } from "@/components/ui/inline-stack";
 import { OPACITY_LEVELS } from "@/lib/ui-constants";
-import type { Character, Playbook } from "@/lib/mock-data";
+import type { Character, Playbook } from "@/lib/types";
 import {
   getAllLines,
   getLearnedLinesCount,

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { OPACITY_LEVELS } from "@/lib/ui-constants";
 import { ProgressBar } from "./progress-bar";
 import { CompletionIcon } from "@/components/ui/completion-icon";
-import type { Scene, Character } from "@/lib/mock-data";
+import type { Scene, Character } from "@/lib/types";
 
 interface SceneListItemProps {
   scene: Scene;

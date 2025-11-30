@@ -65,7 +65,7 @@ export function ProgressBar({
   );
 }
 
-import type { Line } from "@/lib/mock-data";
+import type { Line } from "@/lib/types";
 import { getLineMastery } from "@/lib/play-storage";
 
 // Progress is merged with mastery: compute average mastery percentage across character's lines

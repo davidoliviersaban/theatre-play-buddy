@@ -1,4 +1,4 @@
-import type { Playbook } from "@/lib/mock-data";
+import type { Playbook } from "@/lib/types";
 import { calculateProgress } from "@/components/play/progress-bar";
 import {
   LineCard,

@@ -7,7 +7,7 @@ import { calculateProgress } from "@/components/play/progress-bar";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { InlineStack } from "@/components/ui/inline-stack";
-import type { Playbook, Character } from "@/lib/mock-data";
+import type { Playbook, Character } from "@/lib/types";
 
 interface PracticeHeaderProps {
   play: Playbook;

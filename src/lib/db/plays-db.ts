@@ -1,22 +1,13 @@
 import fs from 'fs/promises';
 import path from 'path';
 import type { Playbook } from '../parse/schemas';
+import type { PlayMetadata } from '../types';
+
+// Re-export PlayMetadata for convenience
+export type { PlayMetadata };
 
 const DB_DIR = path.join(process.cwd(), 'data', 'plays');
 const INDEX_FILE = path.join(DB_DIR, '_index.json');
-
-export interface PlayMetadata {
-    id: string;
-    title: string;
-    author: string;
-    genre: string;
-    year: number;
-    createdAt: string;
-    updatedAt: string;
-    characterCount: number;
-    actCount: number;
-    lineCount: number;
-}
 
 interface PlayIndex {
     plays: PlayMetadata[];
@@ -50,6 +41,14 @@ async function readIndex(): Promise<PlayIndex> {
         }
         throw error;
     }
+}
+
+/**
+ * Get metadata for a single play by ID from the index (does NOT read full play file)
+ */
+export async function getPlayMetadataById(playId: string): Promise<PlayMetadata | null> {
+    const index = await readIndex();
+    return index.plays.find(p => p.id === playId) ?? null;
 }
 
 /**
@@ -145,6 +144,37 @@ export async function getAllPlays(): Promise<PlayMetadata[]> {
     return index.plays.sort((a, b) =>
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
     );
+}
+
+/**
+ * Update play metadata in the index
+ * This updates only the metadata without touching the full play data
+ */
+export async function updatePlayMetadata(playId: string, updates: Partial<Omit<PlayMetadata, 'id' | 'createdAt'>>): Promise<PlayMetadata | null> {
+    try {
+        const index = await readIndex();
+        const playIndex = index.plays.findIndex(p => p.id === playId);
+
+        if (playIndex === -1) {
+            return null;
+        }
+
+        // Update the metadata
+        const updatedMetadata = {
+            ...index.plays[playIndex],
+            ...updates,
+            updatedAt: new Date().toISOString(),
+        };
+
+        index.plays[playIndex] = updatedMetadata;
+        await writeIndex(index);
+
+        console.log(`[DB] Updated metadata for play: ${playId}`);
+        return updatedMetadata;
+    } catch (error) {
+        console.error(`Failed to update metadata for play ${playId}:`, error);
+        throw error;
+    }
 }
 
 /**

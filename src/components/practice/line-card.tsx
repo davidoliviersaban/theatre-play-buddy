@@ -1,6 +1,6 @@
 import { Star, Eye, CheckCircle, ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Line } from "@/lib/mock-data";
+import type { Line } from "@/lib/types";
 import { StructureProgressHeader } from "@/components/practice/structure-header";
 import { removeWords } from "@/lib/word-removal";
 import { Button } from "@/components/ui/button";

@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Star, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Character, Playbook } from "@/lib/mock-data";
+import type { Character, Playbook } from "@/lib/types";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import { calculateProgress } from "@/components/play/progress-bar";
 import { InlineStack } from "@/components/ui/inline-stack";

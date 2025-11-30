@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import type { Line, Playbook } from "@/lib/mock-data";
+import type { Line, Playbook } from "@/lib/types";
 import { calculateProgress } from "@/components/play/progress-bar";
 import { useRef, useEffect } from "react";
 import { StructureProgressHeader } from "@/components/practice/structure-header";
