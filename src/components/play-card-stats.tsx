@@ -34,7 +34,9 @@ export function PlayCardProgress({ play }: PlayCardStatsProps) {
   const allLines = play.acts.flatMap((act) =>
     act.scenes.flatMap((scene) => scene.lines)
   );
-  const progress = characterId ? calculateProgress(allLines, characterId) : 0;
+  const progress = characterId
+    ? calculateProgress(allLines, play.id, characterId)
+    : 0;
 
   if (progress === 0) return null;
 

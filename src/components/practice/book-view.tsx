@@ -99,6 +99,7 @@ export function BookView({
             title={act.title}
             progress={calculateProgress(
               act.scenes.flatMap((s) => s.lines),
+              play.id,
               characterId
             )}
             type="act"
@@ -118,7 +119,11 @@ export function BookView({
                 <div key={scene.id}>
                   <StructureProgressHeader
                     title={scene.title}
-                    progress={calculateProgress(scene.lines, characterId)}
+                    progress={calculateProgress(
+                      scene.lines,
+                      play.id,
+                      characterId
+                    )}
                     type="scene"
                     className="mb-3"
                   />

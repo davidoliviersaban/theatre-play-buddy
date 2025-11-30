@@ -32,7 +32,6 @@ export default function PracticePage({
     skipToNextScene,
     skipToPreviousScene,
     togglePause,
-    lineStages,
     showHint,
     toggleHint,
     markLineAsKnown,
@@ -120,7 +119,6 @@ export default function PracticePage({
             characterId={characterId}
             play={play}
             lineRefs={lineRefs}
-            lineStages={lineStages}
             showHint={showHint}
             onToggleHint={toggleHint}
             onMarkAsKnown={markLineAsKnown}

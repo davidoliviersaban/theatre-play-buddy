@@ -1,4 +1,6 @@
+"use client";
 import Link from "next/link";
+import { useSyncExternalStore } from "react";
 import { ArrowLeft, CheckCircle, BarChart, List, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Playbook, Character } from "@/lib/mock-data";
@@ -24,6 +26,15 @@ export function PracticeHeader({
   sessionStats,
   isHidden,
 }: PracticeHeaderProps) {
+  // Avoid hydration mismatch for dynamic stats by rendering them only on client
+  const subscribe = () => () => {};
+  const getSnapshot = () => true;
+  const getServerSnapshot = () => false;
+  const isClient = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot
+  );
   const hidden = isHidden
     ? "-translate-y-full opacity-0 pointer-events-none"
     : "translate-y-0 opacity-100";
@@ -74,16 +85,19 @@ export function PracticeHeader({
           </div>
         </div>
 
-        {/* Stats row */}
-        <div className="mt-2 text-xs text-muted-foreground sm:text-sm">
-          <span className="inline-flex items-center gap-1 mr-3">
-            <CheckCircle className="h-3 w-3" /> {sessionStats.correctLines}{" "}
-            Correct
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <BarChart className="h-3 w-3" /> {sessionStats.linesRehearsed} Total
-          </span>
-        </div>
+        {/* Stats row - render on client to prevent hydration mismatch */}
+        {isClient && (
+          <div className="mt-2 text-xs text-muted-foreground sm:text-sm">
+            <span className="inline-flex items-center gap-1 mr-3">
+              <CheckCircle className="h-3 w-3" /> {sessionStats.correctLines}{" "}
+              Correct
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <BarChart className="h-3 w-3" /> {sessionStats.linesRehearsed}{" "}
+              Total
+            </span>
+          </div>
+        )}
       </div>
     </header>
   );
