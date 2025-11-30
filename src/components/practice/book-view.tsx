@@ -3,6 +3,8 @@ import type { Line, Playbook } from "@/lib/mock-data";
 import { calculateProgress } from "@/components/play/progress-bar";
 import React from "react";
 import { StructureProgressHeader } from "@/components/practice/structure-header";
+import { getLineMastery } from "@/lib/play-storage";
+import { CompletionIcon } from "@/components/ui/completion-icon";
 
 // Extended line type used in practice session (flattened with metadata)
 type LineWithMetadata = Line & {
@@ -50,7 +52,7 @@ function groupLinesByCharacterWithIndices(
       }
     } else {
       groups.push({
-        characterId: line.characterId,
+        characterId: line.characterId || "__unknown__",
         text: line.text,
         lineIndices: [globalIndex],
         masteryLevel: line.masteryLevel,
@@ -136,7 +138,26 @@ export function BookView({
                       !isStage && group.characterId === characterId;
                     const isCurrentGroup =
                       group.lineIndices.includes(currentLineIndex);
-                    const mastery = group.masteryLevel;
+                    // Aggregate mastery across this group's lines (dialogue only)
+                    let avgMasteryPct = 0;
+                    if (!isStage) {
+                      const lineMasteries = group.lineIndices
+                        .map((li) => lines[li])
+                        .filter((ln) => ln.type === "dialogue")
+                        .map(
+                          (ln) =>
+                            getLineMastery(play.id, group.characterId, ln.id)
+                              ?.masteryPercentage ?? 0
+                        );
+                      if (lineMasteries.length > 0) {
+                        avgMasteryPct = Math.round(
+                          lineMasteries.reduce((a, b) => a + b, 0) /
+                            lineMasteries.length
+                        );
+                      }
+                    }
+                    // Mastery checkbox: checked when mastered (>= 80%)
+                    const isMastered = !isStage && avgMasteryPct >= 80;
                     return (
                       <p
                         key={`${scene.id}-g-${gi}`}
@@ -147,40 +168,36 @@ export function BookView({
                             : isMeGroup
                             ? "text-foreground"
                             : "text-muted-foreground",
+                          // Highlight current dialogue lines (primary)
                           isCurrentGroup &&
                             !isStage &&
-                            "rounded-md bg-primary/5 ring-2 ring-primary px-3 py-2"
+                            "rounded-md bg-primary/5 ring-2 ring-primary px-3 py-2",
+                          // Highlight current stage direction lines (yellow overlay)
+                          isCurrentGroup &&
+                            isStage &&
+                            "rounded-md bg-yellow-100/40 px-3 py-2"
                         )}
                         ref={isCurrentGroup ? currentGroupRef : undefined}
                       >
                         {!isStage && (
-                          <span className="mr-2 font-semibold flex items-center gap-2">
-                            {charName} —
-                            {isMeGroup && mastery && (
-                              <span
-                                className={cn(
-                                  "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ring-1",
-                                  mastery === "high" &&
-                                    "bg-green-500/10 text-green-600 ring-green-600/30",
-                                  mastery === "medium" &&
-                                    "bg-yellow-500/10 text-yellow-600 ring-yellow-600/30",
-                                  mastery === "low" &&
-                                    "bg-red-500/10 text-red-600 ring-red-600/30"
-                                )}
-                                title={`Mastery: ${mastery}`}
-                              >
-                                {mastery === "high"
-                                  ? "Mastered"
-                                  : mastery === "medium"
-                                  ? "Learning"
-                                  : "Practice"}
+                          <span className="mr-2 flex items-center gap-2">
+                            {/* Mastery checkbox to the left of the name */}
+                            {isMeGroup && (
+                              <span title={`Mastery: ${avgMasteryPct}%`}>
+                                <CompletionIcon
+                                  progress={isMastered ? 100 : 0}
+                                  hasContent={true}
+                                  className="h-4 w-4"
+                                />
                               </span>
                             )}
+                            <strong>{charName}</strong>
                             {isCurrentGroup && (
                               <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
                                 Current
                               </span>
                             )}
+                            <span>—</span>
                           </span>
                         )}
                         {isStage ? (

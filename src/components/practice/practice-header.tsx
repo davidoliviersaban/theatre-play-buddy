@@ -2,6 +2,8 @@
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import { ArrowLeft, CheckCircle, BarChart, List, BookOpen } from "lucide-react";
+import { CompletionIcon } from "@/components/ui/completion-icon";
+import { calculateProgress } from "@/components/play/progress-bar";
 import { Button } from "@/components/ui/button";
 import type { Playbook, Character } from "@/lib/mock-data";
 
@@ -56,6 +58,29 @@ export function PracticeHeader({
               <p className="text-sm text-muted-foreground">
                 Practicing as{" "}
                 <span className="font-medium">{character.name}</span>
+                {/* Play progress with checkbox icon */}
+                <span className="ml-3 inline-flex items-center gap-1 align-middle">
+                  {(() => {
+                    const allLines = play.acts.flatMap((a) =>
+                      a.scenes.flatMap((s) => s.lines)
+                    );
+                    const progress = calculateProgress(
+                      allLines,
+                      play.id,
+                      character.id
+                    );
+                    return (
+                      <>
+                        <CompletionIcon
+                          progress={progress}
+                          hasContent={true}
+                          className="h-4 w-4"
+                        />
+                        <span className="text-xs">{progress}%</span>
+                      </>
+                    );
+                  })()}
+                </span>
               </p>
             </div>
           </div>
