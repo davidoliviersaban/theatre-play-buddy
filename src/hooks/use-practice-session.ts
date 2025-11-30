@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import type { Play, Line } from "@/lib/mock-data";
-import { getLastLineIndex, setLastLineIndex } from "@/lib/play-storage";
+import { getLastLineIndex, setLastLineIndex, setSessionStats as persistSessionStats, getSessionStats } from "@/lib/play-storage";
 
 type LineWithMetadata = Line & {
     __actId: string;
@@ -62,10 +62,18 @@ export function usePracticeSession(play: Play, characterId: string, startId?: st
 
     const [currentLineIndex, setCurrentLineIndex] = useState(initialIndex);
     const [isPaused, setIsPaused] = useState(true);
-    const [sessionStats, setSessionStats] = useState({
-        linesRehearsed: 0,
-        correctLines: 0,
-        hintsUsed: 0,
+    const [sessionStats, setSessionStats] = useState(() => {
+        // Load existing stats or start fresh
+        if (characterId) {
+            const stored = getSessionStats(play.id, characterId);
+            if (stored) return stored;
+        }
+        return {
+            linesRehearsed: 0,
+            correctLines: 0,
+            hintsUsed: 0,
+            totalSessions: 1,
+        };
     });
 
     const currentLine = allLines[currentLineIndex];
@@ -98,6 +106,13 @@ export function usePracticeSession(play: Play, characterId: string, startId?: st
             setLastLineIndex(play.id, characterId, index);
         }
     };
+
+    // Persist session stats when they change
+    useEffect(() => {
+        if (characterId) {
+            persistSessionStats(play.id, characterId, sessionStats);
+        }
+    }, [sessionStats, play.id, characterId]);
 
     const goToPrevious = () => setCurrentLineIndex(prev => {
         const next = Math.max(0, prev - 1);
