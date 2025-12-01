@@ -86,13 +86,16 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
     // Use database stats if available, otherwise use local state
     const sessionStats = useMemo(() => {
         if (dbProgress) {
-            return dbProgress.sessionStats;
+            return {
+                linesRehearsed: dbProgress.sessionStats.linesRehearsed,
+                correctLines: 0, // Not tracked in DB yet
+                hintsUsed: dbProgress.sessionStats.totalHints,
+            };
         }
         return {
             linesRehearsed: 0,
             correctLines: 0,
-            totalHints: 0,
-            masteredLines: 0,
+            hintsUsed: 0,
         };
     }, [dbProgress]);
 
@@ -302,11 +305,7 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
             if (currentStage === 5) {
                 if (!countedLineIdsRef.current.has(currentLine.id)) {
                     countedLineIdsRef.current.add(currentLine.id);
-                    setSessionStats((prev) => ({
-                        ...prev,
-                        linesRehearsed: prev.linesRehearsed + 1,
-                        correctLines: prev.correctLines + 1,
-                    }));
+                    // Stats are now tracked in DB via updateLineMastery
                 }
                 goToNext();
             }
@@ -339,11 +338,14 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
         showHint,
         toggleHint,
         markLineAsKnown,
-        getLineMastery: (lineId: string) => dbProgress?.lineProgress[lineId] || {
-            rehearsalCount: 0,
-            hintCount: 0,
-            progressPercent: 0,
-            lastPracticedAt: new Date(),
+        getLineMastery: (lineId: string) => {
+            const progress = dbProgress?.lineProgress[lineId];
+            if (!progress) return null;
+            return {
+                rehearsalCount: progress.rehearsalCount,
+                masteryPercentage: progress.progressPercent,
+                lastPracticed: progress.lastPracticedAt.toISOString(),
+            };
         },
         masteryUpdateTrigger,
     };

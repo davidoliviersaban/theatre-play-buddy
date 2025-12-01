@@ -143,25 +143,6 @@ export async function savePlay(play: Playbook): Promise<void> {
 }
 
 /**
- * Save a temporary/incomplete play for error/collision recovery
- */
-export async function savePlayTemp(raw: any, errorMsg?: string): Promise<void> {
-    await prisma.playTemp.create({
-        data: {
-            title: raw.title ?? 'Untitled',
-            author: raw.author ?? null,
-            year: raw.year ?? null,
-            genre: raw.genre ?? null,
-            description: raw.description ?? null,
-            llmSourceId: raw.llmSourceId ?? null,
-            rawJson: raw,
-            errorMsg: errorMsg ?? null,
-        },
-    });
-    console.log(`[DB] Saved temporary play for recovery: ${raw.title ?? 'Untitled'}`);
-}
-
-/**
  * Get a play by ID
  */
 export async function getPlayById(playId: string): Promise<Playbook | null> {

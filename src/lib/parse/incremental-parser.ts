@@ -9,7 +9,7 @@ type Character = z.infer<typeof CharacterSchema>;
 /**
  * Context carried between parsing chunks to maintain continuity
  */
-interface ParsingContext {
+export interface ParsingContext {
     // Metadata
     title?: string;
     author?: string;
@@ -238,18 +238,23 @@ function mergeIntoContext(
 export async function* parsePlayIncrementally(
     text: string,
     provider: LLMProvider = getDefaultProvider(),
-    chunkSize: number = 2500
-): AsyncGenerator<{ context: ParsingContext; progress: number; chunk: number; total: number }> {
+    chunkSize: number = 2500,
+    onSave?: (context: ParsingContext, chunk: number) => Promise<void>,
+    initialContext?: ParsingContext
+): AsyncGenerator<{ context: ParsingContext; progress: number; chunk: number; total: number; timing: { avgChunkTime: number; estimatedRemaining: number } }> {
     console.log(`[Incremental Parser] Starting incremental parsing`);
     console.log(`[Incremental Parser] Text length: ${text.length} characters`);
     console.log(`[Incremental Parser] Chunk size: ${chunkSize} characters`);
+    
+    const startTime = Date.now();
+    const chunkTimes: number[] = [];
     
     // Split into chunks
     const chunks = splitIntoChunks(text, chunkSize);
     console.log(`[Incremental Parser] Split into ${chunks.length} chunks`);
     
-    // Initialize context
-    const context: ParsingContext = {
+    // Initialize context (use provided or create fresh)
+    const context: ParsingContext = initialContext ?? {
         characters: [],
         acts: [],
         lastLineNumber: 0,
@@ -259,13 +264,31 @@ export async function* parsePlayIncrementally(
         usedLineIds: new Set(),
     };
     
+    if (initialContext) {
+        console.log(`[Incremental Parser] Resuming with initial context: ${context.characters.length} characters, ${context.acts.length} acts, ${context.lastLineNumber} lines`);
+    }
+    
     // Process each chunk
     for (let i = 0; i < chunks.length; i++) {
+        const chunkStartTime = Date.now();
         console.log(`[Incremental Parser] Processing chunk ${i + 1}/${chunks.length}`);
         
         try {
             const result = await parseChunkWithContext(chunks[i], context, i, chunks.length, provider);
             mergeIntoContext(result, context);
+            
+            const chunkTime = Date.now() - chunkStartTime;
+            chunkTimes.push(chunkTime);
+            
+            const avgChunkTime = chunkTimes.reduce((a, b) => a + b, 0) / chunkTimes.length;
+            const estimatedRemaining = avgChunkTime * (chunks.length - i - 1);
+            
+            console.log(`[Incremental Parser] Chunk ${i + 1} took ${chunkTime}ms, avg: ${avgChunkTime.toFixed(0)}ms, est. remaining: ${(estimatedRemaining / 1000).toFixed(0)}s`);
+            
+            // Call onSave callback if provided
+            if (onSave) {
+                await onSave(context, i + 1);
+            }
             
             const progress = Math.round(((i + 1) / chunks.length) * 100);
             
@@ -274,6 +297,10 @@ export async function* parsePlayIncrementally(
                 progress,
                 chunk: i + 1,
                 total: chunks.length,
+                timing: {
+                    avgChunkTime: Math.round(avgChunkTime),
+                    estimatedRemaining: Math.round(estimatedRemaining),
+                },
             };
         } catch (error) {
             console.error(`[Incremental Parser] Error processing chunk ${i + 1}:`, error);
@@ -281,7 +308,8 @@ export async function* parsePlayIncrementally(
         }
     }
     
-    console.log(`[Incremental Parser] Completed parsing ${chunks.length} chunks`);
+    const totalTime = Date.now() - startTime;
+    console.log(`[Incremental Parser] Completed parsing ${chunks.length} chunks in ${(totalTime / 1000).toFixed(1)}s`);
     console.log(`[Incremental Parser] Final stats: ${context.characters.length} characters, ${context.acts.length} acts, ${context.lastLineNumber} lines`);
 }
 

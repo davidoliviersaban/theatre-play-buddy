@@ -11,14 +11,13 @@ datasource db {
 
 model Playbook {
   id          String      @id @default(uuid())
-  llmSourceId String?     @unique // Optional: LLM-generated ID for debugging/mapping
+  llmSourceId String?     // Optional: LLM-generated ID for debugging/mapping
   title       String
   author      String
   year        Int?
   genre       String?
   description String?
   coverImage  String?
-  llmSourceId String?     @db.VarChar(64) // LLM-generated ID for audit/debug only
 
   characters  Character[]
   acts        Act[]
@@ -38,7 +37,6 @@ model Character {
   llmSourceId    String?  // Optional: LLM-generated ID for debugging/mapping
   name           String
   description    String?
-  llmSourceId    String?  @db.VarChar(64) // LLM-generated ID for audit/debug only
   isFavorite     Boolean  @default(false)
   lastSelected   Boolean  @default(false)
   completionRate Float    @default(0)
@@ -63,7 +61,6 @@ model Act {
   llmSourceId String? // Optional: LLM-generated ID for debugging/mapping
   title      String
   order      Int      @default(0)
-  llmSourceId String? @db.VarChar(64) // LLM-generated ID for audit/debug only
 
   playbookId String
   playbook   Playbook @relation(fields: [playbookId], references: [id], onDelete: Cascade)
@@ -83,7 +80,6 @@ model Scene {
   llmSourceId String? // Optional: LLM-generated ID for debugging/mapping
   title     String
   order     Int      @default(0)
-  llmSourceId String? @db.VarChar(64) // LLM-generated ID for audit/debug only
 
   actId     String
   act       Act      @relation(fields: [actId], references: [id], onDelete: Cascade)
@@ -104,7 +100,6 @@ model Line {
   text              String           @db.Text
   type              LineType
   order             Int              @default(0)
-  llmSourceId       String?          @db.VarChar(64) // LLM-generated ID for audit/debug only
 
   // Formatting metadata (optional)
   indentLevel       Int?
@@ -124,20 +119,6 @@ model Line {
   @@index([sceneId, order])
   @@index([type])
   @@index([llmSourceId])
-}
-// Temporary play storage for incomplete/error states
-model PlayTemp {
-  id          String      @id @default(uuid())
-  title       String
-  author      String?
-  year        Int?
-  genre       String?
-  description String?
-  llmSourceId String?     @db.VarChar(64)
-  rawJson     Json        // Raw LLM output for debug/recovery
-  errorMsg    String?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
 }
 
 // Join table for many-to-many relationship between Lines and Characters
@@ -228,4 +209,64 @@ model UserLineProgress {
 enum LineType {
   dialogue
   stage_direction
+}
+
+// Parsing session tracking for progress visibility and error recovery
+model ParsingSession {
+  id              String          @id @default(uuid())
+  
+  // Playbook reference (temporary during parsing)
+  playbookId      String
+  
+  // File metadata
+  filename        String
+  rawText         String          @db.Text
+  
+  // Progress tracking
+  status          ParsingStatus   @default(pending)
+  currentChunk    Int             @default(0)
+  totalChunks     Int
+  
+  // Play metadata (parsed incrementally)
+  title           String?
+  author          String?
+  year            Int?
+  genre           String?
+  description     String?         @db.Text
+  
+  // Incremental parsing state (full context snapshot for resume)
+  currentState    Json?           // ParsingContext serialized: characters, acts, currentActId, etc.
+  
+  // Overall counts (for UI display)
+  totalCharacters Int             @default(0)
+  totalActs       Int             @default(0)
+  totalScenes     Int             @default(0)
+  totalLines      Int             @default(0)
+  
+  // Current position (for UI display)
+  currentActIndex    Int?
+  currentSceneIndex  Int?
+  currentLineIndex   Int?
+  currentCharacters  String[]       @default([])
+  
+  // Timestamps
+  startedAt       DateTime        @default(now())
+  completedAt     DateTime?
+  
+  // Error handling
+  failureReason   String?         @db.Text
+  
+  // Indexes for querying
+  @@index([playbookId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+enum ParsingStatus {
+  pending
+  warming
+  parsing
+  completed
+  failed
+  aborted
 }

@@ -2,8 +2,10 @@ import { NextRequest } from "next/server";
 import { extractTextFromPDF, extractTextFromDOCX, extractTextFromTXT } from "../../../../lib/parse/extractors";
 import { PlaybookSchema, type Playbook } from "../../../../lib/parse/schemas";
 import { streamPlayParsing, getDefaultProvider, parsePlayStructure } from "../../../../lib/parse/llm-parser";
-import { parsePlayIncrementally, contextToPlaybook } from "../../../../lib/parse/incremental-parser";
-import { savePlay, savePlayTemp } from "../../../../lib/db/plays-db-prisma";
+import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "../../../../lib/parse/incremental-parser";
+import { savePlay } from "../../../../lib/db/plays-db-prisma";
+import { createParsingSession, updateParsingSession, deleteCompletedSessions } from "../../../../lib/db/parsing-session-db";
+import { buildSessionUpdate } from "../../../../lib/parse/session-runner";
 import type { DeepPartial } from "ai";
 
 export const runtime = "nodejs";
@@ -280,13 +282,74 @@ export async function POST(req: NextRequest) {
                         // === INCREMENTAL PARSING PATH (for long plays) ===
                         console.log(`[Parse Route] Starting incremental parsing`);
                         
-                        let context;
-                        for await (const incrementalResult of parsePlayIncrementally(text, llmProvider)) {
+                        // T014: Create parsing session on new upload
+                        const tempPlaybookId = `temp-${Date.now()}`;
+                        const filename = uploadId; // Use uploadId as filename placeholder
+                        const chunks = Math.ceil(text.length / 2500); // Estimate chunk count
+                        
+                        const sessionId = await createParsingSession({
+                            playbookId: tempPlaybookId,
+                            filename,
+                            rawText: text,
+                            totalChunks: chunks,
+                        });
+                        console.log(`[Parse Route] ✅ DB: Created parsing session ${sessionId} with ${chunks} estimated chunks`);
+                        
+                        // T015: Emit session_created event with sessionId and totalChunks
+                        sendEvent(controller, "session_created", { 
+                            sessionId, 
+                            totalChunks: chunks,
+                            playbookId: tempPlaybookId 
+                        });
+                        
+                        await updateParsingSession(sessionId, { status: "parsing" });
+                        console.log(`[Parse Route] ✅ DB: Updated session ${sessionId} status to 'parsing'`);
+                        
+                        let context: ParsingContext | null = null; // Will be set in loop
+                        let saveInProgress = false; // Semaphore to prevent concurrent saves
+                        
+                        const savePlayFn = async (ctx: ParsingContext, chunk: number) => {
+                            // Fire-and-forget async save with semaphore to prevent concurrent writes
+                            if (saveInProgress) {
+                                console.log(`[Parse Route] ⏭️  DB: Skipping chunk ${chunk} save (previous save still in progress)`);
+                                return;
+                            }
+                            
+                            saveInProgress = true;
+                            
+                            const updateData = buildSessionUpdate(ctx, chunk);
+                            
+                            // Don't await - let it run in background
+                            updateParsingSession(sessionId, updateData).then(() => {
+                                console.log(`[Parse Route] ✅ DB: Updated session ${sessionId} to chunk ${chunk}`);
+                            }).catch((err) => {
+                                console.error(`[Parse Route] ❌ DB: Failed to update chunk ${chunk}:`, err);
+                            }).finally(() => {
+                                saveInProgress = false; // Release semaphore
+                            });
+                        };
+                        
+                        let totalSynced = false;
+                        for await (const incrementalResult of parsePlayIncrementally(text, llmProvider, 2500, savePlayFn)) {
                             context = incrementalResult.context;
                             lastActivity = Date.now();
+                            // Ensure totalChunks stored matches actual chunk count from parser (may differ from estimate)
+                            if (!totalSynced && incrementalResult.total !== chunks) {
+                                totalSynced = true;
+                                updateParsingSession(sessionId, { totalChunks: incrementalResult.total }).catch(err => {
+                                    console.warn(`[Parse Route] Failed to sync totalChunks to ${incrementalResult.total}:`, err);
+                                });
+                            }
                             
+                            // T017: Update progress event emission to send every chunk completion
                             sendEvent(controller, "progress", {
                                 percent: incrementalResult.progress,
+                                chunk: incrementalResult.chunk,
+                                totalChunks: incrementalResult.total,
+                                characters: context.characters.length,
+                                lines: context.lastLineNumber,
+                                avgChunkTime: incrementalResult.timing.avgChunkTime,
+                                estimatedRemaining: incrementalResult.timing.estimatedRemaining,
                                 message: `Processing chunk ${incrementalResult.chunk}/${incrementalResult.total}: ${context.lastLineNumber} lines, ${context.characters.length} characters`
                             });
                             
@@ -300,11 +363,25 @@ export async function POST(req: NextRequest) {
                             
                             // Update act/scene counts
                             actsSeen = context.acts.length;
-                            scenesSeen = context.acts.reduce((total, act) => total + act.scenes.length, 0);
+                            scenesSeen = context.acts.reduce((total: number, act) => total + act.scenes.length, 0);
                             linesCompleted = context.lastLineNumber;
                         }
                         
+                        // Ensure final DB update completes before validation
+                        // Wait for any pending save to complete
+                        while (saveInProgress) {
+                            await new Promise(resolve => setTimeout(resolve, 100));
+                        }
+                        
                         if (!context) {
+                            // Mark session as failed
+                            await updateParsingSession(sessionId, {
+                                status: "failed",
+                                completedAt: new Date(),
+                                failureReason: "Incremental parsing failed to produce any results",
+                            });
+                            console.log(`[Parse Route] ❌ DB: Marked session ${sessionId} as 'failed' - no results`);
+                            
                             sendEvent(controller, "error", { 
                                 message: "Incremental parsing failed to produce any results", 
                                 code: "PARSE_ERROR" 
@@ -318,6 +395,14 @@ export async function POST(req: NextRequest) {
                         const parsed = PlaybookSchema.safeParse(finalPlaybook);
                         
                         if (!parsed.success) {
+                            // Mark session as failed
+                            await updateParsingSession(sessionId, {
+                                status: "failed",
+                                completedAt: new Date(),
+                                failureReason: `Validation failed: ${parsed.error.message}`,
+                            });
+                            console.log(`[Parse Route] ❌ DB: Marked session ${sessionId} as 'failed' - validation error`);
+                            
                             sendEvent(controller, "error", { 
                                 message: `Validation failed: ${parsed.error.message}`, 
                                 code: "VALIDATION_ERROR" 
@@ -325,6 +410,16 @@ export async function POST(req: NextRequest) {
                             controller.close();
                             return;
                         }
+                        
+                        // Mark session as completed and delete
+                        await updateParsingSession(sessionId, {
+                            status: "completed",
+                            completedAt: new Date(),
+                        });
+                        console.log(`[Parse Route] ✅ DB: Marked session ${sessionId} as 'completed'`);
+                        
+                        await deleteCompletedSessions();
+                        console.log(`[Parse Route] ✅ DB: Deleted completed sessions (cleanup)`);
                         
                         lastPlaybook = parsed.data;
                         console.log(`[Parse Route] Incremental parsing complete: ${linesCompleted} lines`);
@@ -399,7 +494,6 @@ export async function POST(req: NextRequest) {
                 const parsed = PlaybookSchema.safeParse(lastPlaybook);
                 if (!parsed.success) {
                     // Save as temporary play for recovery
-                    await savePlayTemp(lastPlaybook, parsed.error.message);
                     sendEvent(controller, "error", { message: `Validation failed: ${parsed.error.message}`, code: "VALIDATION_ERROR" });
                     controller.close();
                     return;
@@ -410,8 +504,7 @@ export async function POST(req: NextRequest) {
                     await savePlay(parsed.data);
                     console.log(`[Parse Route] Play saved to database: ${parsed.data.id}`);
                 } catch (dbError) {
-                    // Save as temporary play for recovery
-                    await savePlayTemp(parsed.data, (dbError as Error).message);
+                    // Log error but don't fail
                     console.error(`[Parse Route] Failed to save play to database:`, dbError);
                 }
 

@@ -4,9 +4,39 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PlayGrid } from "@/components/home/play-grid";
 import { fetchAllPlays } from "@/lib/api/plays";
+import { ParsingSessions } from "@/components/home/parsing-sessions";
+import {
+  getActiveSessions,
+  getFailedSessions,
+} from "@/lib/db/parsing-session-db";
 
 export default async function Home() {
   const { plays } = await fetchAllPlays();
+  const [activeSessions, failedSessions] = await Promise.all([
+    getActiveSessions(),
+    getFailedSessions(),
+  ]);
+
+  const sessions = [...activeSessions, ...failedSessions].map((session) => ({
+    id: session.id,
+    filename: session.filename,
+    status: session.status,
+    currentChunk: session.currentChunk,
+    totalChunks: session.totalChunks,
+    startedAt: session.startedAt.toISOString(),
+    failureReason: session.failureReason || undefined,
+    // Parsing state
+    title: session.title || undefined,
+    author: session.author || undefined,
+    totalCharacters: session.totalCharacters,
+    totalActs: session.totalActs,
+    totalScenes: session.totalScenes,
+    totalLines: session.totalLines,
+    currentActIndex: session.currentActIndex ?? undefined,
+    currentSceneIndex: session.currentSceneIndex ?? undefined,
+    currentLineIndex: session.currentLineIndex ?? undefined,
+    currentCharacters: session.currentCharacters,
+  }));
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -35,6 +65,8 @@ export default async function Home() {
           />
         </div>
       </div>
+
+      <ParsingSessions sessions={sessions} />
 
       <PlayGrid plays={plays} />
     </div>

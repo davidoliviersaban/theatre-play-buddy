@@ -52,7 +52,7 @@ export function useProgress({ playId, characterId, syncInterval = 20000, enabled
     const [isSyncing, setIsSyncing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     
-    const syncTimerRef = useRef<NodeJS.Timeout>();
+    const syncTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
     const pendingUpdatesRef = useRef<Map<string, Partial<LineProgress>>>(new Map());
 
     const cacheKey = `${CACHE_PREFIX}${playId}:${characterId}`;
@@ -69,9 +69,10 @@ export function useProgress({ playId, characterId, syncInterval = 20000, enabled
                 if (data.characterProgress?.lastPracticedAt) {
                     data.characterProgress.lastPracticedAt = new Date(data.characterProgress.lastPracticedAt);
                 }
-                Object.values(data.lineProgress || {}).forEach((lp: Partial<LineProgress>) => {
-                    if (lp.lastPracticedAt && typeof lp.lastPracticedAt === 'string') {
-                        lp.lastPracticedAt = new Date(lp.lastPracticedAt) as unknown as Date;
+                Object.values(data.lineProgress || {}).forEach((lp: unknown) => {
+                    const lineProgress = lp as Partial<LineProgress>;
+                    if (lineProgress.lastPracticedAt && typeof lineProgress.lastPracticedAt === 'string') {
+                        lineProgress.lastPracticedAt = new Date(lineProgress.lastPracticedAt) as unknown as Date;
                     }
                 });
                 return data;
