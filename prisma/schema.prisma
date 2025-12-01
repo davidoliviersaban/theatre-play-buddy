@@ -11,6 +11,7 @@ datasource db {
 
 model Playbook {
   id          String      @id @default(uuid())
+  llmSourceId String?     @unique // Optional: LLM-generated ID for debugging/mapping
   title       String
   author      String
   year        Int?
@@ -29,10 +30,12 @@ model Playbook {
 
   @@index([title])
   @@index([author])
+  @@index([llmSourceId])
 }
 
 model Character {
   id             String   @id @default(uuid())
+  llmSourceId    String?  // Optional: LLM-generated ID for debugging/mapping
   name           String
   description    String?
   llmSourceId    String?  @db.VarChar(64) // LLM-generated ID for audit/debug only
@@ -52,10 +55,12 @@ model Character {
 
   @@index([playbookId])
   @@index([name])
+  @@index([llmSourceId])
 }
 
 model Act {
   id         String   @id @default(uuid())
+  llmSourceId String? // Optional: LLM-generated ID for debugging/mapping
   title      String
   order      Int      @default(0)
   llmSourceId String? @db.VarChar(64) // LLM-generated ID for audit/debug only
@@ -70,10 +75,12 @@ model Act {
 
   @@index([playbookId])
   @@index([playbookId, order])
+  @@index([llmSourceId])
 }
 
 model Scene {
   id        String   @id @default(uuid())
+  llmSourceId String? // Optional: LLM-generated ID for debugging/mapping
   title     String
   order     Int      @default(0)
   llmSourceId String? @db.VarChar(64) // LLM-generated ID for audit/debug only
@@ -88,10 +95,12 @@ model Scene {
 
   @@index([actId])
   @@index([actId, order])
+  @@index([llmSourceId])
 }
 
 model Line {
   id                String           @id @default(uuid())
+  llmSourceId       String?          // Optional: LLM-generated ID for debugging/mapping
   text              String           @db.Text
   type              LineType
   order             Int              @default(0)
@@ -114,6 +123,7 @@ model Line {
   @@index([sceneId])
   @@index([sceneId, order])
   @@index([type])
+  @@index([llmSourceId])
 }
 // Temporary play storage for incomplete/error states
 model PlayTemp {
