@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Users, Clock, BookOpen, Play as PlayIcon } from "lucide-react";
 import { IconButton } from "@/components/ui/icon-button";
-import type { Playbook } from "@/lib/mock-data";
+import type { Playbook } from "@/lib/types";
 import { getCurrentCharacterId, getLastLineIndex } from "@/lib/play-storage";
 import { useSyncExternalStore } from "react";
 

@@ -5,7 +5,7 @@ import { ActiveCharacterHeader } from "./active-character-header";
 import { CharacterSelectionPanel } from "./character-selection-panel";
 import { cn } from "@/lib/utils";
 import { OPACITY_LEVELS } from "@/lib/ui-constants";
-import type { Character, Playbook } from "@/lib/mock-data";
+import type { Character, Playbook } from "@/lib/types";
 
 interface CharacterSelectorProps {
   play: Playbook;
@@ -31,7 +31,12 @@ export function CharacterSelector({
   );
 
   return (
-    <div className={cn("mt-8 rounded-lg border p-6", `bg-secondary/${OPACITY_LEVELS.subtle}`)}>
+    <div
+      className={cn(
+        "mt-8 rounded-lg border p-6",
+        `bg-secondary/${OPACITY_LEVELS.subtle}`
+      )}
+    >
       {activeCharacter ? (
         <ActiveCharacterHeader
           play={play}

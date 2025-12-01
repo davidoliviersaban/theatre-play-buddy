@@ -1,9 +1,10 @@
-import type { Playbook } from "@/lib/mock-data";
+import type { Playbook } from "@/lib/types";
 import { calculateProgress } from "@/components/play/progress-bar";
 import {
   LineCard,
   type LineWithMetadata,
 } from "@/components/practice/line-card";
+import { getSpeakerIds } from "@/lib/parse/multi-character";
 
 // Use LineWithMetadata from extracted component to keep types consistent
 
@@ -49,11 +50,20 @@ export function LineByLineView({
       <div className="space-y-6">
         {lines.map((line, index) => {
           const isCurrent = index === currentLineIndex;
-          const isMe = line.characterId === characterId;
+          const speakerIds = getSpeakerIds(line);
+          const isMe = speakerIds.includes(characterId);
           const characterName =
             line.type === "stage_direction"
-              ? "Stage direction"
-              : play.characters.find((c) => c.id === line.characterId)?.name ||
+              ? "Stage Direction"
+              : speakerIds.length > 1
+              ? speakerIds
+                  .map(
+                    (id: string) =>
+                      play.characters.find((c) => c.id === id)?.name ||
+                      "Unknown"
+                  )
+                  .join(" & ")
+              : play.characters.find((c) => c.id === speakerIds[0])?.name ||
                 "Unknown speaker";
 
           const isSceneStart =

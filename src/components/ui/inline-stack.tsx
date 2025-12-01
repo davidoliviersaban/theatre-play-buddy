@@ -10,9 +10,17 @@ interface InlineStackProps extends React.HTMLAttributes<HTMLSpanElement> {
  * Utility component for inline flex layouts with consistent spacing
  * Replaces repeated pattern: inline-flex items-center gap-X
  */
-export function InlineStack({ gap = 1, children, className, ...props }: InlineStackProps) {
+export function InlineStack({
+  gap = 1,
+  children,
+  className,
+  ...props
+}: InlineStackProps) {
   return (
-    <span className={cn("inline-flex items-center", `gap-${gap}`, className)} {...props}>
+    <span
+      className={cn("inline-flex items-center", `gap-${gap}`, className)}
+      {...props}
+    >
       {children}
     </span>
   );

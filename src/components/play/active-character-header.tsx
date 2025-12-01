@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Star, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Character, Playbook } from "@/lib/mock-data";
+import type { Character, Playbook } from "@/lib/types";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import { calculateProgress } from "@/components/play/progress-bar";
 import { InlineStack } from "@/components/ui/inline-stack";
@@ -45,7 +45,12 @@ export function ActiveCharacterHeader({
       aria-expanded={isSelectionOpen}
     >
       <div className="flex gap-4">
-        <div className={cn("flex h-12 w-12 items-center justify-center rounded-full flex-shrink-0", `bg-warning/${OPACITY_LEVELS.subtle}`)}>
+        <div
+          className={cn(
+            "flex h-12 w-12 items-center justify-center rounded-full flex-shrink-0",
+            `bg-warning/${OPACITY_LEVELS.subtle}`
+          )}
+        >
           <Star className="h-6 w-6 fill-warning text-warning" />
         </div>
         <div className="flex-1 min-w-0">

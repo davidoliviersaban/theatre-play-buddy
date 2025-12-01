@@ -8,7 +8,8 @@ import { OPACITY_LEVELS } from "@/lib/ui-constants";
 import { IconButton } from "@/components/ui/icon-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatCard } from "@/components/ui/stat-card";
-import { MOCK_PLAYS } from "@/lib/mock-data";
+import { fetchPlayById } from "@/lib/api/plays";
+import type { Playbook } from "@/lib/types";
 import { getCurrentCharacterStats } from "@/lib/play-storage";
 import { DailyStatsTable } from "@/components/play/DailyStatsTable";
 
@@ -18,13 +19,28 @@ export default function SessionSummaryPage({
   params: Promise<{ id: string }>;
 }) {
   const resolvedParams = React.use(params);
+  const [play, setPlay] = React.useState<Playbook | null>(null);
+
+  React.useEffect(() => {
+    fetchPlayById(resolvedParams.id)
+      .then(setPlay)
+      .catch((error) => console.error("Failed to fetch play:", error));
+  }, [resolvedParams.id]);
+
   const isClient = useSyncExternalStore(
     () => () => {},
     () => true,
     () => false
   );
-  const play =
-    MOCK_PLAYS.find((p) => p.id === resolvedParams.id) || MOCK_PLAYS[0];
+
+  if (!play) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Loading...
+      </div>
+    );
+  }
+
   const currentStats = isClient
     ? getCurrentCharacterStats(play.id)
     : { characterId: null, stats: null };
@@ -42,7 +58,12 @@ export default function SessionSummaryPage({
     <div className="min-h-screen bg-background p-8">
       <div className="mx-auto max-w-3xl">
         <div className="mb-8 text-center">
-          <div className={cn("mb-4 inline-flex rounded-full p-4", `bg-success/${OPACITY_LEVELS.subtle}`)}>
+          <div
+            className={cn(
+              "mb-4 inline-flex rounded-full p-4",
+              `bg-success/${OPACITY_LEVELS.subtle}`
+            )}
+          >
             <CheckCircle2 className="h-12 w-12 text-green-500" />
           </div>
           <h1 className="text-3xl font-bold tracking-tight">

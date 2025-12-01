@@ -16,7 +16,7 @@ export function ProgressBar({
   labelInside = true,
 }: ProgressBarProps) {
   const isClient = useClientOnly();
-  
+
   const widthClasses = {
     sm: "w-12",
     md: "w-16",
@@ -24,13 +24,18 @@ export function ProgressBar({
   };
 
   const normalizedProgress = Math.max(0, Math.min(100, progress));
-  
+
   // Render placeholder during SSR to prevent hydration mismatch
   if (!isClient) {
     return (
       <div className="flex items-center gap-2">
-        <div className={`relative h-3 rounded-full bg-secondary ${widthClasses[size]}`}>
-          <div className="absolute left-0 top-0 h-3 rounded-full bg-mastery-high" style={{ width: '0%' }} />
+        <div
+          className={`relative h-3 rounded-full bg-secondary ${widthClasses[size]}`}
+        >
+          <div
+            className="absolute left-0 top-0 h-3 rounded-full bg-mastery-high"
+            style={{ width: "0%" }}
+          />
         </div>
       </div>
     );
@@ -60,7 +65,7 @@ export function ProgressBar({
   );
 }
 
-import type { Line } from "@/lib/mock-data";
+import type { Line } from "@/lib/types";
 import { getLineMastery } from "@/lib/play-storage";
 
 // Progress is merged with mastery: compute average mastery percentage across character's lines

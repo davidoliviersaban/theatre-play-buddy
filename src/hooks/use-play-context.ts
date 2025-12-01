@@ -6,7 +6,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { MOCK_PLAYS, type Playbook, type Character } from "@/lib/mock-data";
+import { MOCK_PLAYS } from "@/lib/mock-data";
+import type { Playbook, Character } from "@/lib/types";
 import { getCurrentPlayId, getCurrentCharacterId } from "@/lib/play-storage";
 
 interface UsePlayContextOptions {

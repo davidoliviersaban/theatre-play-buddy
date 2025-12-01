@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { Search, Plus, BookOpen, Users } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MOCK_PLAYS } from "@/lib/mock-data";
 import { PlayGrid } from "@/components/home/play-grid";
+import { fetchAllPlays } from "@/lib/api/plays";
 
-export default function Home() {
+export default async function Home() {
+  const { plays } = await fetchAllPlays();
+
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-center sm:justify-between">
@@ -34,7 +36,7 @@ export default function Home() {
         </div>
       </div>
 
-      <PlayGrid plays={MOCK_PLAYS} />
+      <PlayGrid plays={plays} />
     </div>
   );
 }

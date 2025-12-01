@@ -1,11 +1,12 @@
 import { cn } from "@/lib/utils";
-import type { Line, Playbook } from "@/lib/mock-data";
+import type { Line, Playbook } from "@/lib/types";
 import { calculateProgress } from "@/components/play/progress-bar";
 import { useRef, useEffect } from "react";
 import { StructureProgressHeader } from "@/components/practice/structure-header";
 import { getLineMastery } from "@/lib/play-storage";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import { OPACITY_LEVELS } from "@/lib/ui-constants";
+import { getSpeakerIds } from "@/lib/parse/multi-character";
 
 // Extended line type used in practice session (flattened with metadata)
 type LineWithMetadata = Line & {
@@ -19,7 +20,6 @@ interface GroupedParagraph {
   characterId: string;
   text: string;
   lineIndices: number[]; // underlying line indexes from global flattened list
-  masteryLevel?: Line["masteryLevel"]; // worst (lowest) mastery among grouped lines
 }
 
 function groupLinesByCharacterWithIndices(
@@ -39,24 +39,17 @@ function groupLinesByCharacterWithIndices(
     }
     const globalIndex = globalLines.indexOf(line);
     const last = groups[groups.length - 1];
-    if (last && last.characterId === line.characterId) {
+    const speakerIds = getSpeakerIds(line);
+    const currentCharId = speakerIds.join(",") || "__unknown__";
+
+    if (last && last.characterId === currentCharId) {
       last.text = `${last.text} ${line.text}`.trim();
       last.lineIndices.push(globalIndex);
-      // update mastery: choose the lowest fidelity (low < medium < high)
-      if (last.masteryLevel === "high" && line.masteryLevel !== "high") {
-        last.masteryLevel = line.masteryLevel;
-      } else if (
-        last.masteryLevel === "medium" &&
-        line.masteryLevel === "low"
-      ) {
-        last.masteryLevel = line.masteryLevel;
-      }
     } else {
       groups.push({
-        characterId: line.characterId || "__unknown__",
+        characterId: currentCharId,
         text: line.text,
         lineIndices: [globalIndex],
-        masteryLevel: line.masteryLevel,
       });
     }
   }
@@ -131,23 +124,37 @@ export function BookView({
                     className="mb-3"
                   />
                   {grouped.map((group, gi) => {
-                    const charName =
-                      play.characters.find((c) => c.id === group.characterId)
-                        ?.name || "Narration";
                     const isStage = group.characterId === "__stage__";
+                    const speakerIds = group.characterId
+                      .split(",")
+                      .filter(Boolean);
                     const isMeGroup =
-                      !isStage && group.characterId === characterId;
+                      !isStage && speakerIds.includes(characterId);
+                    const charName = isStage
+                      ? "Narration"
+                      : speakerIds.length > 1
+                      ? speakerIds
+                          .map(
+                            (id: string) =>
+                              play.characters.find((c) => c.id === id)?.name ||
+                              "Unknown"
+                          )
+                          .join(" & ")
+                      : play.characters.find((c) => c.id === speakerIds[0])
+                          ?.name || "Unknown";
                     const isCurrentGroup =
                       group.lineIndices.includes(currentLineIndex);
                     // Aggregate mastery across this group's lines (dialogue only)
                     let avgMasteryPct = 0;
                     if (!isStage) {
+                      const primaryCharId =
+                        speakerIds.length > 0 ? speakerIds[0] : "";
                       const lineMasteries = group.lineIndices
                         .map((li) => lines[li])
                         .filter((ln) => ln.type === "dialogue")
                         .map(
                           (ln) =>
-                            getLineMastery(play.id, group.characterId, ln.id)
+                            getLineMastery(play.id, primaryCharId, ln.id)
                               ?.masteryPercentage ?? 0
                         );
                       if (lineMasteries.length > 0) {
@@ -159,6 +166,18 @@ export function BookView({
                     }
                     // Mastery checkbox: checked when mastered (>= 80%)
                     const isMastered = !isStage && avgMasteryPct >= 80;
+                    // Calculate indent level for this group (use first line's formatting)
+                    const firstLineIdx = group.lineIndices[0];
+                    const firstLine =
+                      firstLineIdx !== undefined
+                        ? lines[firstLineIdx]
+                        : undefined;
+                    const indentLevel =
+                      (firstLine as any)?.formatting?.indentLevel || 0;
+                    const hasLineBreak =
+                      (firstLine as any)?.formatting?.preserveLineBreaks ||
+                      false;
+
                     return (
                       <p
                         key={`${scene.id}-g-${gi}`}
@@ -176,8 +195,15 @@ export function BookView({
                           // Highlight current stage direction lines (yellow overlay)
                           isCurrentGroup &&
                             isStage &&
-                            "rounded-md bg-yellow-100/40 px-3 py-2"
+                            "rounded-md bg-yellow-100/40 px-3 py-2",
+                          // Add extra margin for line breaks (verse/poetry spacing)
+                          hasLineBreak && "mb-4"
                         )}
+                        style={{
+                          // Apply indentation using padding-left (1rem per level)
+                          paddingLeft:
+                            indentLevel > 0 ? `${indentLevel}rem` : undefined,
+                        }}
                         ref={isCurrentGroup ? currentGroupRef : undefined}
                       >
                         {!isStage && (
@@ -194,7 +220,12 @@ export function BookView({
                             )}
                             <strong>{charName}</strong>
                             {isCurrentGroup && (
-                              <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold text-primary", `bg-primary/${OPACITY_LEVELS.subtle}`)}>
+                              <span
+                                className={cn(
+                                  "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold text-primary",
+                                  `bg-primary/${OPACITY_LEVELS.subtle}`
+                                )}
+                              >
                                 Current
                               </span>
                             )}

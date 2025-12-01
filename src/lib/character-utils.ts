@@ -1,4 +1,7 @@
-import type { Playbook, Character, Line } from "@/lib/mock-data";
+import type { Playbook, Character, Line } from "@/lib/types";
+
+// Augmented line type to support multi-speaker lines without breaking existing type imports
+type LineWithMulti = Line & { characterIdArray?: string[] };
 import { calculateProgress } from "@/components/play/progress-bar";
 import { getLineMastery } from "@/lib/play-storage";
 
@@ -16,9 +19,13 @@ export function getCharacterLines(
     lines: Line[],
     characterId: string
 ): Line[] {
-    return lines.filter(
-        (line) => line.characterId === characterId && line.type === "dialogue"
-    );
+    return (lines as LineWithMulti[]).filter((line) => {
+        if (line.type !== "dialogue") return false;
+        // Support single-speaker and multi-speaker (characterIdArray)
+        if (line.characterId === characterId) return true;
+        const multi = line.characterIdArray;
+        return Array.isArray(multi) ? multi.includes(characterId) : false;
+    });
 }
 
 /**
@@ -64,3 +71,41 @@ export function getLearnedLinesCount(
 export function getTotalLinesCount(lines: Line[], characterId: string): number {
     return getCharacterLines(lines, characterId).length;
 }
+
+/**
+ * Helper: return list of speaker IDs for a line (handles single and multi)
+ */
+export function getSpeakerIds(line: LineWithMulti): string[] {
+    const multi = line.characterIdArray;
+    if (Array.isArray(multi)) return multi;
+    return line.characterId ? [line.characterId] : [];
+}
+
+/**
+ * Check if all characters in a play have been mastered (100% completion)
+ * @param play - The playbook to check
+ * @param allLines - All lines from the play (use getAllLines(play))
+ * @returns true if ALL characters have 100% progress
+ */
+export function areAllCharactersMastered(play: Playbook, allLines: Line[]): boolean {
+    if (play.characters.length === 0) return false;
+
+    return play.characters.every((character) => {
+        const progress = calculateProgress(allLines, play.id, character.id);
+        return progress === 100;
+    });
+}
+
+/**
+ * Get the count of mastered characters in a play
+ * @param play - The playbook to check
+ * @param allLines - All lines from the play (use getAllLines(play))
+ * @returns number of characters with 100% completion
+ */
+export function getMasteredCharacterCount(play: Playbook, allLines: Line[]): number {
+    return play.characters.filter((character) => {
+        const progress = calculateProgress(allLines, play.id, character.id);
+        return progress === 100;
+    }).length;
+}
+

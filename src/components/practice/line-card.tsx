@@ -1,10 +1,14 @@
 import { Star, Eye, CheckCircle, ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Line } from "@/lib/mock-data";
+import type { Line } from "@/lib/types";
 import { StructureProgressHeader } from "@/components/practice/structure-header";
 import { removeWords } from "@/lib/word-removal";
 import { Button } from "@/components/ui/button";
-import { getMasteryColor, ICON_SIZES, OPACITY_LEVELS } from "@/lib/ui-constants";
+import {
+  getMasteryColor,
+  ICON_SIZES,
+  OPACITY_LEVELS,
+} from "@/lib/ui-constants";
 
 export type LineWithMetadata = Line & {
   __actId: string;
@@ -63,8 +67,7 @@ export function LineCard({
     getLineMastery && typeof window !== "undefined"
       ? getLineMastery(line.id)
       : null;
-  const rehearsalCount =
-    masteryData?.rehearsalCount || line.rehearsalCount || 0;
+  const rehearsalCount = masteryData?.rehearsalCount || 0;
   const masteryPercentage = masteryData?.masteryPercentage || 0;
 
   const derivedStage = Math.min(5, Math.floor(masteryPercentage / 20));
@@ -156,10 +159,7 @@ export function LineCard({
           >
             {isMe && (
               <Star
-                className={cn(
-                  "mr-1 fill-warning text-warning",
-                  ICON_SIZES.xs
-                )}
+                className={cn("mr-1 fill-warning text-warning", ICON_SIZES.xs)}
               />
             )}
             {characterName}

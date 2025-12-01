@@ -13,12 +13,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Playbook } from "@/lib/mock-data";
+import type { Playbook, PlayMetadata } from "@/lib/types";
 import { PlayCardStats } from "@/components/play-card-stats";
+import { fetchPlayById } from "@/lib/api/plays";
+import { useEffect, useState, useMemo } from "react";
+import {
+  areAllCharactersMastered,
+  getAllLines,
+  getMasteredCharacterCount,
+} from "@/lib/character-utils";
 
 interface PlayCardProps {
-  play: Playbook;
-  status: "none" | "silver" | "gold";
+  play: PlayMetadata;
 }
 
 const BACKGROUND_CLASSES = {
@@ -38,7 +44,28 @@ const TROPHY_TITLES = {
   silver: "One character mastered",
 } as const;
 
-export function PlayCard({ play, status }: PlayCardProps) {
+export function PlayCard({ play }: PlayCardProps) {
+  const [playbook, setPlaybook] = useState<Playbook | null>(null);
+
+  useEffect(() => {
+    if (!playbook) {
+      fetchPlayById(play.id).then(setPlaybook);
+    }
+  }, [play.id, playbook]);
+
+  // Calculate trophy status from playbook data
+  const status = useMemo(() => {
+    if (!playbook) return "none";
+    const allLines = getAllLines(playbook);
+    const allMastered = areAllCharactersMastered(playbook, allLines);
+    if (allMastered) return "gold";
+    const masteredCount = getMasteredCharacterCount(playbook, allLines);
+    return masteredCount > 0 ? "silver" : "none";
+  }, [playbook]);
+
+  if (!playbook) {
+    return null;
+  }
   return (
     <Card
       className={`relative flex flex-col transition-all hover:border-primary/50 hover:shadow-lg ${BORDER_CLASSES[status]} ${BACKGROUND_CLASSES[status]}`}
@@ -57,25 +84,22 @@ export function PlayCard({ play, status }: PlayCardProps) {
         <CardDescription>
           {play.author} • {play.year}
         </CardDescription>
-        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-          <PlayCardStats play={play} />
-        </div>
       </CardHeader>
       <CardContent className="flex-1">
-        <p className="line-clamp-4 text-sm text-muted-foreground sm:line-clamp-3">
-          {play.description}
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2 sm:mt-4">
+        <div className="mt-1 flex flex-wrap gap-2 sm:mt-1">
           <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
             {play.genre}
           </span>
           <InlineStack
             gap={1}
             className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground"
-            title={`${play.characters.length} Characters`}
+            title={`${play.characterCount} Characters`}
           >
-            <Users className="h-3.5 w-3.5" /> {play.characters.length}
+            <Users className="h-3.5 w-3.5" /> {play.characterCount}
           </InlineStack>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+          <PlayCardStats play={playbook} />
         </div>
       </CardContent>
       <CardFooter>

@@ -5,7 +5,7 @@ import { CompletionIcon } from "@/components/ui/completion-icon";
 import { Badge } from "@/components/ui/badge";
 import { InlineStack } from "@/components/ui/inline-stack";
 import { calculateProgress } from "@/components/play/progress-bar";
-import type { Playbook } from "@/lib/mock-data";
+import type { Playbook } from "@/lib/types";
 import {
   getCurrentCharacterStats,
   getLastRehearsalDate,

@@ -60,9 +60,15 @@ export function getDailyStatsForPlay(playId: string): Array<{
   })).sort((a, b) => b.date.localeCompare(a.date));
 }
 /**
- * Centralized storage utilities for persisting play and character state.
- * Uses sessionStorage for within-session persistence and falls back to query params.
+ * Centralized storage utilities for persisting character state and session stats.
+ * Uses sessionStorage for within-session persistence.
+ * 
+ * Note: Play data is now stored in PostgreSQL database via Prisma.
+ * This module only handles session-specific data like character selection,
+ * line progress, and practice statistics.
  */
+
+import type { Playbook } from "./parse/schemas";
 
 const STORAGE_PREFIX = 'tpc:';
 
@@ -323,7 +329,8 @@ export function setLineMastery(playId: string, characterId: string, lineId: stri
 }
 
 /**
- * Clear all app storage data.
+ * Clear all app storage data (session stats and progress only).
+ * Note: This does not delete play data from the database.
  */
 export function clearAllData(): void {
   if (typeof window === 'undefined') return;

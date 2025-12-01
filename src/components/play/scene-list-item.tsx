@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { OPACITY_LEVELS } from "@/lib/ui-constants";
 import { ProgressBar } from "./progress-bar";
 import { CompletionIcon } from "@/components/ui/completion-icon";
-import type { Scene, Character } from "@/lib/mock-data";
+import type { Scene, Character } from "@/lib/types";
 
 interface SceneListItemProps {
   scene: Scene;
@@ -25,7 +25,12 @@ export function SceneListItem({
   hasCharacterLines,
 }: SceneListItemProps) {
   return (
-    <div className={cn("flex items-center justify-between rounded-md border p-3", `bg-secondary/${OPACITY_LEVELS.light}`)}>
+    <div
+      className={cn(
+        "flex items-center justify-between rounded-md border p-3",
+        `bg-secondary/${OPACITY_LEVELS.light}`
+      )}
+    >
       <div className="flex items-center gap-3">
         {activeCharacter && (
           <CompletionIcon

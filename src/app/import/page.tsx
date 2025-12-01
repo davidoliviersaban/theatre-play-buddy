@@ -1,12 +1,19 @@
+"use client";
+
+import React from "react";
 import Link from "next/link";
-import { Upload, FileText, ArrowLeft, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { OPACITY_LEVELS } from "@/lib/ui-constants";
+import { Upload, ArrowLeft } from "lucide-react";
 import { IconButton } from "@/components/ui/icon-button";
 import { Card, CardContent } from "@/components/ui/card";
+import { FileUpload } from "../../components/import/file-upload";
+import { ParseProgress } from "../../components/import/parse-progress";
 
 export default function ImportPage() {
+  const [uploadInfo, setUploadInfo] = React.useState<{
+    uploadId: string;
+    filename: string;
+    size: number;
+  } | null>(null);
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="mx-auto max-w-2xl">
@@ -33,32 +40,24 @@ export default function ImportPage() {
             <p className="mb-6 text-sm text-muted-foreground">
               or click to browse from your computer
             </p>
-            <Button>Select File</Button>
+            {/* Real upload component */}
+            <div className="mt-4">
+              <FileUpload onUploaded={setUploadInfo} />
+            </div>
           </CardContent>
         </Card>
 
-        <div className="mt-12">
-          <h2 className="mb-4 text-lg font-semibold">Recent Imports</h2>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between rounded-lg border p-4">
-              <div className="flex items-center space-x-4">
-                <div className={cn("rounded-full p-2", `bg-success/${OPACITY_LEVELS.subtle}`)}>
-                  <FileText className="h-5 w-5 text-green-500" />
-                </div>
-                <div>
-                  <p className="font-medium">Romeo_and_Juliet_Full.pdf</p>
-                  <p className="text-xs text-muted-foreground">
-                    Imported 2 hours ago
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center text-success">
-                <CheckCircle2 className="mr-2 h-4 w-4" />
-                <span className="text-sm font-medium">Ready</span>
-              </div>
+        {uploadInfo && (
+          <div className="mt-12 space-y-4">
+            <h2 className="text-lg font-semibold">Parsing Progress</h2>
+            <div className="rounded-lg border p-4">
+              <p className="text-sm text-muted-foreground">
+                Uploaded: {uploadInfo.filename} ({uploadInfo.size} bytes)
+              </p>
+              <ParseProgress uploadId={uploadInfo.uploadId} />
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
