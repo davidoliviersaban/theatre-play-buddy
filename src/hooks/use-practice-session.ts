@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import type { Playbook, Line } from "@/lib/types";
-import { getLastLineIndex, setLastLineIndex, setSessionStats as persistSessionStats, getSessionStats, getLineMastery, setLineMastery, type SessionStats } from "@/lib/play-storage";
+import { getLastLineIndex, setLastLineIndex } from "@/lib/play-storage";
+import { useProgress } from "./use-progress-sync";
 
 type LineWithMetadata = Line & {
     __actId: string;
@@ -13,6 +14,18 @@ type LineWithMetadata = Line & {
 type LineStageMap = Record<string, number>; // lineId -> stage (0-5)
 
 export function usePracticeSession(play: Playbook, characterId: string, startId?: string) {
+    // Initialize database-backed progress tracking
+    const {
+        progress: dbProgress,
+        updateLineProgress: updateDbProgress,
+        isLoading: isProgressLoading,
+    } = useProgress({
+        playId: play.id,
+        characterId,
+        syncInterval: 20000, // Sync every 20 seconds
+        enabled: !!characterId,
+    });
+
     // Flatten lines with act/scene metadata
     const allLines = useMemo<LineWithMetadata[]>(() => {
         return play.acts.flatMap((act) =>
@@ -69,28 +82,19 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
     const [lineStages, setLineStages] = useState<LineStageMap>({});
     const [showHint, setShowHint] = useState(false);
     const [masteryUpdateTrigger, setMasteryUpdateTrigger] = useState(0);
-    const [sessionStats, setSessionStats] = useState(() => {
-        // Only load from storage on client-side
-        if (typeof window === 'undefined') {
-            return {
-                linesRehearsed: 0,
-                correctLines: 0,
-                hintsUsed: 0,
-                totalSessions: 1,
-            };
-        }
-        // Load existing stats or start fresh
-        if (characterId) {
-            const stored = getSessionStats(play.id, characterId);
-            if (stored) return stored;
+    
+    // Use database stats if available, otherwise use local state
+    const sessionStats = useMemo(() => {
+        if (dbProgress) {
+            return dbProgress.sessionStats;
         }
         return {
             linesRehearsed: 0,
             correctLines: 0,
-            hintsUsed: 0,
-            totalSessions: 1,
+            totalHints: 0,
+            masteredLines: 0,
         };
-    });
+    }, [dbProgress]);
 
     const currentLine = allLines[currentLineIndex];
     const isMyLine = currentLine?.characterId === characterId;
@@ -150,13 +154,6 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
         }
     };
 
-    // Persist session stats when they change
-    useEffect(() => {
-        if (characterId) {
-            persistSessionStats(play.id, characterId, sessionStats);
-        }
-    }, [sessionStats, play.id, characterId]);
-
     const goToPrevious = () => setCurrentLineIndex(prev => {
         const next = Math.max(0, prev - 1);
         persistLineIndex(next);
@@ -171,11 +168,11 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
             !countedLineIdsRef.current.has(currentLine.id)
         ) {
             countedLineIdsRef.current.add(currentLine.id);
-            setSessionStats((prev) => ({
-                ...prev,
-                linesRehearsed: prev.linesRehearsed + 1,
-                correctLines: prev.correctLines + 1,
-            }));
+            
+            // Update database with rehearsal count
+            updateDbProgress(currentLine.id, {
+                rehearsalDelta: 1,
+            });
         }
 
         // Update line mastery when moving to next line (only for my dialogue lines)
@@ -241,23 +238,18 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
 
     const toggleHint = () => {
         if (!showHint && currentLine && isMyLine) {
-            // Increment global hint counter
-            setSessionStats((prev) => ({
-                ...prev,
-                hintsUsed: prev.hintsUsed + 1,
-            }));
+            // Update database with hint count
+            updateDbProgress(currentLine.id, {
+                hintDelta: 1,
+            });
 
-            // Update line mastery: increment hint count and decrease mastery by 25%
-            const existing = getLineMastery(play.id, characterId, currentLine.id);
-            const newHintCount = (existing?.hintCount || 0) + 1;
-            const currentMastery = existing?.masteryPercentage || 0;
+            // Update line mastery: decrease mastery by 25%
+            const currentProgress = dbProgress?.lineProgress[currentLine.id];
+            const currentMastery = currentProgress?.progressPercent || 0;
             const newMastery = Math.max(0, currentMastery - 25);
 
-            setLineMastery(play.id, characterId, currentLine.id, {
-                rehearsalCount: existing?.rehearsalCount || 0,
-                masteryPercentage: newMastery,
-                hintCount: newHintCount,
-                lastPracticed: new Date().toISOString(),
+            updateDbProgress(currentLine.id, {
+                progressPercent: newMastery,
             });
 
             // Force re-render
@@ -269,16 +261,12 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
     const updateLineMastery = (lineId: string) => {
         if (typeof window === 'undefined') return;
 
-        const existing = getLineMastery(play.id, characterId, lineId);
-        const newCount = (existing?.rehearsalCount || 0) + 1;
-        const currentMastery = existing?.masteryPercentage || 0;
+        const currentProgress = dbProgress?.lineProgress[lineId];
+        const currentMastery = currentProgress?.progressPercent || 0;
         const newPercentage = Math.min(100, currentMastery + 20);
 
-        setLineMastery(play.id, characterId, lineId, {
-            rehearsalCount: newCount,
-            masteryPercentage: newPercentage,
-            hintCount: existing?.hintCount || 0,
-            lastPracticed: new Date().toISOString(),
+        updateDbProgress(lineId, {
+            progressPercent: newPercentage,
         });
 
         // Force re-render
@@ -340,6 +328,7 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
         isMyLine,
         isPaused,
         sessionStats,
+        isProgressLoading,
         lineRefs,
         goToPrevious,
         goToNext,
@@ -350,7 +339,12 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
         showHint,
         toggleHint,
         markLineAsKnown,
-        getLineMastery: (lineId: string) => getLineMastery(play.id, characterId, lineId),
+        getLineMastery: (lineId: string) => dbProgress?.lineProgress[lineId] || {
+            rehearsalCount: 0,
+            hintCount: 0,
+            progressPercent: 0,
+            lastPracticedAt: new Date(),
+        },
         masteryUpdateTrigger,
     };
 }
