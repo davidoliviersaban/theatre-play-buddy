@@ -19,9 +19,8 @@ import { fetchPlayById } from "@/lib/api/plays";
 import { useEffect, useState, useMemo } from "react";
 import {
   areAllCharactersMastered,
-  getAllLines,
   getMasteredCharacterCount,
-} from "@/lib/character-utils";
+} from "@/lib/utils/character-utils";
 
 interface PlayCardProps {
   play: PlayMetadata;
@@ -56,10 +55,9 @@ export function PlayCard({ play }: PlayCardProps) {
   // Calculate trophy status from playbook data
   const status = useMemo(() => {
     if (!playbook) return "none";
-    const allLines = getAllLines(playbook);
-    const allMastered = areAllCharactersMastered(playbook, allLines);
+    const allMastered = areAllCharactersMastered(playbook);
     if (allMastered) return "gold";
-    const masteredCount = getMasteredCharacterCount(playbook, allLines);
+    const masteredCount = getMasteredCharacterCount(playbook);
     return masteredCount > 0 ? "silver" : "none";
   }, [playbook]);
 

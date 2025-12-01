@@ -10,9 +10,9 @@ import {
   getCurrentCharacterStats,
   getLastRehearsalDate,
 } from "@/lib/play-storage";
-import { getAllLines, getLearnedCharacters } from "@/lib/character-utils";
-import { useClientOnly } from "@/lib/client-utils";
-import { formatTimeAgo } from "@/lib/date-utils";
+import { getAllLines, getLearnedCharacters } from "@/lib/utils/character-utils";
+import { useClientOnly } from "@/lib/utils/client-utils";
+import { formatTimeAgo } from "@/lib/utils/date-utils";
 
 interface PlayCardStatsProps {
   play: Playbook;
@@ -25,7 +25,7 @@ export function PlayCardProgress({ play }: PlayCardStatsProps) {
   const { characterId } = getCurrentCharacterStats(play.id);
   if (!characterId) return null;
 
-  const allLines = getAllLines(play);
+  const allLines = getAllLines(play, characterId);
   const progress = calculateProgress(allLines, play.id, characterId);
 
   if (progress === 0) return null;
@@ -48,12 +48,7 @@ export function PlayCardStats({ play }: PlayCardStatsProps) {
 
   const { characterId } = getCurrentCharacterStats(play.id);
   const lastDate = getLastRehearsalDate(play.id);
-  const allLines = getAllLines(play);
-  const learnedCharacters = getLearnedCharacters(
-    play,
-    allLines,
-    characterId ?? undefined
-  );
+  const learnedCharacters = getLearnedCharacters(play);
 
   if (!characterId && !lastDate && learnedCharacters.length === 0) {
     return null;
@@ -62,6 +57,7 @@ export function PlayCardStats({ play }: PlayCardStatsProps) {
   const currentCharacter = characterId
     ? play.characters.find((c) => c.id === characterId)
     : null;
+  const allLines = characterId ? getAllLines(play, characterId) : [];
   const progress = characterId
     ? calculateProgress(allLines, play.id, characterId)
     : 0;

@@ -8,12 +8,12 @@ import { calculateProgress } from "@/components/play/progress-bar";
 import { cn } from "@/lib/utils";
 import { InlineStack } from "@/components/ui/inline-stack";
 import { OPACITY_LEVELS } from "@/lib/ui-constants";
-import type { Character, Playbook } from "@/lib/mock-data";
+import type { Character, Playbook } from "@/lib/types";
 import {
   getAllLines,
   getLearnedLinesCount,
   getTotalLinesCount,
-} from "@/lib/character-utils";
+} from "@/lib/utils/character-utils";
 
 interface CharacterSelectionPanelProps {
   play: Playbook;
@@ -34,10 +34,10 @@ export function CharacterSelectionPanel({
       <div className="space-y-3">
         {characters.map((char) => {
           const isActive = char.id === activeCharacterId;
-          const allLines = getAllLines(play);
+          const allLines = getAllLines(play, char.id);
           const progress = calculateProgress(allLines, play.id, char.id);
-          const totalLines = getTotalLinesCount(allLines, char.id);
-          const learnedLines = getLearnedLinesCount(play.id, char.id, allLines);
+          const totalLines = getTotalLinesCount(play, char.id);
+          const learnedLines = getLearnedLinesCount(play, char.id);
 
           return (
             <div

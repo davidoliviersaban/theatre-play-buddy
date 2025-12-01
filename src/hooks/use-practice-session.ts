@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import type { Playbook, Line } from "@/lib/types";
-import { getLastLineIndex, setLastLineIndex, setSessionStats as persistSessionStats, getSessionStats, getLineMastery, setLineMastery } from "@/lib/play-storage";
+import { getLastLineIndex, setLastLineIndex, setSessionStats as persistSessionStats, getSessionStats, getLineMastery, setLineMastery, type SessionStats } from "@/lib/play-storage";
 
 type LineWithMetadata = Line & {
     __actId: string;

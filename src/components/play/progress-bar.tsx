@@ -1,6 +1,6 @@
 "use client";
 
-import { useClientOnly } from "@/lib/client-utils";
+import { useClientOnly } from "@/lib/utils/client-utils";
 
 interface ProgressBarProps {
   progress: number;
