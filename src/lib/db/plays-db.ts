@@ -81,7 +81,7 @@ function createMetadata(play: Playbook, isUpdate = false): PlayMetadata {
         title: play.title,
         author: play.author,
         genre: play.genre,
-        year: play.year,
+        year: play.year ?? 0,
         createdAt: isUpdate ? (play as PlayMetadata & Playbook).createdAt || now : now,
         updatedAt: now,
         characterCount: play.characters.length,

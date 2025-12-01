@@ -3,7 +3,7 @@ import { extractTextFromPDF, extractTextFromDOCX, extractTextFromTXT } from "../
 import { PlaybookSchema, type Playbook } from "../../../../lib/parse/schemas";
 import { streamPlayParsing, getDefaultProvider, parsePlayStructure } from "../../../../lib/parse/llm-parser";
 import { parsePlayIncrementally, contextToPlaybook } from "../../../../lib/parse/incremental-parser";
-import { savePlay } from "../../../../lib/db/plays-db-prisma";
+import { savePlay, savePlayTemp } from "../../../../lib/db/plays-db-prisma";
 import type { DeepPartial } from "ai";
 
 export const runtime = "nodejs";
@@ -398,6 +398,8 @@ export async function POST(req: NextRequest) {
 
                 const parsed = PlaybookSchema.safeParse(lastPlaybook);
                 if (!parsed.success) {
+                    // Save as temporary play for recovery
+                    await savePlayTemp(lastPlaybook, parsed.error.message);
                     sendEvent(controller, "error", { message: `Validation failed: ${parsed.error.message}`, code: "VALIDATION_ERROR" });
                     controller.close();
                     return;
@@ -408,8 +410,9 @@ export async function POST(req: NextRequest) {
                     await savePlay(parsed.data);
                     console.log(`[Parse Route] Play saved to database: ${parsed.data.id}`);
                 } catch (dbError) {
+                    // Save as temporary play for recovery
+                    await savePlayTemp(parsed.data, (dbError as Error).message);
                     console.error(`[Parse Route] Failed to save play to database:`, dbError);
-                    // Don't fail the request, just log the error
                 }
 
                 sendEvent(controller, "progress", { percent: 100, message: "Validation complete" });

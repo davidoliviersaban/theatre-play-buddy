@@ -17,15 +17,16 @@ model Playbook {
   genre       String?
   description String?
   coverImage  String?
-  
+  llmSourceId String?     @db.VarChar(64) // LLM-generated ID for audit/debug only
+
   characters  Character[]
   acts        Act[]
   userCharacterProgress UserCharacterProgress[]
   userLineProgress UserLineProgress[]
-  
+
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  
+
   @@index([title])
   @@index([author])
 }
@@ -34,20 +35,21 @@ model Character {
   id             String   @id @default(uuid())
   name           String
   description    String?
+  llmSourceId    String?  @db.VarChar(64) // LLM-generated ID for audit/debug only
   isFavorite     Boolean  @default(false)
   lastSelected   Boolean  @default(false)
   completionRate Float    @default(0)
-  
+
   playbookId     String
   playbook       Playbook @relation(fields: [playbookId], references: [id], onDelete: Cascade)
-  
+
   lines          LineCharacter[]
   userCharacterProgress UserCharacterProgress[]
   userLineProgress UserLineProgress[]
-  
+
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-  
+
   @@index([playbookId])
   @@index([name])
 }
@@ -56,15 +58,16 @@ model Act {
   id         String   @id @default(uuid())
   title      String
   order      Int      @default(0)
-  
+  llmSourceId String? @db.VarChar(64) // LLM-generated ID for audit/debug only
+
   playbookId String
   playbook   Playbook @relation(fields: [playbookId], references: [id], onDelete: Cascade)
-  
+
   scenes     Scene[]
-  
+
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  
+
   @@index([playbookId])
   @@index([playbookId, order])
 }
@@ -73,15 +76,16 @@ model Scene {
   id        String   @id @default(uuid())
   title     String
   order     Int      @default(0)
-  
+  llmSourceId String? @db.VarChar(64) // LLM-generated ID for audit/debug only
+
   actId     String
   act       Act      @relation(fields: [actId], references: [id], onDelete: Cascade)
-  
+
   lines     Line[]
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@index([actId])
   @@index([actId, order])
 }
@@ -91,24 +95,39 @@ model Line {
   text              String           @db.Text
   type              LineType
   order             Int              @default(0)
-  
+  llmSourceId       String?          @db.VarChar(64) // LLM-generated ID for audit/debug only
+
   // Formatting metadata (optional)
   indentLevel       Int?
   preserveLineBreaks Boolean?
-  
+
   sceneId           String
   scene             Scene            @relation(fields: [sceneId], references: [id], onDelete: Cascade)
-  
+
   // Multi-character attribution via join table
   characters        LineCharacter[]
   userProgress      UserLineProgress[]
-  
+
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
-  
+
   @@index([sceneId])
   @@index([sceneId, order])
   @@index([type])
+}
+// Temporary play storage for incomplete/error states
+model PlayTemp {
+  id          String      @id @default(uuid())
+  title       String
+  author      String?
+  year        Int?
+  genre       String?
+  description String?
+  llmSourceId String?     @db.VarChar(64)
+  rawJson     Json        // Raw LLM output for debug/recovery
+  errorMsg    String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 // Join table for many-to-many relationship between Lines and Characters

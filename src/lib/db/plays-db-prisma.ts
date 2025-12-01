@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { prisma } from './prisma';
 import type { Playbook } from '../parse/schemas';
 import type { PlayMetadata } from '../types';
@@ -73,7 +74,7 @@ export async function savePlay(play: Playbook): Promise<void> {
         });
     }
 
-    // Create new play with all nested data
+    // Create new play with all nested data, including llmSourceId fields
     await prisma.playbook.create({
         data: {
             id: play.id,
@@ -82,12 +83,14 @@ export async function savePlay(play: Playbook): Promise<void> {
             year: play.year,
             genre: play.genre,
             description: play.description,
+            llmSourceId: (play as any).llmSourceId ?? undefined,
             // coverImage: play.coverImage,
             characters: {
                 create: play.characters.map(char => ({
                     id: char.id,
                     name: char.name,
                     description: char.description,
+                    llmSourceId: (char as any).llmSourceId ?? undefined,
                 })),
             },
             acts: {
@@ -95,17 +98,20 @@ export async function savePlay(play: Playbook): Promise<void> {
                     id: act.id,
                     title: act.title,
                     order: actIndex,
+                    llmSourceId: (act as any).llmSourceId ?? undefined,
                     scenes: {
                         create: act.scenes.map((scene, sceneIndex) => ({
                             id: scene.id,
                             title: scene.title,
                             order: sceneIndex,
+                            llmSourceId: (scene as any).llmSourceId ?? undefined,
                             lines: {
                                 create: scene.lines.map((line, lineIndex) => ({
                                     id: line.id,
                                     text: line.text,
                                     type: line.type,
                                     order: lineIndex,
+                                    llmSourceId: (line as any).llmSourceId ?? undefined,
                                     indentLevel: line.formatting?.indentLevel,
                                     preserveLineBreaks: line.formatting?.preserveLineBreaks,
                                     // Handle character relationship
@@ -134,6 +140,25 @@ export async function savePlay(play: Playbook): Promise<void> {
     });
 
     console.log(`[DB] Saved play: ${play.id} (${existingPlay ? 'updated' : 'created'})`);
+}
+
+/**
+ * Save a temporary/incomplete play for error/collision recovery
+ */
+export async function savePlayTemp(raw: any, errorMsg?: string): Promise<void> {
+    await prisma.playTemp.create({
+        data: {
+            title: raw.title ?? 'Untitled',
+            author: raw.author ?? null,
+            year: raw.year ?? null,
+            genre: raw.genre ?? null,
+            description: raw.description ?? null,
+            llmSourceId: raw.llmSourceId ?? null,
+            rawJson: raw,
+            errorMsg: errorMsg ?? null,
+        },
+    });
+    console.log(`[DB] Saved temporary play for recovery: ${raw.title ?? 'Untitled'}`);
 }
 
 /**

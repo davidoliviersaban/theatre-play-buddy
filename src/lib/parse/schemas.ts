@@ -44,7 +44,7 @@ export const PlaybookSchema = z.object({
     id: z.string().describe("Unique identifier for the play"),
     title: z.string().describe("Full title of the play"),
     author: z.string().describe("Playwright's name"),
-    year: z.number().describe("Year of publication or first performance"),
+    year: z.number().optional().nullable().describe("Year of publication or first performance"),
     genre: z.string().describe("Genre classification (e.g., 'Tragedy', 'Comedy', 'Drama')"),
     description: z.string().describe("Brief synopsis or description of the play"),
     // coverImage: z.string().optional().describe("Optional URL or path to cover image"),
