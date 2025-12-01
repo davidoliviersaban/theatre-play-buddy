@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client';
 import { prisma } from './prisma';
 import type { Playbook } from '../parse/schemas';
 import type { PlayMetadata } from '../types';
@@ -62,84 +61,104 @@ export async function getPlayMetadataById(playId: string): Promise<PlayMetadata 
  * Save a play to the database
  */
 export async function savePlay(play: Playbook): Promise<void> {
-    // Check if play exists
-    const existingPlay = await prisma.playbook.findUnique({
-        where: { id: play.id },
-    });
-
-    if (existingPlay) {
-        // Update existing play - delete and recreate for simplicity
-        await prisma.playbook.delete({
-            where: { id: play.id },
-        });
-    }
-
-    // Create new play with all nested data, including llmSourceId fields
-    await prisma.playbook.create({
+    // Build character name-to-ID mapping after creation (for line attribution)
+    // We'll create characters first, then reference them by the DB-generated IDs
+    
+    // Create the playbook with all nested entities, letting Prisma generate all IDs
+    const createdPlaybook = await prisma.playbook.create({
         data: {
-            id: play.id,
             title: play.title,
             author: play.author,
             year: play.year,
             genre: play.genre,
             description: play.description,
-            llmSourceId: (play as any).llmSourceId ?? undefined,
-            // coverImage: play.coverImage,
+            llmSourceId: (play as unknown as { llmSourceId?: string }).llmSourceId ?? undefined,
             characters: {
                 create: play.characters.map(char => ({
-                    id: char.id,
                     name: char.name,
                     description: char.description,
-                    llmSourceId: (char as any).llmSourceId ?? undefined,
-                })),
-            },
-            acts: {
-                create: play.acts.map((act, actIndex) => ({
-                    id: act.id,
-                    title: act.title,
-                    order: actIndex,
-                    llmSourceId: (act as any).llmSourceId ?? undefined,
-                    scenes: {
-                        create: act.scenes.map((scene, sceneIndex) => ({
-                            id: scene.id,
-                            title: scene.title,
-                            order: sceneIndex,
-                            llmSourceId: (scene as any).llmSourceId ?? undefined,
-                            lines: {
-                                create: scene.lines.map((line, lineIndex) => ({
-                                    id: line.id,
-                                    text: line.text,
-                                    type: line.type,
-                                    order: lineIndex,
-                                    llmSourceId: (line as any).llmSourceId ?? undefined,
-                                    indentLevel: line.formatting?.indentLevel,
-                                    preserveLineBreaks: line.formatting?.preserveLineBreaks,
-                                    // Handle character relationship
-                                    characters: line.characterId
-                                        ? {
-                                              create: {
-                                                  characterId: line.characterId,
-                                                  order: 0,
-                                              },
-                                          }
-                                        : line.characterIdArray
-                                        ? {
-                                              create: line.characterIdArray.map((charId, i) => ({
-                                                  characterId: charId,
-                                                  order: i,
-                                              })),
-                                          }
-                                        : undefined,
-                                })),
-                            },
-                        })),
-                    },
+                    llmSourceId: char.id, // Store LLM's ID as llmSourceId for mapping
                 })),
             },
         },
+        include: {
+            characters: true,
+        },
     });
-
-    console.log(`[DB] Saved play: ${play.id} (${existingPlay ? 'updated' : 'created'})`);
+    
+    // Build mapping from LLM character ID to DB character ID
+    const charIdMap = new Map<string, string>();
+    for (const char of play.characters) {
+        // Use LLM ID if provided, otherwise fall back to character name
+        const lookupKey = char.id || char.name;
+        const dbChar = createdPlaybook.characters.find(c => 
+            (char.id && c.llmSourceId === char.id) || c.name === char.name
+        );
+        if (dbChar) {
+            charIdMap.set(lookupKey, dbChar.id);
+        }
+    }
+    
+    // Now create acts, scenes, and lines
+    for (const [actIndex, act] of play.acts.entries()) {
+        const createdAct = await prisma.act.create({
+            data: {
+                title: act.title,
+                order: actIndex,
+                playbookId: createdPlaybook.id,
+                llmSourceId: act.id,
+            },
+        });
+        
+        for (const [sceneIndex, scene] of act.scenes.entries()) {
+            const createdScene = await prisma.scene.create({
+                data: {
+                    title: scene.title,
+                    order: sceneIndex,
+                    actId: createdAct.id,
+                    llmSourceId: scene.id,
+                },
+            });
+            
+            for (const [lineIndex, line] of scene.lines.entries()) {
+                const createdLine = await prisma.line.create({
+                    data: {
+                        text: line.text,
+                        type: line.type,
+                        order: lineIndex,
+                        sceneId: createdScene.id,
+                        llmSourceId: line.id,
+                        indentLevel: line.formatting?.indentLevel,
+                        preserveLineBreaks: line.formatting?.preserveLineBreaks,
+                    },
+                });
+                
+                // Create character attributions
+                const charIds: string[] = [];
+                if (line.characterId) {
+                    const dbCharId = charIdMap.get(line.characterId);
+                    if (dbCharId) charIds.push(dbCharId);
+                } else if (line.characterIdArray) {
+                    for (const llmCharId of line.characterIdArray) {
+                        const dbCharId = charIdMap.get(llmCharId);
+                        if (dbCharId) charIds.push(dbCharId);
+                    }
+                }
+                
+                if (charIds.length > 0) {
+                    await prisma.lineCharacter.createMany({
+                        data: charIds.map((charId, i) => ({
+                            lineId: createdLine.id,
+                            characterId: charId,
+                            order: i,
+                        })),
+                    });
+                }
+            }
+        }
+    }
+    
+    console.log(`[DB] ✅ Created play: ${createdPlaybook.id} (${play.title})`);
 }
 
 /**

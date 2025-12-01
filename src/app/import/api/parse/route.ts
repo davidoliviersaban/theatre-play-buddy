@@ -107,6 +107,132 @@ function emitSceneEvents(
 }
 
 /**
+ * Fix character ID mismatches by matching lowercase characterId against actual character list
+ * Replaces incorrect characterIds with the correct ones from the playbook
+ */
+function fixCharacterIdMismatches(playbook: DeepPartial<Playbook>): DeepPartial<Playbook> {
+    if (!playbook.characters || !playbook.acts) return playbook;
+    
+    // Build a map of lowercase character IDs to actual character IDs
+    const charIdMap = new Map<string, string>();
+    for (const char of playbook.characters) {
+        if (char?.id) {
+            charIdMap.set(char.id.toLowerCase(), char.id);
+        }
+    }
+    
+    let fixedCount = 0;
+    
+    // Iterate through all lines and fix character IDs
+    for (const act of playbook.acts) {
+        if (!act?.scenes) continue;
+        
+        for (const scene of act.scenes) {
+            if (!scene?.lines) continue;
+            
+            for (const line of scene.lines) {
+                if (!line) continue;
+                
+                // Fix single characterId
+                if (line.characterId) {
+                    const correctId = charIdMap.get(line.characterId.toLowerCase());
+                    if (correctId && correctId !== line.characterId) {
+                        console.log(`[Char Fix] Replacing "${line.characterId}" → "${correctId}"`);
+                        line.characterId = correctId;
+                        fixedCount++;
+                    }
+                }
+                
+                // Fix characterIdArray
+                if (line.characterIdArray && Array.isArray(line.characterIdArray)) {
+                    for (let i = 0; i < line.characterIdArray.length; i++) {
+                        const charId = line.characterIdArray[i];
+                        if (charId) {
+                            const correctId = charIdMap.get(charId.toLowerCase());
+                            if (correctId && correctId !== charId) {
+                                console.log(`[Char Fix] Replacing "${charId}" → "${correctId}" in array`);
+                                line.characterIdArray[i] = correctId;
+                                fixedCount++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    if (fixedCount > 0) {
+        console.log(`[Char Fix] Fixed ${fixedCount} character ID mismatches`);
+    }
+    
+    return playbook;
+}
+
+/**
+ * Clean up playbook data to ensure validation passes
+ * Handles edge cases where LLM produces invalid data
+ */
+function cleanupPlaybook(playbook: DeepPartial<Playbook>): DeepPartial<Playbook> {
+    if (!playbook.acts || !playbook.characters) return playbook;
+    
+    // Build valid character ID set
+    const validCharIds = new Set<string>();
+    for (const char of playbook.characters) {
+        if (char?.id) validCharIds.add(char.id);
+    }
+    
+    let fixedDialogueCount = 0;
+    let removedLinesCount = 0;
+    
+    for (const act of playbook.acts) {
+        if (!act?.scenes) continue;
+        
+        for (const scene of act.scenes) {
+            if (!scene?.lines) continue;
+            
+            // Filter and fix lines
+            scene.lines = scene.lines.filter(line => {
+                if (!line) {
+                    removedLinesCount++;
+                    return false;
+                }
+                
+                // Remove lines without text
+                if (!line.text || line.text.trim().length === 0) {
+                    removedLinesCount++;
+                    return false;
+                }
+                
+                // If dialogue without valid character attribution, convert to stage direction
+                if (line.type === "dialogue") {
+                    const hasValidSingleChar = line.characterId && validCharIds.has(line.characterId);
+                    const hasValidArrayChars = line.characterIdArray && 
+                        Array.isArray(line.characterIdArray) && 
+                        line.characterIdArray.length > 0 &&
+                        line.characterIdArray.some(id => id && validCharIds.has(id));
+                    
+                    if (!hasValidSingleChar && !hasValidArrayChars) {
+                        console.warn(`[Cleanup] Converting orphan dialogue to stage direction: "${line.text?.slice(0, 50)}..."`);
+                        line.type = "stage_direction";
+                        delete line.characterId;
+                        delete line.characterIdArray;
+                        fixedDialogueCount++;
+                    }
+                }
+                
+                return true;
+            });
+        }
+    }
+    
+    if (fixedDialogueCount > 0 || removedLinesCount > 0) {
+        console.log(`[Cleanup] Fixed ${fixedDialogueCount} orphan dialogues, removed ${removedLinesCount} invalid lines`);
+    }
+    
+    return playbook;
+}
+
+/**
  * T039: Detect unsupported speakers (crowd/unknown) and emit telemetry events.
  * This helps measure the frequency of unsupported cases for future prioritization.
  */
@@ -392,7 +518,14 @@ export async function POST(req: NextRequest) {
                         
                         // Convert final context to playbook
                         const finalPlaybook = contextToPlaybook(context);
-                        const parsed = PlaybookSchema.safeParse(finalPlaybook);
+                        
+                        // Fix character ID mismatches before validation
+                        const fixedPlaybook = fixCharacterIdMismatches(finalPlaybook);
+                        
+                        // Clean up orphan dialogues and invalid lines
+                        const cleanedPlaybook = cleanupPlaybook(fixedPlaybook);
+                        
+                        const parsed = PlaybookSchema.safeParse(cleanedPlaybook);
                         
                         if (!parsed.success) {
                             // Mark session as failed
@@ -411,6 +544,30 @@ export async function POST(req: NextRequest) {
                             return;
                         }
                         
+                        console.log(`[Parse Route] ✅ Validation passed!`);
+                        
+                        // Save to database
+                        try {
+                            await savePlay(parsed.data);
+                            console.log(`[Parse Route] ✅ Play saved to database: ${parsed.data.id}`);
+                        } catch (dbError) {
+                            console.error(`[Parse Route] ❌ Failed to save play to database:`, dbError);
+                            
+                            // Mark session as failed due to DB save error
+                            await updateParsingSession(sessionId, {
+                                status: "failed",
+                                completedAt: new Date(),
+                                failureReason: `Database save failed: ${(dbError as Error).message}`,
+                            });
+                            
+                            sendEvent(controller, "error", { 
+                                message: `Failed to save play: ${(dbError as Error).message}`,
+                                code: "DB_SAVE_ERROR" 
+                            });
+                            controller.close();
+                            return;
+                        }
+                        
                         // Mark session as completed and delete
                         await updateParsingSession(sessionId, {
                             status: "completed",
@@ -421,8 +578,14 @@ export async function POST(req: NextRequest) {
                         await deleteCompletedSessions();
                         console.log(`[Parse Route] ✅ DB: Deleted completed sessions (cleanup)`);
                         
-                        lastPlaybook = parsed.data;
-                        console.log(`[Parse Route] Incremental parsing complete: ${linesCompleted} lines`);
+                        console.log(`[Parse Route] ✅ Incremental parsing complete: ${linesCompleted} lines`);
+                        
+                        // Emit final success events and close
+                        sendEvent(controller, "progress", { percent: 100, message: "Parsing complete" });
+                        sendEvent(controller, "complete", parsed.data);
+                        __sseClosed = true;
+                        controller.close();
+                        return;
                         
                     } else {
                         // === STREAMING PARSING PATH (for shorter plays) ===
@@ -500,12 +663,22 @@ export async function POST(req: NextRequest) {
                 }
 
                 // Save to file-based database
+
+                console.log(`[Parse Route] ✅ Validation passed!`);
+                
+                // Save to database
                 try {
                     await savePlay(parsed.data);
-                    console.log(`[Parse Route] Play saved to database: ${parsed.data.id}`);
+                    console.log(`[Parse Route] ✅ Play saved to database: ${parsed.data.id}`);
                 } catch (dbError) {
-                    // Log error but don't fail
-                    console.error(`[Parse Route] Failed to save play to database:`, dbError);
+                    console.error(`[Parse Route] ❌ Failed to save play to database (streaming mode, no session):`, dbError);
+                    sendEvent(controller, "error", { 
+                        message: `Failed to save play: ${(dbError as Error).message}`,
+                        code: "DB_SAVE_ERROR" 
+                    });
+                    // We still close the stream on failure here.
+                    controller.close();
+                    return;
                 }
 
                 sendEvent(controller, "progress", { percent: 100, message: "Validation complete" });

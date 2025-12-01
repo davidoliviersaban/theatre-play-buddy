@@ -53,7 +53,7 @@ export async function createParsingSession(data: CreateSessionData): Promise<str
       currentChunk: 0,
     },
   });
-  
+
   console.log(`[ParsingSession] Created session ${session.id} for ${data.filename}`);
   return session.id;
 }
@@ -69,7 +69,7 @@ export async function updateParsingSession(
     where: { id: sessionId },
     data,
   });
-  
+
   console.log(`[ParsingSession] Updated session ${sessionId}:`, data);
 }
 
@@ -121,7 +121,7 @@ export async function deleteCompletedSessions(): Promise<number> {
       status: "completed",
     },
   });
-  
+
   console.log(`[ParsingSession] Deleted ${result.count} completed sessions`);
   return result.count;
 }

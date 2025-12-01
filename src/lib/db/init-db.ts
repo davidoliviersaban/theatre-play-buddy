@@ -1,5 +1,7 @@
 import { prisma } from './prisma';
 import { MOCK_PLAYS } from '../mock-data';
+import { savePlay } from './plays-db-prisma';
+import type { Playbook } from '../parse/schemas';
 
 let initializationStarted = false;
 
@@ -29,59 +31,35 @@ export async function initializeDatabase(): Promise<void> {
 
         for (const mockPlay of MOCK_PLAYS) {
             try {
-                // Create playbook with all nested data
-                await prisma.playbook.create({
-                    data: {
-                        id: mockPlay.id,
-                        title: mockPlay.title,
-                        author: mockPlay.author,
-                        year: mockPlay.year,
-                        genre: mockPlay.genre,
-                        description: mockPlay.description,
-                        coverImage: mockPlay.coverImage,
-                        characters: {
-                            create: mockPlay.characters.map(char => ({
-                                id: char.id,
-                                name: char.name,
-                                description: char.description,
-                                isFavorite: char.isFavorite ?? false,
-                                lastSelected: char.lastSelected ?? false,
-                                completionRate: char.completionRate ?? 0,
+                // Convert mock play to Playbook format (IDs become optional llmSourceIds)
+                const playbook: Playbook = {
+                    title: mockPlay.title,
+                    author: mockPlay.author,
+                    year: mockPlay.year,
+                    genre: mockPlay.genre || 'Drama',
+                    description: mockPlay.description || '',
+                    characters: mockPlay.characters.map(char => ({
+                        id: char.id, // Will be stored as llmSourceId
+                        name: char.name,
+                        description: char.description,
+                    })),
+                    acts: mockPlay.acts.map(act => ({
+                        id: act.id, // Will be stored as llmSourceId
+                        title: act.title,
+                        scenes: act.scenes.map(scene => ({
+                            id: scene.id, // Will be stored as llmSourceId
+                            title: scene.title,
+                            lines: scene.lines.map(line => ({
+                                id: line.id, // Will be stored as llmSourceId
+                                text: line.text,
+                                type: line.type as 'dialogue' | 'stage_direction',
+                                characterId: line.characterId,
                             })),
-                        },
-                        acts: {
-                            create: mockPlay.acts.map((act, actIndex) => ({
-                                id: act.id,
-                                title: act.title,
-                                order: actIndex,
-                                scenes: {
-                                    create: act.scenes.map((scene, sceneIndex) => ({
-                                        id: scene.id,
-                                        title: scene.title,
-                                        order: sceneIndex,
-                                        lines: {
-                                            create: scene.lines.map((line, lineIndex) => ({
-                                                id: line.id,
-                                                text: line.text,
-                                                type: line.type,
-                                                order: lineIndex,
-                                                // Handle character relationship
-                                                characters: line.characterId
-                                                    ? {
-                                                        create: {
-                                                            characterId: line.characterId,
-                                                            order: 0,
-                                                        },
-                                                    }
-                                                    : undefined,
-                                            })),
-                                        },
-                                    })),
-                                },
-                            })),
-                        },
-                    },
-                });
+                        })),
+                    })),
+                };
+
+                await savePlay(playbook);
                 console.log(`[DB Init] ✓ Saved: ${mockPlay.title}`);
             } catch (error) {
                 console.error(`[DB Init] ✗ Failed to save ${mockPlay.title}:`, error);

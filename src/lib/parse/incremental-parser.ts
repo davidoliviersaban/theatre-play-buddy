@@ -316,13 +316,11 @@ export async function* parsePlayIncrementally(
 /**
  * Convert parsing context to final Playbook format
  */
-export function contextToPlaybook(context: ParsingContext, fallbackId: string = 'imported-play'): Playbook {
-    const playId = context.title
-        ? context.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-        : fallbackId;
+export function contextToPlaybook(context: ParsingContext): Playbook {
+    // IDs are now optional - Prisma will auto-generate them via @default(uuid())
+    // This eliminates all ID collision issues completely
     
     return {
-        id: playId,
         title: context.title || 'Untitled Play',
         author: context.author || 'Unknown Author',
         year: context.year ?? new Date().getFullYear(),

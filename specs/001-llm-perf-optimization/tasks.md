@@ -54,8 +54,8 @@
 
 ### Implementation for User Story 1
 
-- [ ] T014 [P] [US1] Modify `src/app/import/api/parse/route.ts` to create ParsingSession on new upload (store filename, rawText, totalChunks)
-- [ ] T015 [P] [US1] Add session ID emission to SSE stream in `src/app/import/api/parse/route.ts` (emit "session_created" event with sessionId, totalChunks)
+- [x] T014 [P] [US1] Modify `src/app/import/api/parse/route.ts` to create ParsingSession on new upload (store filename, rawText, totalChunks)
+- [x] T015 [P] [US1] Add session ID emission to SSE stream in `src/app/import/api/parse/route.ts` (emit "session_created" event with sessionId, totalChunks)
 - [ ] T016 [US1] Implement `onSave` callback in `src/app/import/api/parse/route.ts` that calls `savePlay()` and `updateParsingSession()` after each chunk
 - [ ] T017 [US1] Update progress event emission in `src/app/import/api/parse/route.ts` to send every chunk completion (current chunk, characters, lines)
 - [ ] T018 [US1] Add timing logs to show chunk processing time and estimated time remaining in `src/lib/parse/incremental-parser.ts`
