@@ -205,7 +205,6 @@ type Line = {
   characterId?: string; // note: stage directions may not have a characterId
   text: string;
   type: "dialogue" | "stage_direction";
-  masteryLevel?: "low" | "medium" | "high"; // For practice mode
   rehearsalCount?: number;
 };
 ```
@@ -223,7 +222,6 @@ export const LineSchema = z
     text: z.string().min(1, "Line text is required"),
     type: z.enum(["dialogue", "stage_direction"]),
     // Practice-related fields not set during parsing
-    masteryLevel: z.enum(["low", "medium", "high"]).optional(),
     rehearsalCount: z.number().int().min(0).optional(),
   })
   .refine(
@@ -256,7 +254,6 @@ export type LineParsed = z.infer<typeof LineSchema>;
   - Use `characterId` for single speaker; use `characterIdArray` for multiple speakers
 - `text`: Required, non-empty string
 - `type`: Must be either `'dialogue'` or `'stage_direction'`
-- Practice fields (`masteryLevel`, `rehearsalCount`) optional, not set by LLM
 
 **Multi-Character Support**:
 
@@ -306,7 +303,6 @@ export type LineParsed = z.infer<typeof LineSchema>;
   - Brackets: "[Thunder]"
   - All caps with no speaker: "THUNDER AND LIGHTNING"
 - Generate UUID for id
-- Set `masteryLevel` and `rehearsalCount` to undefined (added later during practice)
 
 ---
 
@@ -586,7 +582,6 @@ export const LineSchema = z
       .optional(),
     text: z.string().min(1, "Line text is required"),
     type: z.enum(["dialogue", "stage_direction"]),
-    masteryLevel: z.enum(["low", "medium", "high"]).optional(),
     rehearsalCount: z.number().int().min(0).optional(),
   })
   .refine(

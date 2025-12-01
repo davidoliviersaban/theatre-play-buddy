@@ -1,18 +1,20 @@
 # Database Implementation Status
 
-## Current Status: ✅ PostgreSQL Database Fully Operational & Integrated
+## Current Status: ✅ PostgreSQL Database Fully Operational & Integrated with LLM Parser
 
-The PostgreSQL database is now fully configured, seeded, and **integrated with the API**. All API routes are now using Prisma ORM to interact with PostgreSQL instead of file-based storage.
+The PostgreSQL database is now fully configured, seeded, and **integrated with both the API and LLM parser**. All API routes and the LLM play parser now use Prisma ORM to interact with PostgreSQL instead of file-based storage.
 
 ### What's Working:
 
 - ✅ Prisma 7.x configuration with `prisma.config.ts`
 - ✅ PostgreSQL adapter (`@prisma/adapter-pg`) integrated
-- ✅ Database schema migrated successfully
+- ✅ Database schema migrated successfully (including user progress tracking)
 - ✅ Database seeded with 4 sample plays, 12 characters, and 75 lines
 - ✅ All relationships properly configured
 - ✅ Environment variables loading from `.env.local`
 - ✅ **API routes switched to Prisma database (December 1, 2024)**
+- ✅ **LLM parser integrated with database (December 1, 2024)**
+- ✅ **User progress tracking tables added (UserLineProgress, UserCharacterProgress)**
 
 ### Features Supported:
 
@@ -21,24 +23,46 @@ The PostgreSQL database is now fully configured, seeded, and **integrated with t
 - ✅ Act and Scene hierarchy
 - ✅ Line storage with multi-character attribution
 - ✅ Formatting preservation (indentation, line breaks)
-- ✅ Practice progress tracking (mastery levels, rehearsal counts)
+- ✅ User progress tracking (mastery levels, rehearsal counts, hints)
+- ✅ **LLM-parsed play import and persistence**
+- ✅ **Real-time parsing progress via Server-Sent Events**
 
 ## Database Adapter Status
 
 ### PostgreSQL Adapter (Active - ✅ IN USE)
 
 - ✅ **Location**: `src/lib/db/plays-db-prisma.ts`
-- ✅ **Status**: Fully functional, **currently used by all API endpoints**
+- ✅ **Status**: Fully functional, **currently used by all API endpoints and LLM parser**
 - ✅ **Database**: Running in Docker container, seeded with sample data
-- ✅ **Integration**: API routes updated to use Prisma (December 1, 2024)
-- ✅ **Tested**: GET /api/plays, GET /api/plays?stats=true, GET /api/plays/[id]
+- ✅ **Integration**: API routes and parse route updated to use Prisma
+- ✅ **Tested**: GET /api/plays, GET /api/plays?stats=true, GET /api/plays/[id], POST /import/api/parse
 
 ### File-Based Adapter (Legacy - Deprecated)
 
 - ⚠️ **Location**: `src/lib/db/plays-db.ts`
-- ⚠️ **Status**: Deprecated, no longer used by API
+- ⚠️ **Status**: Deprecated, no longer used by API or parser
 - ⚠️ **Storage**: JSON files in `data/plays/`
 - 📝 **Action**: Can be archived or removed
+
+## LLM Parser Integration (✅ Complete)
+
+The LLM play parser now saves imported plays directly to the PostgreSQL database:
+
+### ✅ Completed Integration:
+
+1. **Parse Route Updated**: `src/app/import/api/parse/route.ts` uses Prisma adapter
+2. **UI Updated**: `src/components/import/parse-progress.tsx` removed sessionStorage persistence
+3. **Storage Cleaned**: `src/lib/play-storage.ts` removed play persistence functions
+4. **Navigation Added**: "View Play" button navigates to imported play
+5. **Documentation Created**: `LLM_PARSER_DB_INTEGRATION.md` documents the integration
+
+### Import Workflow:
+
+1. Upload play file (PDF, DOCX, TXT) via `/import`
+2. LLM parses text into structured data (real-time progress via SSE)
+3. Zod schemas validate the parsed structure
+4. Prisma saves play to PostgreSQL with all relationships
+5. UI displays success with link to view the imported play
 
 ## PostgreSQL Setup (Already Complete ✅)
 

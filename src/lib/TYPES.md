@@ -16,7 +16,6 @@ The types are organized into several categories:
 
 ### Practice Mode Types
 
-- **`MasteryLevel`** - User's mastery level: "low" | "medium" | "high"
 - **`PracticeSession`** - Configuration for a practice session
 - **`CharacterPracticeStats`** - Statistics for character practice progress
 
@@ -50,7 +49,7 @@ The types are organized into several categories:
 Import types from `@/lib/types`:
 
 ```typescript
-import type { Playbook, Character, Line, MasteryLevel } from "@/lib/types";
+import type { Playbook, Character, Line } from "@/lib/types";
 ```
 
 ## Relationship to Backend Types

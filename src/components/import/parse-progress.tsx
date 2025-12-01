@@ -1,12 +1,13 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
-import { saveImportedPlay } from "../../lib/play-storage";
 import type { Playbook } from "../../lib/parse/schemas";
 import { ParseErrorDisplay } from "./parse-error-display";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { X, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function ParseProgress({ uploadId }: { uploadId: string }) {
+  const router = useRouter();
   const [events, setEvents] = useState<string[]>([]);
   const [error, setError] = useState<{ message: string; code?: string } | null>(
     null
@@ -74,8 +75,7 @@ export function ParseProgress({ uploadId }: { uploadId: string }) {
                 ...prev,
                 `✅ Complete: ${data?.title || "Untitled"}`,
               ]);
-              // Persist to storage
-              if (data) saveImportedPlay(data);
+              // Play is already saved to database by the parse route
             } else if (evt) {
               setEvents((prev) => [...prev, `${evt}: ${JSON.stringify(data)}`]);
             }
@@ -128,6 +128,13 @@ export function ParseProgress({ uploadId }: { uploadId: string }) {
           <p className="text-sm text-muted-foreground">
             {playbook.characters.length} characters, {playbook.acts.length} acts
           </p>
+          <Button
+            onClick={() => router.push(`/play/${playbook.id}`)}
+            className="mt-2"
+          >
+            View Play
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
         </div>
       )}
     </div>

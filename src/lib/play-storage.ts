@@ -60,14 +60,17 @@ export function getDailyStatsForPlay(playId: string): Array<{
   })).sort((a, b) => b.date.localeCompare(a.date));
 }
 /**
- * Centralized storage utilities for persisting play and character state.
- * Uses sessionStorage for within-session persistence and falls back to query params.
+ * Centralized storage utilities for persisting character state and session stats.
+ * Uses sessionStorage for within-session persistence.
+ * 
+ * Note: Play data is now stored in PostgreSQL database via Prisma.
+ * This module only handles session-specific data like character selection,
+ * line progress, and practice statistics.
  */
 
 import type { Playbook } from "./parse/schemas";
 
 const STORAGE_PREFIX = 'tpc:';
-const PLAYS_KEY = `${STORAGE_PREFIX}plays`;
 
 export const StorageKeys = {
   LAST_PLAY_ID: `${STORAGE_PREFIX}lastPlayId`,
@@ -326,7 +329,8 @@ export function setLineMastery(playId: string, characterId: string, lineId: stri
 }
 
 /**
- * Clear all app storage data.
+ * Clear all app storage data (session stats and progress only).
+ * Note: This does not delete play data from the database.
  */
 export function clearAllData(): void {
   if (typeof window === 'undefined') return;
@@ -339,36 +343,4 @@ export function clearAllData(): void {
     }
   }
   keys.forEach(key => sessionStorage.removeItem(key));
-}
-
-/**
- * Get all imported plays from storage.
- */
-export function getImportedPlays(): Playbook[] {
-  if (typeof window === 'undefined') return [];
-  const stored = sessionStorage.getItem(PLAYS_KEY);
-  if (!stored) return [];
-  try {
-    return JSON.parse(stored) as Playbook[];
-  } catch {
-    return [];
-  }
-}
-
-/**
- * Save an imported play to storage.
- */
-export function saveImportedPlay(play: Playbook): void {
-  if (typeof window === 'undefined') return;
-  const existing = getImportedPlays();
-  const updated = [...existing.filter(p => p.id !== play.id), play];
-  sessionStorage.setItem(PLAYS_KEY, JSON.stringify(updated));
-}
-
-/**
- * Get a specific play by ID.
- */
-export function getPlayById(playId: string): Playbook | null {
-  const plays = getImportedPlays();
-  return plays.find(p => p.id === playId) || null;
 }

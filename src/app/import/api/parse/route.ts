@@ -2,12 +2,17 @@ import { NextRequest } from "next/server";
 import { extractTextFromPDF, extractTextFromDOCX, extractTextFromTXT } from "../../../../lib/parse/extractors";
 import { PlaybookSchema, type Playbook } from "../../../../lib/parse/schemas";
 import { streamPlayParsing, getDefaultProvider, parsePlayStructure } from "../../../../lib/parse/llm-parser";
-import { savePlay } from "../../../../lib/db/plays-db";
+import { parsePlayIncrementally, contextToPlaybook } from "../../../../lib/parse/incremental-parser";
+import { savePlay } from "../../../../lib/db/plays-db-prisma";
 import type { DeepPartial } from "ai";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
+
+// Threshold for using incremental parsing (characters)
+// Plays longer than this will be parsed in chunks to avoid timeouts
+const INCREMENTAL_PARSE_THRESHOLD = 20000;
 
 let __sseClosed = false;
 
@@ -31,7 +36,7 @@ function sendEvent(controller: ReadableStreamDefaultController, event: string, d
 }
 
 function calculateProgress(linesCompleted: number, estimatedTokens: number): number {
-    return Math.min(Math.round(linesCompleted / estimatedTokens * 1000), 100);
+    return Math.min(Math.round(linesCompleted / estimatedTokens * 100), 100);
 }
 
 function countCurrentLines(partial: DeepPartial<Playbook>): number {
@@ -236,6 +241,18 @@ export async function POST(req: NextRequest) {
 
                 sendEvent(controller, "progress", { percent: 2, message: "Text extracted" });
 
+                // Decide parsing strategy based on text length
+                const useIncrementalParsing = text.length > INCREMENTAL_PARSE_THRESHOLD;
+                
+                if (useIncrementalParsing) {
+                    console.log(`[Parse Route] Text length ${text.length} exceeds threshold ${INCREMENTAL_PARSE_THRESHOLD}`);
+                    console.log(`[Parse Route] Using incremental parsing for better reliability`);
+                    sendEvent(controller, "parse_mode", { mode: "incremental", textLength: text.length });
+                } else {
+                    console.log(`[Parse Route] Using streaming parsing for text length ${text.length}`);
+                    sendEvent(controller, "parse_mode", { mode: "streaming", textLength: text.length });
+                }
+
                 // Stream LLM parsing
                 sendEvent(controller, "progress", { percent: 3, message: "Parsing with LLM" });
                 sendEvent(controller, "llm_provider", { provider: llmProvider });
@@ -259,54 +276,108 @@ export async function POST(req: NextRequest) {
                     // Emit a started event so clients know the call began
                     sendEvent(controller, "llm_started", { textPreview: text.slice(0, 200) });
 
-                    // Watchdog: emit keepalive every 5s if no activity
-                    const keepalive = setInterval(() => {
-                        const idleMs = Date.now() - lastActivity;
-                        if (idleMs > 5000) {
-                            sendEvent(controller, "keepalive", { idleMs });
-                        }
-                    }, 5000);
-
-                    let completed = false;
-                    // Fallback: if no partial chunks within 20s, attempt non-streaming parse and return
-                    const fallbackTimer = setTimeout(async () => {
-                        if (chunkCount === 0 && !completed) {
-                            completed = await handleFallbackParse(text, llmProvider, controller);
-                        }
-                    }, 20000);
-
-
-
-                    for await (const partial of streamPlayParsing(text, llmProvider)) {
-                        if (completed) break;
-                        chunkCount++;
-                        lastActivity = Date.now();
-                        lastPlaybook = partial;
-
-                        const currentLines = countCurrentLines(partial);
-                        const newLinesAdded = currentLines - linesCompleted;
-
-                        // Only emit events when significant progress is made (batches of 10 lines)
-                        if (newLinesAdded >= 10 || (currentLines > 0 && linesCompleted === 0)) {
-                            linesCompleted = currentLines;
-
-                            emitCharacterEvents(partial, charactersSeen, controller);
-                            actsSeen = emitActEvents(partial, actsSeen, controller);
-                            scenesSeen = emitSceneEvents(partial, scenesSeen, controller);
-                            detectUnsupportedSpeakers(partial, charactersSeen, controller, unsupportedSeen);
-
-                            const progress = calculateProgress(linesCompleted, estimatedTokens);
+                    if (useIncrementalParsing) {
+                        // === INCREMENTAL PARSING PATH (for long plays) ===
+                        console.log(`[Parse Route] Starting incremental parsing`);
+                        
+                        let context;
+                        for await (const incrementalResult of parsePlayIncrementally(text, llmProvider)) {
+                            context = incrementalResult.context;
+                            lastActivity = Date.now();
+                            
                             sendEvent(controller, "progress", {
-                                percent: progress,
-                                message: `Parsed ${linesCompleted} lines, ${charactersSeen.size} characters, ${actsSeen} acts`
+                                percent: incrementalResult.progress,
+                                message: `Processing chunk ${incrementalResult.chunk}/${incrementalResult.total}: ${context.lastLineNumber} lines, ${context.characters.length} characters`
                             });
+                            
+                            // Emit character discoveries
+                            for (const char of context.characters) {
+                                if (!charactersSeen.has(char.id)) {
+                                    charactersSeen.add(char.id);
+                                    sendEvent(controller, "character_found", { id: char.id, name: char.name });
+                                }
+                            }
+                            
+                            // Update act/scene counts
+                            actsSeen = context.acts.length;
+                            scenesSeen = context.acts.reduce((total, act) => total + act.scenes.length, 0);
+                            linesCompleted = context.lastLineNumber;
                         }
+                        
+                        if (!context) {
+                            sendEvent(controller, "error", { 
+                                message: "Incremental parsing failed to produce any results", 
+                                code: "PARSE_ERROR" 
+                            });
+                            controller.close();
+                            return;
+                        }
+                        
+                        // Convert final context to playbook
+                        const finalPlaybook = contextToPlaybook(context);
+                        const parsed = PlaybookSchema.safeParse(finalPlaybook);
+                        
+                        if (!parsed.success) {
+                            sendEvent(controller, "error", { 
+                                message: `Validation failed: ${parsed.error.message}`, 
+                                code: "VALIDATION_ERROR" 
+                            });
+                            controller.close();
+                            return;
+                        }
+                        
+                        lastPlaybook = parsed.data;
+                        console.log(`[Parse Route] Incremental parsing complete: ${linesCompleted} lines`);
+                        
+                    } else {
+                        // === STREAMING PARSING PATH (for shorter plays) ===
+                        // Watchdog: emit keepalive every 5s if no activity
+                        const keepalive = setInterval(() => {
+                            const idleMs = Date.now() - lastActivity;
+                            if (idleMs > 5000) {
+                                sendEvent(controller, "keepalive", { idleMs });
+                            }
+                        }, 5000);
+
+                        let completed = false;
+                        // Fallback: if no partial chunks within 20s, attempt non-streaming parse and return
+                        const fallbackTimer = setTimeout(async () => {
+                            if (chunkCount === 0 && !completed) {
+                                completed = await handleFallbackParse(text, llmProvider, controller);
+                            }
+                        }, 20000);
+
+                        for await (const partial of streamPlayParsing(text, llmProvider)) {
+                            if (completed) break;
+                            chunkCount++;
+                            lastActivity = Date.now();
+                            lastPlaybook = partial;
+
+                            const currentLines = countCurrentLines(partial);
+                            const newLinesAdded = currentLines - linesCompleted;
+
+                            // Only emit events when significant progress is made (batches of 10 lines)
+                            if (newLinesAdded >= 10 || (currentLines > 0 && linesCompleted === 0)) {
+                                linesCompleted = currentLines;
+
+                                emitCharacterEvents(partial, charactersSeen, controller);
+                                actsSeen = emitActEvents(partial, actsSeen, controller);
+                                scenesSeen = emitSceneEvents(partial, scenesSeen, controller);
+                                detectUnsupportedSpeakers(partial, charactersSeen, controller, unsupportedSeen);
+
+                                const progress = calculateProgress(linesCompleted, estimatedTokens);
+                                sendEvent(controller, "progress", {
+                                    percent: progress,
+                                    message: `Parsed ${linesCompleted} lines, ${charactersSeen.size} characters, ${actsSeen} acts`
+                                });
+                            }
+                        }
+                        if (chunkCount === 0 && !completed) {
+                            sendEvent(controller, "info", { message: "No partial chunks received; awaiting final result" });
+                        }
+                        clearTimeout(fallbackTimer);
+                        clearInterval(keepalive);
                     }
-                    if (chunkCount === 0 && !completed) {
-                        sendEvent(controller, "info", { message: "No partial chunks received; awaiting final result" });
-                    }
-                    clearTimeout(fallbackTimer);
-                    clearInterval(keepalive);
                 } catch (llmError) {
                     console.error(`[Parse Route] LLM error after ${chunkCount} chunks:`, llmError);
                     const errMsg = `LLM parsing failed after ${chunkCount} chunks: ${(llmError as Error).message}`;

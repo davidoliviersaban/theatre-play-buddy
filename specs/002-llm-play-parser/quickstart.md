@@ -98,7 +98,6 @@ model Line {
 
   text          String   @db.Text
   type          LineType
-  masteryLevel  MasteryLevel?
   rehearsalCount Int?    @default(0)
 
   createdAt     DateTime @default(now())
