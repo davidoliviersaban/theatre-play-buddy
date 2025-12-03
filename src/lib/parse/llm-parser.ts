@@ -24,8 +24,8 @@ export function getModel(provider: LLMProvider = getDefaultProvider()) {
     return openai("gpt-4.1-mini");
 }
 
-export async function parsePlayStructure(text: string, provider: LLMProvider = getDefaultProvider()) {
-    const model = getModel(provider);
+
+function getPrompt(text: string) {
 
     const prompt = `You are an expert at analyzing play scripts. Extract the following structured information from this play:
 
@@ -74,77 +74,45 @@ IMPORTANT RULES:
 
 Play text:
 ${text}`;
+    return prompt;
+}
+
+/**
+ * Full play parsing non-streaming
+ * @param text 
+ * @param provider 
+ */
+export async function parsePlayStructure(text: string, provider: LLMProvider = getDefaultProvider()) {
+    const model = getModel(provider);
 
     const result = await generateObject({
         model,
         schema: PlaybookSchema,
-        prompt,
+        prompt: getPrompt(text),
     });
 
     return result.object;
 }
 
-export async function* streamPlayParsing(text: string, provider: LLMProvider = getDefaultProvider()) {
+/**
+ * Full play parsing with streaming partial results
+ * @param text 
+ * @param provider 
+ */
+export async function* streamPlayStructure(text: string, provider: LLMProvider = getDefaultProvider()) {
     const model = getModel(provider);
 
     console.log(`[LLM Parser] Starting parsing with provider: ${provider}`);
     console.log(`[LLM Parser] Text length: ${text.length} characters`);
     console.log(`[LLM Parser] Text preview (first 500 chars):`, text.substring(0, 500));
 
-    const prompt = `You are an expert at analyzing play scripts. Extract the following structured information from this play:
-
-1. Title and metadata (author, year if mentioned, genre, description)
-2. All characters with their descriptions
-3. Acts and scenes with their titles
-4. Line-by-line dialogue and stage directions
-
-CRITICAL FIELD REQUIREMENTS FOR EVERY LINE:
-- "text" (string, REQUIRED): The actual dialogue or stage direction text. NEVER omit this field.
-- "type" (string, REQUIRED): Must be either "dialogue" or "stage_direction". NEVER omit this field.
-- For type="dialogue": MUST have either "characterId" (single speaker) OR "characterIdArray" (multiple speakers)
-- For type="stage_direction": characterId/characterIdArray are optional
-- "id" (string, REQUIRED): Unique identifier like "act1-scene1-line1"
-
-EXAMPLES:
-Dialogue (single speaker):
-{
-  "id": "act1-scene1-line5",
-  "type": "dialogue",
-  "characterId": "juliet",
-  "text": "O Romeo, Romeo! Wherefore art thou Romeo?"
-}
-
-Dialogue (multiple speakers):
-{
-  "id": "act2-scene3-line12",
-  "type": "dialogue",
-  "characterIdArray": ["guard1", "guard2"],
-  "text": "Who goes there?"
-}
-
-Stage direction:
-{
-  "id": "act1-scene1-line1",
-  "type": "stage_direction",
-  "text": "Enter ROMEO and MERCUTIO"
-}
-
-IMPORTANT RULES:
-- NEVER create a line object without "text" and "type" fields
-- For dialogue, ALWAYS include characterId OR characterIdArray
-- Character IDs should be lowercase, consistent identifiers (e.g., "romeo", "juliet", "laurence")
-- For unidentifiable speakers (crowds, anonymous), use stage directions instead of dialogue
-- If a line cannot be properly attributed, convert it to a stage_direction with descriptive text
-
-Play text:
-${text}`;
 
     console.log(`[LLM Parser] Calling streamObject...`);
 
     const result = streamObject({
         model,
         schema: PlaybookSchema,
-        prompt,
+        prompt: getPrompt(text),
     });
 
     console.log(`[LLM Parser] Stream started, awaiting chunks...`);

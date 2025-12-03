@@ -2,12 +2,14 @@
  * Unit tests for JobWorker
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { JobWorker } from "@/jobs/worker";
 import { JobQueue } from "@/jobs/queue";
 import { parseJobPipeline } from "@/jobs/parse/parse-pipeline";
 
 // Mock dependencies
-jest.mock("@/jobs/parse/queue");
+jest.mock("@/jobs/queue");
 jest.mock("@/jobs/parse/parse-pipeline");
 jest.mock("@/jobs/parse/logger", () => ({
   workerLogger: {
@@ -67,7 +69,7 @@ describe("JobWorker", () => {
       mockQueue.renewLock.mockResolvedValue(true);
 
       // Start worker in background
-      const workerPromise = worker.start();
+      void worker.start();
 
       // Wait for first job to be claimed
       await jest.advanceTimersByTimeAsync(100);
@@ -89,7 +91,7 @@ describe("JobWorker", () => {
     it("should wait when no jobs available", async () => {
       mockQueue.claimNext.mockResolvedValue(null);
 
-      const startPromise = worker.start();
+      void worker.start();
 
       // Advance time but not enough for multiple polls
       jest.advanceTimersByTime(3000);
@@ -119,7 +121,7 @@ describe("JobWorker", () => {
       );
 
       // Start worker
-      const workerPromise = worker.start();
+      void worker.start();
 
       // Wait for job to be claimed
       await jest.advanceTimersByTimeAsync(100);

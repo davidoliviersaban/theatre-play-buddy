@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { extractTextFromPDF, extractTextFromDOCX, extractTextFromTXT } from "@/lib/parse/extractors";
 import { PlaybookSchema, type Playbook } from "@/lib/parse/schemas";
-import { streamPlayParsing, getDefaultProvider, parsePlayStructure } from "@/lib/parse/llm-parser";
+import { streamPlayStructure, getDefaultProvider, parsePlayStructure } from "@/lib/parse/llm-parser";
 import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "@/lib/parse/incremental-parser";
 import { savePlay } from "@/lib/db/plays-db-prisma";
 import { createParseJob, updateParseJob, deleteCompletedJobs } from "@/lib/db/parse-job-db";
-import { buildSessionUpdate } from "@/lib/parse/session-runner";
+import { buildSessionUpdate } from "@/jobs/parse/context-utils";
 import { JobQueue } from "@/jobs/queue";
 import type { DeepPartial } from "ai";
 
@@ -672,7 +672,7 @@ export async function POST(req: NextRequest) {
                             }
                         }, 20000);
 
-                        for await (const partial of streamPlayParsing(text, llmProvider)) {
+                        for await (const partial of streamPlayStructure(text, llmProvider)) {
                             if (completed) break;
                             chunkCount++;
                             lastActivity = Date.now();
