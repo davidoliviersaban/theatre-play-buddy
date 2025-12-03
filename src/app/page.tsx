@@ -6,7 +6,7 @@ import { PlayGrid } from "@/components/home/play-grid";
 import { fetchAllPlays } from "@/lib/api/plays";
 import { ParsingSessions } from "@/components/home/parsing-sessions";
 import { getActiveJobs, getFailedJobs } from "@/lib/db/parse-job-db";
-import { ParsingSession } from "@prisma/client";
+import { ParsingSession } from "@/components/home/parsing-sessions";
 
 export default async function Home() {
   const { plays } = await fetchAllPlays();
@@ -15,19 +15,43 @@ export default async function Home() {
     getFailedJobs(),
   ]);
 
+  // Map ParseJob status to ParsingSession status
+  const mapStatus = (status: string): ParsingSession["status"] => {
+    switch (status) {
+      case "queued":
+        return "pending";
+      case "running":
+        return "parsing";
+      case "retrying":
+        return "parsing";
+      case "paused":
+        return "pending";
+      case "completed":
+        return "completed";
+      case "failed":
+        return "failed";
+      case "cancelled":
+        return "aborted";
+      default:
+        return "pending";
+    }
+  };
+
   const sessions: ParsingSession[] = [...activeSessions, ...failedSessions]
     .filter((job) => job.status !== "cancelled" && job.status !== "queued")
     .map((job) => {
       // Extract metadata from config if it exists
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const config = job.config as any;
       return {
         id: job.id,
         filename: job.filename,
-        status: job.status,
+        status: mapStatus(job.status),
         currentChunk: job.completedChunks,
         totalChunks: job.totalChunks ?? 0,
-        startedAt: (job.startedAt?.toISOString() ?? job.createdAt.toISOString()) as string,
-        failureReason: job.failureReason || null,
+        startedAt: (job.startedAt?.toISOString() ??
+          job.createdAt.toISOString()) as string,
+        failureReason: job.failureReason || undefined,
         // Parsing state from config or currentState
         title: config?.title || undefined,
         author: config?.author || undefined,
@@ -39,7 +63,7 @@ export default async function Home() {
         currentSceneIndex: config?.currentSceneIndex ?? undefined,
         currentLineIndex: config?.currentLineIndex ?? undefined,
         currentCharacters: config?.currentCharacters || [],
-      } as ParsingSession;
+      };
     });
 
   return (

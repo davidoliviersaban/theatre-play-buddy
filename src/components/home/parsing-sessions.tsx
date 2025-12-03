@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { Play as PlayIcon } from "lucide-react";
 
-interface ParsingSession {
+export interface ParsingSession {
   id: string;
   filename: string;
   status:
