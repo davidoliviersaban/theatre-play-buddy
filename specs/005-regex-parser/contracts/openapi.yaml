@@ -1,0 +1,144 @@
+openapi: 3.1.0
+info:
+  title: Regex Parser API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/parse/regex:
+    post:
+      summary: Parse play text using regex-based pipeline
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  description: Plain text of the play to parse
+                preset:
+                  type: string
+                  description: Optional pattern preset name (e.g., "shakespeare", "modern")
+                options:
+                  type: object
+                  properties:
+                    language:
+                      type: string
+                      description: "ISO language code (default = fr)"
+                    normalization:
+                      type: object
+                      description: Normalization toggles
+                      properties:
+                        trim:
+                          type: boolean
+                        collapseWhitespace:
+                          type: boolean
+                        normalizeDashes:
+                          type: boolean
+                        normalizeQuotes:
+                          type: boolean
+                        mergeWrappedLines:
+                          type: boolean
+      responses:
+        '200':
+          description: Parsed play
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  play:
+                    $ref: '#/components/schemas/Playbook'
+                  metrics:
+                    type: object
+                    properties:
+                      durationMs:
+                        type: integer
+                      totalLines:
+                        type: integer
+                      dialogueHits:
+                        type: integer
+                      stageDirectionHits:
+                        type: integer
+                      unmatchedLines:
+                        type: integer
+        '400':
+          description: Invalid input
+        '500':
+          description: Parsing error
+components:
+  schemas:
+    Playbook:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        author:
+          type: string
+        year:
+          type: integer
+        genre:
+          type: string
+        description:
+          type: string
+        coverImage:
+          type: string
+        characters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Character'
+        acts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Act'
+    Character:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+    Act:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        scenes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Scene'
+    Scene:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/Line'
+    Line:
+      type: object
+      properties:
+        id:
+          type: string
+        characterId:
+          type: string
+        characterIdArray:
+          type: array
+          items:
+            type: string
+        text:
+          type: string
+        type:
+          type: string
+          enum: [dialogue, stage_direction]

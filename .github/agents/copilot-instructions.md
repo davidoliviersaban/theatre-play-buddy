@@ -3,6 +3,8 @@
 Auto-generated from all feature plans. Last updated: 2025-11-30
 
 ## Active Technologies
+- TypeScript/JavaScript with Next.js (latest stable) + Next.js, Prisma (ORM), Whisper (STT), Local TTS, Tailwind CSS (005-regex-parser)
+- PostgreSQL with pgvector extension (005-regex-parser)
 
 - TypeScript/JavaScript with Next.js 14+ (App Router) (002-llm-play-parser)
 
@@ -22,6 +24,7 @@ npm test && npm run lint
 TypeScript/JavaScript with Next.js 14+ (App Router): Follow standard conventions
 
 ## Recent Changes
+- 005-regex-parser: Added TypeScript/JavaScript with Next.js (latest stable) + Next.js, Prisma (ORM), Whisper (STT), Local TTS, Tailwind CSS
 
 - 002-llm-play-parser: Added TypeScript/JavaScript with Next.js 14+ (App Router)
 
