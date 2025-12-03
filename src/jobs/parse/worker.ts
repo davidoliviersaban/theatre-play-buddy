@@ -10,9 +10,10 @@ import { parseJobPipeline } from "./parse-pipeline";
 /**
  * Sleep utility for polling delays
  */
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
+
+const POLL_INTERVAL_MS = 5_000;
+const HEARTBEAT_INTERVAL_MS = 60_000;
 
 export class JobWorker {
   private workerId: string;
@@ -40,7 +41,7 @@ export class JobWorker {
 
         if (!job) {
           // No jobs available, wait before polling again
-          await sleep(5000);
+          await sleep(POLL_INTERVAL_MS);
           continue;
         }
 
@@ -90,7 +91,7 @@ export class JobWorker {
       } catch (error) {
         console.error(`[Worker ${this.workerId}] Heartbeat error:`, error);
       }
-    }, 60000); // Every minute
+    }, HEARTBEAT_INTERVAL_MS); // Every minute
   }
 
   /**

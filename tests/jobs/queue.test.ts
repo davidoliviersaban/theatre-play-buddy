@@ -2,7 +2,7 @@
  * Unit tests for JobQueue
  */
 
-import { JobQueue, handleFailure } from "@/lib/jobs/queue";
+import { JobQueue, handleFailure } from "@/jobs/parse/queue";
 import { prisma } from "@/lib/db/prisma";
 import type { ParseJob } from "@prisma/client";
 

@@ -6,7 +6,7 @@ import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "
 import { savePlay } from "../../../../lib/db/plays-db-prisma";
 import { createParseJob, updateParseJob, deleteCompletedJobs } from "../../../../lib/db/parse-job-db";
 import { buildSessionUpdate } from "../../../../lib/parse/session-runner";
-import { JobQueue } from "../../../../lib/jobs/queue";
+import { JobQueue } from "../../../../jobs/parse/queue";
 import type { DeepPartial } from "ai";
 
 export const runtime = "nodejs";

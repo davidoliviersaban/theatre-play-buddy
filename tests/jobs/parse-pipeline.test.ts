@@ -1,4 +1,4 @@
-import { parseJobPipeline } from '@/lib/jobs/parse-pipeline';
+import { parseJobPipeline } from '@/jobs/parse/parse-pipeline';
 import prisma from '@/lib/db/prisma';
 
 // Mock savePlay and any validators used inside the pipeline if they are imported

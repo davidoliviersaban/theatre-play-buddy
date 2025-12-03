@@ -2,9 +2,9 @@
  * Unit tests for JobWorker
  */
 
-import { JobWorker } from "@/lib/jobs/worker";
-import { JobQueue } from "@/lib/jobs/queue";
-import { parseJobPipeline } from "@/lib/jobs/parse-pipeline";
+import { JobWorker } from "@/jobs/parse/worker";
+import { JobQueue } from "@/jobs/parse/queue";
+import { parseJobPipeline } from "@/jobs/parse/parse-pipeline";
 
 // Mock dependencies
 jest.mock("@/lib/jobs/queue");

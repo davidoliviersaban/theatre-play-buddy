@@ -4,7 +4,7 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
-import { getWorkerCount } from "@/lib/jobs/bootstrap";
+import { getWorkerCount } from "@/jobs/parse/bootstrap";
 
 export const dynamic = "force-dynamic";
 

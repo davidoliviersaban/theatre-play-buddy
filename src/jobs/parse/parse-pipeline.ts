@@ -4,34 +4,32 @@
  */
 
 import type { ParseJob } from "@prisma/client";
-import type { JobResult, JobProgress } from "./types";
-import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "../parse/incremental-parser";
-import { PlaybookSchema } from "../parse/schemas";
-import { savePlay } from "../db/plays-db-prisma";
-import { prisma } from "../db/prisma";
+import type { JobResult, JobProgress } from "../types";
+import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "../../lib/parse/incremental-parser";
+import { PlaybookSchema } from "../../lib/parse/schemas";
+import { savePlay } from "../../lib/db/plays-db-prisma";
+import { prisma } from "../../lib/db/prisma";
 
 // Import fixCharacterIdMismatches from session-runner (will be refactored later)
 function fixCharacterIdMismatches(playbook: any): any {
   // Ensure all dialogue lines have proper character attribution
   if (!playbook.acts) return playbook;
 
-  for (const act of playbook.acts) {
-    if (!act.scenes) continue;
-    for (const scene of act.scenes) {
-      if (!scene.lines) continue;
-      for (const line of scene.lines) {
-        if (line.type === "dialogue") {
-          // Normalize character attribution
-          if (line.characterIdArray && line.characterIdArray.length > 0) {
-            line.characters = line.characterIdArray.map((id: string) => ({ characterId: id }));
-            delete line.characterId;
-            delete line.characterIdArray;
-          } else if (line.characterId) {
-            line.characters = [{ characterId: line.characterId }];
-            delete line.characterId;
-            delete line.characterIdArray;
-          }
-        }
+  const normalizeDialogue = (line: any) => {
+    if (line.type !== "dialogue") return;
+    if (Array.isArray(line.characterIdArray) && line.characterIdArray.length > 0) {
+      line.characters = line.characterIdArray.map((id: string) => ({ characterId: id }));
+    } else if (line.characterId) {
+      line.characters = [{ characterId: line.characterId }];
+    }
+    delete line.characterId;
+    delete line.characterIdArray;
+  };
+
+  for (const act of playbook.acts ?? []) {
+    for (const scene of act.scenes ?? []) {
+      for (const line of scene.lines ?? []) {
+        normalizeDialogue(line);
       }
     }
   }
@@ -106,28 +104,21 @@ function restoreContext(currentState: unknown): ParsingContext | null {
  */
 function cleanupPlaybook(playbook: any): any {
   // Remove any dialogue lines without character attribution
-  if (playbook.acts) {
-    for (const act of playbook.acts) {
-      if (act.scenes) {
-        for (const scene of act.scenes) {
-          if (scene.lines) {
-            scene.lines = scene.lines.filter((line: any) => {
-              // Keep stage directions
-              if (line.type === "stage_direction") {
-                return true;
-              }
-              // Keep dialogue with at least one character
-              if (line.type === "dialogue") {
-                const hasCharacters =
-                  (line.characters && line.characters.length > 0) ||
-                  (line.characterId && line.characterId.length > 0);
-                return hasCharacters;
-              }
-              return true;
-            });
-          }
+  for (const act of playbook.acts ?? []) {
+    for (const scene of act.scenes ?? []) {
+      if (!Array.isArray(scene.lines)) continue;
+      scene.lines = scene.lines.filter((line: any) => {
+        // Keep stage directions
+        if (line.type === "stage_direction") return true;
+        // Keep dialogue with at least one character
+        if (line.type === "dialogue") {
+          const chars = Array.isArray(line.characters) ? line.characters.length : 0;
+          const hasId = typeof line.characterId === "string" && line.characterId.length > 0;
+          return chars > 0 || hasId;
         }
-      }
+        // Keep unknown types by default (could be extended later)
+        return true;
+      });
     }
   }
   return playbook;

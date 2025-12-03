@@ -10,7 +10,7 @@ export async function register() {
         await initializeDatabase();
 
         // Start background job workers
-        const { startWorkers } = await import('./lib/jobs/bootstrap');
+        const { startWorkers } = await import('./jobs/parse/bootstrap');
         const workerCount = parseInt(process.env.WORKER_COUNT || '2');
         startWorkers(workerCount);
     }
