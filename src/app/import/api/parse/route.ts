@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { extractTextFromPDF, extractTextFromDOCX, extractTextFromTXT } from "@/lib/parse/extractors";
-import { PlaybookSchema, type Playbook } from "@/lib/parse/schemas";
-import { streamPlayStructure, getDefaultProvider, parsePlayStructure } from "@/lib/parse/llm-parser";
-import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "@/lib/parse/incremental-parser";
+import { extractTextFromPDF, extractTextFromDOCX, extractTextFromTXT } from "@/lib/play/extractors";
+import { PlaybookSchema, type Playbook } from "@/lib/play/schemas";
+import { streamPlayStructure, getDefaultProvider, parsePlayStructure } from "@/jobs/parse/llm-parser";
+import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "@/jobs/parse/incremental/parser";
 import { savePlay } from "@/lib/db/plays-db-prisma";
 import { createParseJob, updateParseJob, deleteCompletedJobs } from "@/lib/db/parse-job-db";
 import { buildSessionUpdate } from "@/jobs/parse/context-utils";
@@ -548,7 +548,7 @@ export async function POST(req: NextRequest) {
 
                             // Emit character discoveries
                             for (const char of context.characters) {
-                                if (!charactersSeen.has(char.id)) {
+                                if (char.id && !charactersSeen.has(char.id)) {
                                     charactersSeen.add(char.id);
                                     sendEvent(controller, "character_found", { id: char.id, name: char.name });
                                 }
@@ -556,7 +556,7 @@ export async function POST(req: NextRequest) {
 
                             // Update act/scene counts
                             actsSeen = context.acts.length;
-                            scenesSeen = context.acts.reduce((total: number, act) => total + act.scenes.length, 0);
+                            scenesSeen = context.acts.reduce((total: number, act: { scenes: unknown[] }) => total + act.scenes.length, 0);
                             linesCompleted = context.lastLineNumber;
                         }
 

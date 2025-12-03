@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const CharacterSchema = z.object({
-    id: z.string().optional().describe("Optional identifier for the character (will be auto-generated if not provided)"),
+    id: z.string().optional().describe("Identifier generated for the character by the database"),
     name: z.string().describe("Character's name as it appears in the play"),
     description: z.string().optional().describe("Optional character description or role information"),
 });
@@ -12,7 +12,7 @@ export const FormattingMetadataSchema = z.object({
 }).optional();
 
 export const LineSchema = z.object({
-    id: z.string().optional().describe("Optional identifier for the line (will be auto-generated if not provided)"),
+    id: z.string().optional().describe("Identifier generated for the line by the database"),
     characterId: z.string().optional().describe("ID of the single character speaking this line. Use for single-speaker dialogue. Must be provided for type='dialogue' if characterIdArray is not used."),
     characterIdArray: z.array(z.string()).optional().describe("Array of character IDs for multi-speaker lines (e.g., when multiple characters speak simultaneously like 'BOTH:', 'ALL:'). Use for multi-speaker dialogue. Must be provided for type='dialogue' if characterId is not used."),
     text: z.string().describe("REQUIRED: The actual text content of the line or stage direction. This field must NEVER be omitted or empty."),
@@ -29,19 +29,19 @@ export const LineSchema = z.object({
 });
 
 export const SceneSchema = z.object({
-    id: z.string().optional().describe("Optional identifier for the scene (will be auto-generated if not provided)"),
+    id: z.string().optional().describe("Identifier generated for the scene by the database"),
     title: z.string().describe("Scene title or description (e.g., 'Scene 1', 'The Castle')"),
     lines: z.array(LineSchema).describe("Ordered array of dialogue lines and stage directions in this scene"),
 });
 
 export const ActSchema = z.object({
-    id: z.string().optional().describe("Optional identifier for the act (will be auto-generated if not provided)"),
+    id: z.string().optional().describe("Identifier generated for the act by the database"),
     title: z.string().describe("Act title (e.g., 'Act I', 'Prologue')"),
     scenes: z.array(SceneSchema).describe("Ordered array of scenes within this act"),
 });
 
 export const PlaybookSchema = z.object({
-    id: z.string().optional().describe("Optional identifier for the play (will be auto-generated if not provided)"),
+    id: z.string().optional().describe("Identifier generated for the playbook by the database"),
     title: z.string().describe("Full title of the play"),
     author: z.string().describe("Playwright's name"),
     year: z.number().optional().nullable().describe("Year of publication or first performance"),

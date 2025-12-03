@@ -1,5 +1,5 @@
 import { prisma } from './prisma';
-import type { Playbook } from '../parse/schemas';
+import type { Playbook } from '../play/schemas';
 import type { PlayMetadata } from '../types';
 
 // Re-export PlayMetadata for convenience
@@ -63,7 +63,7 @@ export async function getPlayMetadataById(playId: string): Promise<PlayMetadata 
 export async function savePlay(play: Playbook): Promise<void> {
     // Build character name-to-ID mapping after creation (for line attribution)
     // We'll create characters first, then reference them by the DB-generated IDs
-    
+
     // Create the playbook with all nested entities, letting Prisma generate all IDs
     const createdPlaybook = await prisma.playbook.create({
         data: {
@@ -85,20 +85,20 @@ export async function savePlay(play: Playbook): Promise<void> {
             characters: true,
         },
     });
-    
+
     // Build mapping from LLM character ID to DB character ID
     const charIdMap = new Map<string, string>();
     for (const char of play.characters) {
         // Use LLM ID if provided, otherwise fall back to character name
         const lookupKey = char.id || char.name;
-        const dbChar = createdPlaybook.characters.find(c => 
+        const dbChar = createdPlaybook.characters.find(c =>
             (char.id && c.llmSourceId === char.id) || c.name === char.name
         );
         if (dbChar) {
             charIdMap.set(lookupKey, dbChar.id);
         }
     }
-    
+
     // Now create acts, scenes, and lines
     for (const [actIndex, act] of play.acts.entries()) {
         const createdAct = await prisma.act.create({
@@ -109,7 +109,7 @@ export async function savePlay(play: Playbook): Promise<void> {
                 llmSourceId: act.id,
             },
         });
-        
+
         for (const [sceneIndex, scene] of act.scenes.entries()) {
             const createdScene = await prisma.scene.create({
                 data: {
@@ -119,7 +119,7 @@ export async function savePlay(play: Playbook): Promise<void> {
                     llmSourceId: scene.id,
                 },
             });
-            
+
             for (const [lineIndex, line] of scene.lines.entries()) {
                 const createdLine = await prisma.line.create({
                     data: {
@@ -132,7 +132,7 @@ export async function savePlay(play: Playbook): Promise<void> {
                         preserveLineBreaks: line.formatting?.preserveLineBreaks,
                     },
                 });
-                
+
                 // Create character attributions
                 const charIds: string[] = [];
                 if (line.characterId) {
@@ -144,7 +144,7 @@ export async function savePlay(play: Playbook): Promise<void> {
                         if (dbCharId) charIds.push(dbCharId);
                     }
                 }
-                
+
                 if (charIds.length > 0) {
                     await prisma.lineCharacter.createMany({
                         data: charIds.map((charId, i) => ({
@@ -157,7 +157,7 @@ export async function savePlay(play: Playbook): Promise<void> {
             }
         }
     }
-    
+
     console.log(`[DB] ✅ Created play: ${createdPlaybook.id} (${play.title})`);
 }
 
@@ -230,9 +230,9 @@ export async function getPlayById(playId: string): Promise<Playbook | null> {
                         formatting:
                             line.indentLevel !== null || line.preserveLineBreaks !== null
                                 ? {
-                                      indentLevel: line.indentLevel ?? undefined,
-                                      preserveLineBreaks: line.preserveLineBreaks ?? undefined,
-                                  }
+                                    indentLevel: line.indentLevel ?? undefined,
+                                    preserveLineBreaks: line.preserveLineBreaks ?? undefined,
+                                }
                                 : undefined,
                     };
                 }),

@@ -4,7 +4,7 @@ import {
   LineCard,
   type LineWithMetadata,
 } from "@/components/practice/line-card";
-import { getSpeakerIds } from "@/lib/parse/multi-character";
+import { getSpeakerIds } from "@/lib/play/multi-character";
 
 // Use LineWithMetadata from extracted component to keep types consistent
 

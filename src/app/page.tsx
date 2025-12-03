@@ -6,6 +6,7 @@ import { PlayGrid } from "@/components/home/play-grid";
 import { fetchAllPlays } from "@/lib/api/plays";
 import { ParsingSessions } from "@/components/home/parsing-sessions";
 import { getActiveJobs, getFailedJobs } from "@/lib/db/parse-job-db";
+import { ParsingSession } from "@prisma/client";
 
 export default async function Home() {
   const { plays } = await fetchAllPlays();
@@ -14,30 +15,32 @@ export default async function Home() {
     getFailedJobs(),
   ]);
 
-  const sessions = [...activeSessions, ...failedSessions].map((job) => {
-    // Extract metadata from config if it exists
-    const config = job.config as any;
-    return {
-      id: job.id,
-      filename: job.filename,
-      status: job.status,
-      currentChunk: job.completedChunks,
-      totalChunks: job.totalChunks ?? 0,
-      startedAt: job.startedAt?.toISOString() ?? job.createdAt.toISOString(),
-      failureReason: job.failureReason || undefined,
-      // Parsing state from config or currentState
-      title: config?.title || undefined,
-      author: config?.author || undefined,
-      totalCharacters: config?.totalCharacters || 0,
-      totalActs: config?.totalActs || 0,
-      totalScenes: config?.totalScenes || 0,
-      totalLines: config?.totalLines || 0,
-      currentActIndex: config?.currentActIndex ?? undefined,
-      currentSceneIndex: config?.currentSceneIndex ?? undefined,
-      currentLineIndex: config?.currentLineIndex ?? undefined,
-      currentCharacters: config?.currentCharacters || [],
-    };
-  });
+  const sessions: ParsingSession[] = [...activeSessions, ...failedSessions]
+    .filter((job) => job.status !== "cancelled" && job.status !== "queued")
+    .map((job) => {
+      // Extract metadata from config if it exists
+      const config = job.config as any;
+      return {
+        id: job.id,
+        filename: job.filename,
+        status: job.status,
+        currentChunk: job.completedChunks,
+        totalChunks: job.totalChunks ?? 0,
+        startedAt: (job.startedAt?.toISOString() ?? job.createdAt.toISOString()) as string,
+        failureReason: job.failureReason || null,
+        // Parsing state from config or currentState
+        title: config?.title || undefined,
+        author: config?.author || undefined,
+        totalCharacters: config?.totalCharacters || 0,
+        totalActs: config?.totalActs || 0,
+        totalScenes: config?.totalScenes || 0,
+        totalLines: config?.totalLines || 0,
+        currentActIndex: config?.currentActIndex ?? undefined,
+        currentSceneIndex: config?.currentSceneIndex ?? undefined,
+        currentLineIndex: config?.currentLineIndex ?? undefined,
+        currentCharacters: config?.currentCharacters || [],
+      } as ParsingSession;
+    });
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">

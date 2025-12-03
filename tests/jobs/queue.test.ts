@@ -4,7 +4,6 @@
 
 import { JobQueue, handleFailure } from "@/jobs/queue";
 import { prisma } from "@/lib/db/prisma";
-import type { ParseJob } from "@prisma/client";
 
 // Mock Prisma
 jest.mock("@/lib/db/prisma", () => ({

@@ -68,7 +68,6 @@ export function getDailyStatsForPlay(playId: string): Array<{
  * line progress, and practice statistics.
  */
 
-import type { Playbook } from "./parse/schemas";
 
 const STORAGE_PREFIX = 'tpc:';
 
@@ -120,10 +119,11 @@ export function getCurrentPlayId(searchParams?: URLSearchParams | { get: (key: s
  * Priority: query param > sessionStorage
  */
 export function getCurrentCharacterId(
-  playId: string,
+  playId: string | null,
   searchParams?: URLSearchParams | { get: (key: string) => string | null }
 ): string | null {
   if (typeof window === 'undefined') return null;
+  if (!playId) return null;
 
   // Check query params first
   if (searchParams) {
@@ -155,8 +155,9 @@ export function setCurrentCharacterId(playId: string, characterId: string): void
 /**
  * Get last practiced line index for a play/character combo.
  */
-export function getLastLineIndex(playId: string, characterId: string): number | null {
+export function getLastLineIndex(playId: string | null, characterId: string): number | null {
   if (typeof window === 'undefined') return null;
+  if (!playId) return null;
 
   const stored = sessionStorage.getItem(StorageKeys.playCharacterLine(playId, characterId));
   if (stored) {
@@ -181,8 +182,9 @@ export function setLastLineIndex(playId: string, characterId: string, lineIndex:
 /**
  * Get last rehearsal date for a play.
  */
-export function getLastRehearsalDate(playId: string): Date | null {
+export function getLastRehearsalDate(playId: string | null): Date | null {
   if (typeof window === 'undefined') return null;
+  if (!playId) return null;
 
   const stored = sessionStorage.getItem(StorageKeys.playLastRehearsalDate(playId));
   if (stored) {
@@ -195,8 +197,9 @@ export function getLastRehearsalDate(playId: string): Date | null {
 /**
  * Get session statistics for a play/character combo.
  */
-export function getSessionStats(playId: string, characterId: string): SessionStats | null {
+export function getSessionStats(playId: string | null, characterId: string): SessionStats | null {
   if (typeof window === 'undefined') return null;
+  if (!playId) return null;
 
   const stored = sessionStorage.getItem(StorageKeys.playSessionStats(playId, characterId));
   if (stored) {
@@ -222,12 +225,13 @@ export function setSessionStats(playId: string, characterId: string, stats: Sess
 /**
  * Get aggregated session statistics across all characters for a play.
  */
-export function getPlayAggregatedStats(playId: string): {
+export function getPlayAggregatedStats(playId: string | null): {
   totalCharacters: number;
   totalLinesRehearsed: number;
   activeCharacterName: string | null;
 } | null {
   if (typeof window === 'undefined') return null;
+  if (!playId) return null;
 
   let totalLinesRehearsed = 0;
   let charactersWithActivity = 0;
@@ -270,11 +274,12 @@ export function getPlayAggregatedStats(playId: string): {
  * Get session statistics for the currently selected character in a play.
  * Returns stats specific to the active character, not aggregated.
  */
-export function getCurrentCharacterStats(playId: string): {
+export function getCurrentCharacterStats(playId: string | null): {
   characterId: string | null;
   stats: SessionStats | null;
 } {
   if (typeof window === 'undefined') return { characterId: null, stats: null };
+  if (!playId) return { characterId: null, stats: null };
 
   const characterId = getCurrentCharacterId(playId);
   if (!characterId) {
@@ -306,8 +311,9 @@ export function clearPlayData(playId: string): void {
 /**
  * Get mastery data for a specific line.
  */
-export function getLineMastery(playId: string, characterId: string, lineId: string): LineMastery | null {
+export function getLineMastery(playId: string | null, characterId: string, lineId: string): LineMastery | null {
   if (typeof window === 'undefined') return null;
+  if (!playId) return null;
 
   const stored = sessionStorage.getItem(StorageKeys.lineMastery(playId, characterId, lineId));
   if (stored) {
@@ -323,8 +329,9 @@ export function getLineMastery(playId: string, characterId: string, lineId: stri
 /**
  * Set mastery data for a specific line.
  */
-export function setLineMastery(playId: string, characterId: string, lineId: string, mastery: LineMastery): void {
+export function setLineMastery(playId: string | null, characterId: string, lineId: string, mastery: LineMastery): void {
   if (typeof window === 'undefined') return;
+  if (!playId) return;
   sessionStorage.setItem(StorageKeys.lineMastery(playId, characterId, lineId), JSON.stringify(mastery));
 }
 

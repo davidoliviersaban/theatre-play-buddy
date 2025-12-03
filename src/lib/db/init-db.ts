@@ -1,7 +1,7 @@
 import { prisma } from './prisma';
 import { MOCK_PLAYS } from '../mock-data';
 import { savePlay } from './plays-db-prisma';
-import type { Playbook } from '../parse/schemas';
+import type { Playbook } from '../play/schemas';
 
 let initializationStarted = false;
 

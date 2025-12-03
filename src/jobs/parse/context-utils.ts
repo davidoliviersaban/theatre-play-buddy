@@ -1,5 +1,5 @@
 import type { Prisma } from "@prisma/client";
-import type { ParsingContext } from "@/lib/parse/incremental-parser";
+import type { ParsingContext } from "./incremental/parser";
 
 function getCurrentPosition(ctx: ParsingContext) {
     let currentActIndex: number | null = null;
@@ -20,12 +20,12 @@ function getCurrentPosition(ctx: ParsingContext) {
                 const lastLine = lastScene.lines[currentLineIndex];
 
                 if (lastLine.characterId) {
-                    const char = ctx.characters.find((c) => c.id === lastLine.characterId);
+                    const char = ctx.characters.find((c: { id?: string; name: string }) => c.id === lastLine.characterId);
                     if (char) currentCharacters = [char.name];
                 } else if (lastLine.characterIdArray) {
                     currentCharacters = lastLine.characterIdArray
-                        .map((id) => ctx.characters.find((c) => c.id === id)?.name)
-                        .filter((name): name is string => !!name);
+                        .map((id: string) => ctx.characters.find((c: { id?: string; name: string }) => c.id === id)?.name)
+                        .filter((name: string | undefined): name is string => !!name);
                 }
             }
         }
@@ -74,7 +74,7 @@ export function buildSessionUpdate(
             description: ctx.description,
             totalCharacters: ctx.characters.length,
             totalActs: ctx.acts.length,
-            totalScenes: ctx.acts.reduce((sum, act) => sum + act.scenes.length, 0),
+            totalScenes: ctx.acts.reduce((sum: number, act: { scenes: unknown[] }) => sum + act.scenes.length, 0),
             totalLines: ctx.lastLineNumber,
             ...position,
         },

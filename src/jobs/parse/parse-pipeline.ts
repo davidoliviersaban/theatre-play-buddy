@@ -5,8 +5,8 @@
 
 import type { ParseJob } from "@prisma/client";
 import type { JobResult, JobProgress } from "@/jobs/types";
-import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "@/lib/parse/incremental-parser";
-import { PlaybookSchema } from "@/lib/parse/schemas";
+import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "./incremental/parser";
+import { PlaybookSchema } from "@/lib/play/schemas";
 import { savePlay } from "@/lib/db/plays-db-prisma";
 import { prisma } from "@/lib/db/prisma";
 

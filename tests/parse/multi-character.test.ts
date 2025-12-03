@@ -5,8 +5,8 @@
  * - getSpeakerIds: Extract character IDs from lines with single or multiple speakers
  */
 
-import { getSpeakerIds } from '@/lib/parse/multi-character';
-import type { Line } from '@/lib/parse/schemas';
+import { getSpeakerIds } from '@/lib/play/multi-character';
+import type { Line } from '@/lib/play/schemas';
 
 describe('getSpeakerIds', () => {
   describe('single-character lines', () => {

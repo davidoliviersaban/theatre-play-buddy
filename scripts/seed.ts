@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { MOCK_PLAYS } from '../src/lib/mock-data';
 import { savePlay } from '../src/lib/db/plays-db-prisma';
-import type { Playbook } from '../src/lib/parse/schemas';
+import type { Playbook } from '../src/lib/play/schemas';
 
 // Load .env.local first, then fall back to .env
 config({ path: '.env.local' });

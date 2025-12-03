@@ -82,7 +82,7 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
     const [lineStages, setLineStages] = useState<LineStageMap>({});
     const [showHint, setShowHint] = useState(false);
     const [masteryUpdateTrigger, setMasteryUpdateTrigger] = useState(0);
-    
+
     // Use database stats if available, otherwise use local state
     const sessionStats = useMemo(() => {
         if (dbProgress) {
@@ -171,7 +171,7 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
             !countedLineIdsRef.current.has(currentLine.id)
         ) {
             countedLineIdsRef.current.add(currentLine.id);
-            
+
             // Update database with rehearsal count
             updateDbProgress(currentLine.id, {
                 rehearsalDelta: 1,

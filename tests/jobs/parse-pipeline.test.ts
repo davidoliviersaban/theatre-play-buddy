@@ -11,7 +11,7 @@ jest.mock('@/lib/db/plays-db-prisma', () => {
 });
 
 // Mock PlaybookSchema to accept our stubbed playbook without strict validations
-jest.mock('@/lib/parse/schemas', () => {
+jest.mock('@/lib/play/schemas', () => {
     return {
         __esModule: true,
         PlaybookSchema: {
@@ -21,7 +21,7 @@ jest.mock('@/lib/parse/schemas', () => {
 });
 
 // Mock incremental parser to avoid hitting real LLM providers during tests
-jest.mock('@/lib/parse/incremental-parser', () => {
+jest.mock('@/jobs/parse/incremental/parser', () => {
     return {
         __esModule: true,
         parsePlayIncrementally: async function* (

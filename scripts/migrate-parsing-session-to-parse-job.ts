@@ -8,13 +8,13 @@
  * Usage: npx tsx scripts/migrate-parsing-session-to-parse-job.ts
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, JobStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 // Map old ParsingStatus to new JobStatus
-function mapStatus(oldStatus: string): string {
-  const statusMap: Record<string, string> = {
+function mapStatus(oldStatus: string): JobStatus {
+  const statusMap: Record<string, JobStatus> = {
     pending: 'queued',
     warming: 'running',
     parsing: 'running',
@@ -92,7 +92,7 @@ async function migrateParsingSessionsToParseJobs() {
             retryCount: 0,
             maxRetries: 3,
             checkpoints: [],
-            currentState: session.currentState,
+            ...(session.currentState !== null && { currentState: session.currentState }),
 
             // Progress tracking
             totalChunks: session.totalChunks,

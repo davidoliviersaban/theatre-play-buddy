@@ -15,7 +15,7 @@ import {
   PlaybookSchema,
   FormattingMetadataSchema,
   type Line,
-} from '@/lib/parse/schemas';
+} from '@/lib/play/schemas';
 
 describe('CharacterSchema', () => {
   it('should validate a basic character', () => {

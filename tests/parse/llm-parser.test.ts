@@ -11,8 +11,8 @@
  * but exercises the real integration points.
  */
 
-import { extractTextFromTXT } from '@/lib/parse/extractors';
-import { PlaybookSchema, type Playbook } from '@/lib/parse/schemas';
+import { extractTextFromTXT } from '@/lib/play/extractors';
+import { PlaybookSchema, type Playbook } from '@/lib/play/schemas';
 import type { DeepPartial } from 'ai';
 
 // Sample test play script

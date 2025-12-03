@@ -6,7 +6,7 @@ import { StructureProgressHeader } from "@/components/practice/structure-header"
 import { getLineMastery } from "@/lib/play-storage";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import { OPACITY_LEVELS } from "@/lib/ui-constants";
-import { getSpeakerIds } from "@/lib/parse/multi-character";
+import { getSpeakerIds } from "@/lib/play/multi-character";
 
 // Extended line type used in practice session (flattened with metadata)
 type LineWithMetadata = Line & {

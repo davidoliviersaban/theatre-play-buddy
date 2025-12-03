@@ -1,19 +1,16 @@
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { generateObject, streamObject } from "ai";
-import { PlaybookSchema } from "./schemas";
+import { PlaybookSchema } from "@/lib/play/schemas";
 
 export type LLMProvider = "anthropic" | "openai";
 
-// Read default provider from environment with sensible fallback
 export function getDefaultProvider(): LLMProvider {
     const env = (process.env.DEFAULT_LLM_PROVIDER || "").toLowerCase();
     if (env === "anthropic") return "anthropic";
     if (env === "openai") return "openai";
-    // Accept common variants
     if (env === "claude") return "anthropic";
     if (env.startsWith("gpt")) return "openai";
-    // Fallback to openai to match documented .env example
     return "openai";
 }
 
@@ -24,9 +21,7 @@ export function getModel(provider: LLMProvider = getDefaultProvider()) {
     return openai("gpt-4.1-mini");
 }
 
-
 function getPrompt(text: string) {
-
     const prompt = `You are an expert at analyzing play scripts. Extract the following structured information from this play:
 
 1. Title and metadata (author, year if mentioned, genre, description)
@@ -77,11 +72,6 @@ ${text}`;
     return prompt;
 }
 
-/**
- * Full play parsing non-streaming
- * @param text 
- * @param provider 
- */
 export async function parsePlayStructure(text: string, provider: LLMProvider = getDefaultProvider()) {
     const model = getModel(provider);
 
@@ -94,18 +84,12 @@ export async function parsePlayStructure(text: string, provider: LLMProvider = g
     return result.object;
 }
 
-/**
- * Full play parsing with streaming partial results
- * @param text 
- * @param provider 
- */
 export async function* streamPlayStructure(text: string, provider: LLMProvider = getDefaultProvider()) {
     const model = getModel(provider);
 
     console.log(`[LLM Parser] Starting parsing with provider: ${provider}`);
     console.log(`[LLM Parser] Text length: ${text.length} characters`);
     console.log(`[LLM Parser] Text preview (first 500 chars):`, text.substring(0, 500));
-
 
     console.log(`[LLM Parser] Calling streamObject...`);
 
@@ -117,7 +101,6 @@ export async function* streamPlayStructure(text: string, provider: LLMProvider =
 
     console.log(`[LLM Parser] Stream started, awaiting chunks...`);
 
-    // Estimate token count (rough: 1 token ≈ 4 chars for English)
     const estimatedTokens = Math.ceil(text.length / 4);
     console.log(`[LLM Parser] Estimated input tokens: ${estimatedTokens}`);
 
@@ -133,7 +116,6 @@ export async function* streamPlayStructure(text: string, provider: LLMProvider =
             hasYielded = true;
             lastActivity = Date.now();
 
-            // Only log when new complete lines are added
             const currentLinesCount = chunk.acts?.reduce((total, act) =>
                 total + (act?.scenes?.reduce((sceneTotal, scene) =>
                     sceneTotal + (scene?.lines?.length || 0), 0) || 0), 0) || 0;
@@ -151,13 +133,11 @@ export async function* streamPlayStructure(text: string, provider: LLMProvider =
         console.error(`[LLM Parser] Error during partial streaming:`, streamError);
     }
 
-    // Always try to get the final result
     try {
         console.log(`[LLM Parser] Awaiting final object...`);
         const finalResult = await result.object;
         console.log(`[LLM Parser] Final object received:`, finalResult ? 'exists' : 'null');
 
-        // If we got a final result but didn't yield any chunks, yield it now
         if (!hasYielded && finalResult) {
             console.log(`[LLM Parser] No chunks streamed, yielding complete final object`);
             yield finalResult;
@@ -165,7 +145,6 @@ export async function* streamPlayStructure(text: string, provider: LLMProvider =
     } catch (finalError) {
         console.error(`[LLM Parser] Error getting final object:`, finalError);
 
-        // Extract Zod validation errors if available for better debugging
         if (finalError && typeof finalError === 'object' && 'cause' in finalError) {
             const errorWithCause = finalError as { cause?: { issues?: unknown } };
             const cause = errorWithCause.cause;

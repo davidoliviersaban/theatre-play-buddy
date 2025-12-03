@@ -4,6 +4,9 @@
  * This file contains all the TypeScript types used in the frontend application.
  * These types extend the base schema types with additional UI-specific properties
  * for practice mode, user preferences, and progress tracking.
+ * 
+ * They are not meant to mirror the database schema exactly, but rather to provide
+ * a rich type system for the frontend logic and components.
  */
 
 // ============================================================================

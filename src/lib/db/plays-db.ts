@@ -1,7 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import type { Playbook } from '../parse/schemas';
-import type { PlayMetadata } from '../types';
+import type { Playbook, PlayMetadata } from '../types';
 
 // Re-export PlayMetadata for convenience
 export type { PlayMetadata };
