@@ -3,7 +3,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { JobQueue } from "@/jobs/parse/queue";
+import { JobQueue } from "@/jobs/queue";
 
 export const dynamic = "force-dynamic";
 

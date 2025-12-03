@@ -5,7 +5,7 @@
 
 import { JobQueue, handleFailure } from "./queue";
 import type { ParseJob } from "@prisma/client";
-import { parseJobPipeline } from "./parse-pipeline";
+import { parseJobPipeline } from "./parse/parse-pipeline";
 
 /**
  * Sleep utility for polling delays

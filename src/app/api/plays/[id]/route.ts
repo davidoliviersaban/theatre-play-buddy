@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPlayById, deletePlay, getPlayMetadataById } from "../../../../lib/db/plays-db-prisma";
+import { getPlayById, deletePlay, getPlayMetadataById } from "@/lib/db/plays-db-prisma";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

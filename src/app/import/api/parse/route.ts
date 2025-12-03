@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { extractTextFromPDF, extractTextFromDOCX, extractTextFromTXT } from "../../../../lib/parse/extractors";
-import { PlaybookSchema, type Playbook } from "../../../../lib/parse/schemas";
-import { streamPlayParsing, getDefaultProvider, parsePlayStructure } from "../../../../lib/parse/llm-parser";
-import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "../../../../lib/parse/incremental-parser";
-import { savePlay } from "../../../../lib/db/plays-db-prisma";
-import { createParseJob, updateParseJob, deleteCompletedJobs } from "../../../../lib/db/parse-job-db";
-import { buildSessionUpdate } from "../../../../lib/parse/session-runner";
-import { JobQueue } from "../../../../jobs/parse/queue";
+import { extractTextFromPDF, extractTextFromDOCX, extractTextFromTXT } from "@/lib/parse/extractors";
+import { PlaybookSchema, type Playbook } from "@/lib/parse/schemas";
+import { streamPlayParsing, getDefaultProvider, parsePlayStructure } from "@/lib/parse/llm-parser";
+import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "@/lib/parse/incremental-parser";
+import { savePlay } from "@/lib/db/plays-db-prisma";
+import { createParseJob, updateParseJob, deleteCompletedJobs } from "@/lib/db/parse-job-db";
+import { buildSessionUpdate } from "@/lib/parse/session-runner";
+import { JobQueue } from "@/jobs/queue";
 import type { DeepPartial } from "ai";
 
 export const runtime = "nodejs";

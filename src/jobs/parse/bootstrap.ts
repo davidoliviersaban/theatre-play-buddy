@@ -3,7 +3,7 @@
  * Starts and manages worker pool on application initialization
  */
 
-import { JobWorker } from "./worker";
+import { JobWorker } from "@/jobs/worker";
 
 let workers: JobWorker[] = [];
 let shutdownInProgress = false;

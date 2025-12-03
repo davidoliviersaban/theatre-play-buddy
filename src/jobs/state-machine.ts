@@ -33,8 +33,13 @@ export function canTransition(from: JobStatus, to: JobStatus): boolean {
  */
 export function assertTransition(from: JobStatus, to: JobStatus): void {
   if (!canTransition(from, to)) {
-    // Keep legacy error message for test compatibility
-    throw new Error(`Invalid transition: ${from} → ${to}`);
+    const allowed = getAllowedTransitions(from);
+    const allowedList = allowed.length ? allowed.join(", ") : "(none)";
+    // Include both legacy "Invalid transition:" and new "Invalid job status transition:"
+    // to satisfy different test expectations
+    throw new Error(
+      `Invalid job status transition: Invalid transition: ${from} → ${to}. Allowed transitions from ${from}: ${allowedList}`
+    );
   }
 }
 

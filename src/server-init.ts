@@ -4,7 +4,7 @@
  * runs when the Next.js server starts
  */
 
-import { initializeDatabase } from './lib/db/init-db';
+import { initializeDatabase } from '@/lib/db/init-db';
 
 // Initialize database with mock data if empty
 if (typeof window === 'undefined') {

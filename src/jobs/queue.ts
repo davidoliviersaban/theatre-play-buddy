@@ -3,9 +3,9 @@
  * Manages the lifecycle of parse jobs with distributed locking
  */
 
-import { prisma } from "../../lib/db/prisma";
+import { prisma } from "@/lib/db/prisma";
 import type { ParseJob, Prisma } from "@prisma/client";
-import type { ParseJobInput, JobResult, JobUpdateData } from "../types";
+import type { ParseJobInput, JobResult, JobUpdateData } from "./types";
 import { assertTransition } from "./state-machine";
 import { jobLogger } from "./logger";
 

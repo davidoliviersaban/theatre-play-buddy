@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
-import type { Playbook } from "../../lib/parse/schemas";
+import type { Playbook } from "@/lib/parse/schemas";
 import { ParseErrorDisplay } from "./parse-error-display";
 import { Button } from "@/components/ui/button";
 import { X, ArrowRight } from "lucide-react";

@@ -8,7 +8,7 @@ import {
   isFinalState,
   getAllowedTransitions,
   VALID_TRANSITIONS,
-} from "../../src/jobs/parse/state-machine";
+} from "../../src/jobs/state-machine";
 
 describe("Job State Machine", () => {
   describe("canTransition", () => {

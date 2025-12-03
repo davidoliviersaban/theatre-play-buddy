@@ -2,7 +2,7 @@
  * Unit tests for JobQueue
  */
 
-import { JobQueue, handleFailure } from "@/jobs/parse/queue";
+import { JobQueue, handleFailure } from "@/jobs/queue";
 import { prisma } from "@/lib/db/prisma";
 import type { ParseJob } from "@prisma/client";
 
@@ -21,7 +21,7 @@ jest.mock("@/lib/db/prisma", () => ({
 }));
 
 // Mock logger
-jest.mock("@/lib/jobs/logger", () => ({
+jest.mock("@/jobs/parse/logger", () => ({
   jobLogger: {
     info: jest.fn(),
     warn: jest.fn(),

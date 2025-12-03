@@ -4,11 +4,11 @@
  */
 
 import type { ParseJob } from "@prisma/client";
-import type { JobResult, JobProgress } from "../types";
-import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "../../lib/parse/incremental-parser";
-import { PlaybookSchema } from "../../lib/parse/schemas";
-import { savePlay } from "../../lib/db/plays-db-prisma";
-import { prisma } from "../../lib/db/prisma";
+import type { JobResult, JobProgress } from "@/jobs/types";
+import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "@/lib/parse/incremental-parser";
+import { PlaybookSchema } from "@/lib/parse/schemas";
+import { savePlay } from "@/lib/db/plays-db-prisma";
+import { prisma } from "@/lib/db/prisma";
 
 // Import fixCharacterIdMismatches from session-runner (will be refactored later)
 function fixCharacterIdMismatches(playbook: any): any {
