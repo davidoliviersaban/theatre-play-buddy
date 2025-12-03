@@ -270,3 +270,66 @@ enum ParsingStatus {
   failed
   aborted
 }
+
+// Job queue model for parsing tasks (replaces ParsingSession with robust job architecture)
+model ParseJob {
+  id              String        @id @default(uuid())
+
+  // Job metadata
+  type            JobType       @default(PARSE_PLAY)
+  priority        Int           @default(0) // Higher = more urgent
+  status          JobStatus     @default(queued)
+
+  // Input data
+  rawText         String        @db.Text
+  filename        String
+  config          Json?         // { chunkSize, llmProvider, etc }
+
+  // Output reference
+  playbookId      String?       // Set when completed successfully
+
+  // Execution state
+  retryCount      Int           @default(0)
+  maxRetries      Int           @default(3)
+  checkpoints     Json          @default("[]") // Array of checkpoint markers
+  currentState    Json?         // ParsingContext snapshot
+
+  // Progress tracking
+  totalChunks     Int?
+  completedChunks Int           @default(0)
+  progress        Float         @default(0) // 0-100
+
+  // Error tracking
+  lastError       String?       @db.Text
+  failureReason   String?       @db.Text
+
+  // Distributed lock
+  workerId        String?       // Which worker is processing
+  lockedAt        DateTime?
+  lockExpiry      DateTime?
+
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  startedAt       DateTime?
+  completedAt     DateTime?
+  updatedAt       DateTime      @updatedAt
+
+  @@index([status, priority, createdAt]) // For efficient queue polling
+  @@index([workerId]) // For worker-specific queries
+  @@index([playbookId]) // For output lookup
+}
+
+enum JobType {
+  PARSE_PLAY
+  // Future: EXPORT_PLAY, BULK_IMPORT, etc
+}
+
+enum JobStatus {
+  queued
+  running
+  paused
+  retrying
+  completed
+  failed
+  cancelled
+}

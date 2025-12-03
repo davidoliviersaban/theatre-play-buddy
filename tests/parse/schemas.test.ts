@@ -42,13 +42,13 @@ describe('CharacterSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should reject character without id', () => {
+  it('should accept character without id (id generated server-side)', () => {
     const character = {
       name: 'Hamlet',
     };
 
     const result = CharacterSchema.safeParse(character);
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it('should reject character without name', () => {
@@ -283,14 +283,14 @@ describe('SceneSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should reject scene without id', () => {
+  it('should accept scene without id (id generated server-side)', () => {
     const scene = {
       title: 'Scene 1',
       lines: [],
     };
 
     const result = SceneSchema.safeParse(scene);
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it('should reject scene without title', () => {
@@ -339,14 +339,14 @@ describe('ActSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should reject act without id', () => {
+  it('should accept act without id (id generated server-side)', () => {
     const act = {
       title: 'Act I',
       scenes: [],
     };
 
     const result = ActSchema.safeParse(act);
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it('should reject act without title', () => {
@@ -402,7 +402,7 @@ describe('PlaybookSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should reject playbook without id', () => {
+  it('should accept playbook without id (id generated server-side)', () => {
     const playbook = {
       title: 'Hamlet',
       author: 'Shakespeare',
@@ -414,7 +414,7 @@ describe('PlaybookSchema', () => {
     };
 
     const result = PlaybookSchema.safeParse(playbook);
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it('should reject playbook without title', () => {
@@ -447,7 +447,7 @@ describe('PlaybookSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('should reject playbook without year', () => {
+  it('should accept playbook without year (optional field)', () => {
     const playbook = {
       id: 'play-1',
       title: 'Hamlet',
@@ -459,7 +459,7 @@ describe('PlaybookSchema', () => {
     };
 
     const result = PlaybookSchema.safeParse(playbook);
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it('should reject playbook without genre', () => {

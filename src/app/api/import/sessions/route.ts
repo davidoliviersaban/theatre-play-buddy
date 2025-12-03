@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getActiveSessions, getFailedSessions } from "@/lib/db/parsing-session-db";
+import { getActiveJobs, getFailedJobs } from "@/lib/db/parse-job-db";
 
 export const dynamic = "force-dynamic";
 
@@ -10,18 +10,18 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const [activeSessions, failedSessions] = await Promise.all([
-      getActiveSessions(),
-      getFailedSessions(),
+      getActiveJobs(),
+      getFailedJobs(),
     ]);
 
-    const sessions = [...activeSessions, ...failedSessions].map((session) => ({
-      id: session.id,
-      filename: session.filename,
-      status: session.status,
-      currentChunk: session.currentChunk,
-      totalChunks: session.totalChunks,
-      startedAt: session.startedAt.toISOString(),
-      failureReason: session.failureReason,
+    const sessions = [...activeSessions, ...failedSessions].map((job) => ({
+      id: job.id,
+      filename: job.filename,
+      status: job.status,
+      currentChunk: job.completedChunks,
+      totalChunks: job.totalChunks ?? 0,
+      startedAt: job.startedAt?.toISOString() ?? job.createdAt.toISOString(),
+      failureReason: job.failureReason,
     }));
 
     return NextResponse.json({ sessions });

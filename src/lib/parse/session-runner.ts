@@ -19,61 +19,61 @@ const runningSessions = new Set<string>();
  * Replaces incorrect characterIds with the correct ones from the playbook
  */
 function fixCharacterIdMismatches(playbook: DeepPartial<Playbook> | Playbook): DeepPartial<Playbook> | Playbook {
-    if (!playbook.characters || !playbook.acts) return playbook;
-    
-    // Build a map of lowercase character IDs to actual character IDs
-    const charIdMap = new Map<string, string>();
-    for (const char of playbook.characters) {
-        if (char?.id) {
-            charIdMap.set(char.id.toLowerCase(), char.id);
-        }
+  if (!playbook.characters || !playbook.acts) return playbook;
+
+  // Build a map of lowercase character IDs to actual character IDs
+  const charIdMap = new Map<string, string>();
+  for (const char of playbook.characters) {
+    if (char?.id) {
+      charIdMap.set(char.id.toLowerCase(), char.id);
     }
-    
-    let fixedCount = 0;
-    
-    // Iterate through all lines and fix character IDs
-    for (const act of playbook.acts) {
-        if (!act?.scenes) continue;
-        
-        for (const scene of act.scenes) {
-            if (!scene?.lines) continue;
-            
-            for (const line of scene.lines) {
-                if (!line) continue;
-                
-                // Fix single characterId
-                if (line.characterId) {
-                    const correctId = charIdMap.get(line.characterId.toLowerCase());
-                    if (correctId && correctId !== line.characterId) {
-                        console.log(`[Session Runner - Char Fix] Replacing "${line.characterId}" → "${correctId}"`);
-                        line.characterId = correctId;
-                        fixedCount++;
-                    }
-                }
-                
-                // Fix characterIdArray
-                if (line.characterIdArray && Array.isArray(line.characterIdArray)) {
-                    for (let i = 0; i < line.characterIdArray.length; i++) {
-                        const charId = line.characterIdArray[i];
-                        if (charId) {
-                            const correctId = charIdMap.get(charId.toLowerCase());
-                            if (correctId && correctId !== charId) {
-                                console.log(`[Session Runner - Char Fix] Replacing "${charId}" → "${correctId}" in array`);
-                                line.characterIdArray[i] = correctId;
-                                fixedCount++;
-                            }
-                        }
-                    }
-                }
+  }
+
+  let fixedCount = 0;
+
+  // Iterate through all lines and fix character IDs
+  for (const act of playbook.acts) {
+    if (!act?.scenes) continue;
+
+    for (const scene of act.scenes) {
+      if (!scene?.lines) continue;
+
+      for (const line of scene.lines) {
+        if (!line) continue;
+
+        // Fix single characterId
+        if (line.characterId) {
+          const correctId = charIdMap.get(line.characterId.toLowerCase());
+          if (correctId && correctId !== line.characterId) {
+            console.log(`[Session Runner - Char Fix] Replacing "${line.characterId}" → "${correctId}"`);
+            line.characterId = correctId;
+            fixedCount++;
+          }
+        }
+
+        // Fix characterIdArray
+        if (line.characterIdArray && Array.isArray(line.characterIdArray)) {
+          for (let i = 0; i < line.characterIdArray.length; i++) {
+            const charId = line.characterIdArray[i];
+            if (charId) {
+              const correctId = charIdMap.get(charId.toLowerCase());
+              if (correctId && correctId !== charId) {
+                console.log(`[Session Runner - Char Fix] Replacing "${charId}" → "${correctId}" in array`);
+                line.characterIdArray[i] = correctId;
+                fixedCount++;
+              }
             }
+          }
         }
+      }
     }
-    
-    if (fixedCount > 0) {
-        console.log(`[Session Runner - Char Fix] Fixed ${fixedCount} character ID mismatches`);
-    }
-    
-    return playbook;
+  }
+
+  if (fixedCount > 0) {
+    console.log(`[Session Runner - Char Fix] Fixed ${fixedCount} character ID mismatches`);
+  }
+
+  return playbook;
 }
 
 /**
@@ -81,63 +81,63 @@ function fixCharacterIdMismatches(playbook: DeepPartial<Playbook> | Playbook): D
  * Handles edge cases where LLM produces invalid data
  */
 function cleanupPlaybook(playbook: DeepPartial<Playbook> | Playbook): DeepPartial<Playbook> | Playbook {
-    if (!playbook.acts || !playbook.characters) return playbook;
-    
-    // Build valid character ID set
-    const validCharIds = new Set<string>();
-    for (const char of playbook.characters) {
-        if (char?.id) validCharIds.add(char.id);
-    }
-    
-    let fixedDialogueCount = 0;
-    let removedLinesCount = 0;
-    
-    for (const act of playbook.acts) {
-        if (!act?.scenes) continue;
-        
-        for (const scene of act.scenes) {
-            if (!scene?.lines) continue;
-            
-            // Filter and fix lines
-            scene.lines = scene.lines.filter(line => {
-                if (!line) {
-                    removedLinesCount++;
-                    return false;
-                }
-                
-                // Remove lines without text
-                if (!line.text || line.text.trim().length === 0) {
-                    removedLinesCount++;
-                    return false;
-                }
-                
-                // If dialogue without valid character attribution, convert to stage direction
-                if (line.type === "dialogue") {
-                    const hasValidSingleChar = line.characterId && validCharIds.has(line.characterId);
-                    const hasValidArrayChars = line.characterIdArray && 
-                        Array.isArray(line.characterIdArray) && 
-                        line.characterIdArray.length > 0 &&
-                        line.characterIdArray.some(id => id && validCharIds.has(id));
-                    
-                    if (!hasValidSingleChar && !hasValidArrayChars) {
-                        console.warn(`[Session Runner - Cleanup] Converting orphan dialogue to stage direction: "${line.text?.slice(0, 50)}..."`);
-                        line.type = "stage_direction";
-                        delete line.characterId;
-                        delete line.characterIdArray;
-                        fixedDialogueCount++;
-                    }
-                }
-                
-                return true;
-            });
+  if (!playbook.acts || !playbook.characters) return playbook;
+
+  // Build valid character ID set
+  const validCharIds = new Set<string>();
+  for (const char of playbook.characters) {
+    if (char?.id) validCharIds.add(char.id);
+  }
+
+  let fixedDialogueCount = 0;
+  let removedLinesCount = 0;
+
+  for (const act of playbook.acts) {
+    if (!act?.scenes) continue;
+
+    for (const scene of act.scenes) {
+      if (!scene?.lines) continue;
+
+      // Filter and fix lines
+      scene.lines = scene.lines.filter(line => {
+        if (!line) {
+          removedLinesCount++;
+          return false;
         }
+
+        // Remove lines without text
+        if (!line.text || line.text.trim().length === 0) {
+          removedLinesCount++;
+          return false;
+        }
+
+        // If dialogue without valid character attribution, convert to stage direction
+        if (line.type === "dialogue") {
+          const hasValidSingleChar = line.characterId && validCharIds.has(line.characterId);
+          const hasValidArrayChars = line.characterIdArray &&
+            Array.isArray(line.characterIdArray) &&
+            line.characterIdArray.length > 0 &&
+            line.characterIdArray.some(id => id && validCharIds.has(id));
+
+          if (!hasValidSingleChar && !hasValidArrayChars) {
+            console.warn(`[Session Runner - Cleanup] Converting orphan dialogue to stage direction: "${line.text?.slice(0, 50)}..."`);
+            line.type = "stage_direction";
+            delete line.characterId;
+            delete line.characterIdArray;
+            fixedDialogueCount++;
+          }
+        }
+
+        return true;
+      });
     }
-    
-    if (fixedDialogueCount > 0 || removedLinesCount > 0) {
-        console.log(`[Session Runner - Cleanup] Fixed ${fixedDialogueCount} orphan dialogues, removed ${removedLinesCount} invalid lines`);
-    }
-    
-    return playbook;
+  }
+
+  if (fixedDialogueCount > 0 || removedLinesCount > 0) {
+    console.log(`[Session Runner - Cleanup] Fixed ${fixedDialogueCount} orphan dialogues, removed ${removedLinesCount} invalid lines`);
+  }
+
+  return playbook;
 }
 
 /**
@@ -260,7 +260,7 @@ function deserializeContext(savedState: unknown): ParsingContext {
 }
 
 /**
- * Build incremental update data for ParsingSession from context
+ * Build incremental update data for ParseJob from context
  */
 export function buildSessionUpdate(ctx: ParsingContext, chunk: number, baseChunkOffset: number = 0) {
   const position = getCurrentPosition(ctx);
@@ -268,19 +268,22 @@ export function buildSessionUpdate(ctx: ParsingContext, chunk: number, baseChunk
 
   return {
     // Maintain absolute chunk number across resumes by adding base offset
-    currentChunk: baseChunkOffset + chunk,
-    status: "parsing" as const,
-    title: ctx.title,
-    author: ctx.author,
-    year: ctx.year,
-    genre: ctx.genre,
-    description: ctx.description,
+    completedChunks: baseChunkOffset + chunk,
+    status: "running" as const,
     currentState,
-    totalCharacters: ctx.characters.length,
-    totalActs: ctx.acts.length,
-    totalScenes: ctx.acts.reduce((sum, act) => sum + act.scenes.length, 0),
-    totalLines: ctx.lastLineNumber,
-    ...position,
+    // Store metadata in config for UI display
+    config: {
+      title: ctx.title,
+      author: ctx.author,
+      year: ctx.year,
+      genre: ctx.genre,
+      description: ctx.description,
+      totalCharacters: ctx.characters.length,
+      totalActs: ctx.acts.length,
+      totalScenes: ctx.acts.reduce((sum, act) => sum + act.scenes.length, 0),
+      totalLines: ctx.lastLineNumber,
+      ...position,
+    },
   };
 }
 
@@ -304,7 +307,7 @@ export async function runParsingSession(sessionId: string, chunkSize = 2500) {
     return;
   }
   runningSessions.add(sessionId);
-  
+
   try {
     const session = await prisma.parsingSession.findUnique({ where: { id: sessionId } });
     if (!session) {
@@ -329,16 +332,16 @@ export async function runParsingSession(sessionId: string, chunkSize = 2500) {
     const onSave = async (ctx: ParsingContext, chunk: number) => {
       if (saveInProgress) return;
       saveInProgress = true;
-      
+
       const updateData = buildSessionUpdate(ctx, chunk, baseChunkOffset);
-      
+
       prisma.parsingSession.update({
         where: { id: sessionId },
         data: updateData,
       }).catch((err) => {
         console.error(`[Session Runner] Failed to persist chunk ${chunk}:`, err);
-      }).finally(() => { 
-        saveInProgress = false; 
+      }).finally(() => {
+        saveInProgress = false;
       });
     };
 
@@ -370,13 +373,13 @@ export async function runParsingSession(sessionId: string, chunkSize = 2500) {
 
     // Validate final playbook
     const finalPlaybook = contextToPlaybook(context);
-    
+
     // Fix character ID mismatches before validation
     const fixedPlaybook = fixCharacterIdMismatches(finalPlaybook);
-    
+
     // Clean up orphan dialogues and invalid lines
     const cleanedPlaybook = cleanupPlaybook(fixedPlaybook);
-    
+
     const parsed = PlaybookSchema.safeParse(cleanedPlaybook);
     if (!parsed.success) {
       await markSessionFailed(sessionId, `Validation failed: ${parsed.error.message}`);

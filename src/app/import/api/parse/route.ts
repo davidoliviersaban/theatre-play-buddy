@@ -1,11 +1,12 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { extractTextFromPDF, extractTextFromDOCX, extractTextFromTXT } from "../../../../lib/parse/extractors";
 import { PlaybookSchema, type Playbook } from "../../../../lib/parse/schemas";
 import { streamPlayParsing, getDefaultProvider, parsePlayStructure } from "../../../../lib/parse/llm-parser";
 import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "../../../../lib/parse/incremental-parser";
 import { savePlay } from "../../../../lib/db/plays-db-prisma";
-import { createParsingSession, updateParsingSession, deleteCompletedSessions } from "../../../../lib/db/parsing-session-db";
+import { createParseJob, updateParseJob, deleteCompletedJobs } from "../../../../lib/db/parse-job-db";
 import { buildSessionUpdate } from "../../../../lib/parse/session-runner";
+import { JobQueue } from "../../../../lib/jobs/queue";
 import type { DeepPartial } from "ai";
 
 export const runtime = "nodejs";
@@ -112,7 +113,7 @@ function emitSceneEvents(
  */
 function fixCharacterIdMismatches(playbook: DeepPartial<Playbook>): DeepPartial<Playbook> {
     if (!playbook.characters || !playbook.acts) return playbook;
-    
+
     // Build a map of lowercase character IDs to actual character IDs
     const charIdMap = new Map<string, string>();
     for (const char of playbook.characters) {
@@ -120,19 +121,19 @@ function fixCharacterIdMismatches(playbook: DeepPartial<Playbook>): DeepPartial<
             charIdMap.set(char.id.toLowerCase(), char.id);
         }
     }
-    
+
     let fixedCount = 0;
-    
+
     // Iterate through all lines and fix character IDs
     for (const act of playbook.acts) {
         if (!act?.scenes) continue;
-        
+
         for (const scene of act.scenes) {
             if (!scene?.lines) continue;
-            
+
             for (const line of scene.lines) {
                 if (!line) continue;
-                
+
                 // Fix single characterId
                 if (line.characterId) {
                     const correctId = charIdMap.get(line.characterId.toLowerCase());
@@ -142,7 +143,7 @@ function fixCharacterIdMismatches(playbook: DeepPartial<Playbook>): DeepPartial<
                         fixedCount++;
                     }
                 }
-                
+
                 // Fix characterIdArray
                 if (line.characterIdArray && Array.isArray(line.characterIdArray)) {
                     for (let i = 0; i < line.characterIdArray.length; i++) {
@@ -160,11 +161,11 @@ function fixCharacterIdMismatches(playbook: DeepPartial<Playbook>): DeepPartial<
             }
         }
     }
-    
+
     if (fixedCount > 0) {
         console.log(`[Char Fix] Fixed ${fixedCount} character ID mismatches`);
     }
-    
+
     return playbook;
 }
 
@@ -174,43 +175,43 @@ function fixCharacterIdMismatches(playbook: DeepPartial<Playbook>): DeepPartial<
  */
 function cleanupPlaybook(playbook: DeepPartial<Playbook>): DeepPartial<Playbook> {
     if (!playbook.acts || !playbook.characters) return playbook;
-    
+
     // Build valid character ID set
     const validCharIds = new Set<string>();
     for (const char of playbook.characters) {
         if (char?.id) validCharIds.add(char.id);
     }
-    
+
     let fixedDialogueCount = 0;
     let removedLinesCount = 0;
-    
+
     for (const act of playbook.acts) {
         if (!act?.scenes) continue;
-        
+
         for (const scene of act.scenes) {
             if (!scene?.lines) continue;
-            
+
             // Filter and fix lines
             scene.lines = scene.lines.filter(line => {
                 if (!line) {
                     removedLinesCount++;
                     return false;
                 }
-                
+
                 // Remove lines without text
                 if (!line.text || line.text.trim().length === 0) {
                     removedLinesCount++;
                     return false;
                 }
-                
+
                 // If dialogue without valid character attribution, convert to stage direction
                 if (line.type === "dialogue") {
                     const hasValidSingleChar = line.characterId && validCharIds.has(line.characterId);
-                    const hasValidArrayChars = line.characterIdArray && 
-                        Array.isArray(line.characterIdArray) && 
+                    const hasValidArrayChars = line.characterIdArray &&
+                        Array.isArray(line.characterIdArray) &&
                         line.characterIdArray.length > 0 &&
                         line.characterIdArray.some(id => id && validCharIds.has(id));
-                    
+
                     if (!hasValidSingleChar && !hasValidArrayChars) {
                         console.warn(`[Cleanup] Converting orphan dialogue to stage direction: "${line.text?.slice(0, 50)}..."`);
                         line.type = "stage_direction";
@@ -219,16 +220,16 @@ function cleanupPlaybook(playbook: DeepPartial<Playbook>): DeepPartial<Playbook>
                         fixedDialogueCount++;
                     }
                 }
-                
+
                 return true;
             });
         }
     }
-    
+
     if (fixedDialogueCount > 0 || removedLinesCount > 0) {
         console.log(`[Cleanup] Fixed ${fixedDialogueCount} orphan dialogues, removed ${removedLinesCount} invalid lines`);
     }
-    
+
     return playbook;
 }
 
@@ -318,6 +319,69 @@ export async function POST(req: NextRequest) {
         return new Response(JSON.stringify({ error: "uploadId required" }), { status: 400 });
     }
 
+    // Feature flag: Use new job queue system if enabled
+    const useJobQueue = process.env.USE_JOB_QUEUE === "true";
+
+    if (useJobQueue) {
+        // NEW JOB QUEUE PATH
+        console.log(`[Parse Route] Using job queue system for upload ${uploadId}`);
+
+        const gb = globalThis as unknown as { __uploadBuffers?: Map<string, Buffer> };
+        const buffer = gb.__uploadBuffers?.get(uploadId);
+        if (!buffer) {
+            return NextResponse.json({ error: "Upload not found" }, { status: 404 });
+        }
+
+        try {
+            // Extract text
+            let text = "";
+            const header = Buffer.from(buffer).subarray(0, 4).toString("hex");
+            if (header.startsWith("25504446")) {
+                text = await extractTextFromPDF(buffer);
+            } else if (header.startsWith("504b")) {
+                text = await extractTextFromDOCX(buffer);
+            } else {
+                text = await extractTextFromTXT(buffer);
+            }
+
+            if (!text || text.trim().length === 0) {
+                return NextResponse.json(
+                    { error: "No text content found in file" },
+                    { status: 400 }
+                );
+            }
+
+            // Enqueue job
+            const queue = new JobQueue();
+            const jobId = await queue.enqueue({
+                rawText: text,
+                filename: uploadId,
+                config: {
+                    chunkSize: 2500,
+                    llmProvider,
+                },
+            });
+
+            console.log(`[Parse Route] Enqueued job ${jobId} for file ${uploadId}`);
+
+            // Return job ID for status polling
+            return NextResponse.json({
+                jobId,
+                message: "Job enqueued successfully. Poll /api/jobs/{jobId} for status."
+            });
+
+        } catch (error) {
+            console.error(`[Parse Route] Error enqueueing job:`, error);
+            return NextResponse.json(
+                { error: `Failed to enqueue job: ${(error as Error).message}` },
+                { status: 500 }
+            );
+        }
+    }
+
+    // OLD SSE STREAMING PATH (fallback)
+    console.log(`[Parse Route] Using legacy SSE streaming for upload ${uploadId}`);
+
     // Check API key is configured
     const apiKey = llmProvider === "anthropic"
         ? process.env.ANTHROPIC_API_KEY
@@ -371,7 +435,7 @@ export async function POST(req: NextRequest) {
 
                 // Decide parsing strategy based on text length
                 const useIncrementalParsing = text.length > INCREMENTAL_PARSE_THRESHOLD;
-                
+
                 if (useIncrementalParsing) {
                     console.log(`[Parse Route] Text length ${text.length} exceeds threshold ${INCREMENTAL_PARSE_THRESHOLD}`);
                     console.log(`[Parse Route] Using incremental parsing for better reliability`);
@@ -407,46 +471,49 @@ export async function POST(req: NextRequest) {
                     if (useIncrementalParsing) {
                         // === INCREMENTAL PARSING PATH (for long plays) ===
                         console.log(`[Parse Route] Starting incremental parsing`);
-                        
+
                         // T014: Create parsing session on new upload
                         const tempPlaybookId = `temp-${Date.now()}`;
                         const filename = uploadId; // Use uploadId as filename placeholder
                         const chunks = Math.ceil(text.length / 2500); // Estimate chunk count
-                        
-                        const sessionId = await createParsingSession({
-                            playbookId: tempPlaybookId,
+
+                        const sessionId = await createParseJob({
                             filename,
                             rawText: text,
-                            totalChunks: chunks,
+                            config: {
+                                chunkSize: 2500,
+                                llmProvider,
+                                tempPlaybookId
+                            },
                         });
-                        console.log(`[Parse Route] ✅ DB: Created parsing session ${sessionId} with ${chunks} estimated chunks`);
-                        
+                        console.log(`[Parse Route] ✅ DB: Created parsing job ${sessionId} with ${chunks} estimated chunks`);
+
                         // T015: Emit session_created event with sessionId and totalChunks
-                        sendEvent(controller, "session_created", { 
-                            sessionId, 
+                        sendEvent(controller, "session_created", {
+                            sessionId,
                             totalChunks: chunks,
-                            playbookId: tempPlaybookId 
+                            playbookId: tempPlaybookId
                         });
-                        
-                        await updateParsingSession(sessionId, { status: "parsing" });
-                        console.log(`[Parse Route] ✅ DB: Updated session ${sessionId} status to 'parsing'`);
-                        
+
+                        await updateParseJob(sessionId, { status: "running", startedAt: new Date() });
+                        console.log(`[Parse Route] ✅ DB: Updated job ${sessionId} status to 'running'`);
+
                         let context: ParsingContext | null = null; // Will be set in loop
                         let saveInProgress = false; // Semaphore to prevent concurrent saves
-                        
+
                         const savePlayFn = async (ctx: ParsingContext, chunk: number) => {
                             // Fire-and-forget async save with semaphore to prevent concurrent writes
                             if (saveInProgress) {
                                 console.log(`[Parse Route] ⏭️  DB: Skipping chunk ${chunk} save (previous save still in progress)`);
                                 return;
                             }
-                            
+
                             saveInProgress = true;
-                            
+
                             const updateData = buildSessionUpdate(ctx, chunk);
-                            
+
                             // Don't await - let it run in background
-                            updateParsingSession(sessionId, updateData).then(() => {
+                            updateParseJob(sessionId, updateData).then(() => {
                                 console.log(`[Parse Route] ✅ DB: Updated session ${sessionId} to chunk ${chunk}`);
                             }).catch((err) => {
                                 console.error(`[Parse Route] ❌ DB: Failed to update chunk ${chunk}:`, err);
@@ -454,7 +521,7 @@ export async function POST(req: NextRequest) {
                                 saveInProgress = false; // Release semaphore
                             });
                         };
-                        
+
                         let totalSynced = false;
                         for await (const incrementalResult of parsePlayIncrementally(text, llmProvider, 2500, savePlayFn)) {
                             context = incrementalResult.context;
@@ -462,11 +529,11 @@ export async function POST(req: NextRequest) {
                             // Ensure totalChunks stored matches actual chunk count from parser (may differ from estimate)
                             if (!totalSynced && incrementalResult.total !== chunks) {
                                 totalSynced = true;
-                                updateParsingSession(sessionId, { totalChunks: incrementalResult.total }).catch(err => {
+                                updateParseJob(sessionId, { totalChunks: incrementalResult.total }).catch(err => {
                                     console.warn(`[Parse Route] Failed to sync totalChunks to ${incrementalResult.total}:`, err);
                                 });
                             }
-                            
+
                             // T017: Update progress event emission to send every chunk completion
                             sendEvent(controller, "progress", {
                                 percent: incrementalResult.progress,
@@ -478,7 +545,7 @@ export async function POST(req: NextRequest) {
                                 estimatedRemaining: incrementalResult.timing.estimatedRemaining,
                                 message: `Processing chunk ${incrementalResult.chunk}/${incrementalResult.total}: ${context.lastLineNumber} lines, ${context.characters.length} characters`
                             });
-                            
+
                             // Emit character discoveries
                             for (const char of context.characters) {
                                 if (!charactersSeen.has(char.id)) {
@@ -486,107 +553,107 @@ export async function POST(req: NextRequest) {
                                     sendEvent(controller, "character_found", { id: char.id, name: char.name });
                                 }
                             }
-                            
+
                             // Update act/scene counts
                             actsSeen = context.acts.length;
                             scenesSeen = context.acts.reduce((total: number, act) => total + act.scenes.length, 0);
                             linesCompleted = context.lastLineNumber;
                         }
-                        
+
                         // Ensure final DB update completes before validation
                         // Wait for any pending save to complete
                         while (saveInProgress) {
                             await new Promise(resolve => setTimeout(resolve, 100));
                         }
-                        
+
                         if (!context) {
                             // Mark session as failed
-                            await updateParsingSession(sessionId, {
+                            await updateParseJob(sessionId, {
                                 status: "failed",
                                 completedAt: new Date(),
                                 failureReason: "Incremental parsing failed to produce any results",
                             });
                             console.log(`[Parse Route] ❌ DB: Marked session ${sessionId} as 'failed' - no results`);
-                            
-                            sendEvent(controller, "error", { 
-                                message: "Incremental parsing failed to produce any results", 
-                                code: "PARSE_ERROR" 
+
+                            sendEvent(controller, "error", {
+                                message: "Incremental parsing failed to produce any results",
+                                code: "PARSE_ERROR"
                             });
                             controller.close();
                             return;
                         }
-                        
+
                         // Convert final context to playbook
                         const finalPlaybook = contextToPlaybook(context);
-                        
+
                         // Fix character ID mismatches before validation
                         const fixedPlaybook = fixCharacterIdMismatches(finalPlaybook);
-                        
+
                         // Clean up orphan dialogues and invalid lines
                         const cleanedPlaybook = cleanupPlaybook(fixedPlaybook);
-                        
+
                         const parsed = PlaybookSchema.safeParse(cleanedPlaybook);
-                        
+
                         if (!parsed.success) {
                             // Mark session as failed
-                            await updateParsingSession(sessionId, {
+                            await updateParseJob(sessionId, {
                                 status: "failed",
                                 completedAt: new Date(),
                                 failureReason: `Validation failed: ${parsed.error.message}`,
                             });
                             console.log(`[Parse Route] ❌ DB: Marked session ${sessionId} as 'failed' - validation error`);
-                            
-                            sendEvent(controller, "error", { 
-                                message: `Validation failed: ${parsed.error.message}`, 
-                                code: "VALIDATION_ERROR" 
+
+                            sendEvent(controller, "error", {
+                                message: `Validation failed: ${parsed.error.message}`,
+                                code: "VALIDATION_ERROR"
                             });
                             controller.close();
                             return;
                         }
-                        
+
                         console.log(`[Parse Route] ✅ Validation passed!`);
-                        
+
                         // Save to database
                         try {
                             await savePlay(parsed.data);
                             console.log(`[Parse Route] ✅ Play saved to database: ${parsed.data.id}`);
                         } catch (dbError) {
                             console.error(`[Parse Route] ❌ Failed to save play to database:`, dbError);
-                            
+
                             // Mark session as failed due to DB save error
-                            await updateParsingSession(sessionId, {
+                            await updateParseJob(sessionId, {
                                 status: "failed",
                                 completedAt: new Date(),
                                 failureReason: `Database save failed: ${(dbError as Error).message}`,
                             });
-                            
-                            sendEvent(controller, "error", { 
+
+                            sendEvent(controller, "error", {
                                 message: `Failed to save play: ${(dbError as Error).message}`,
-                                code: "DB_SAVE_ERROR" 
+                                code: "DB_SAVE_ERROR"
                             });
                             controller.close();
                             return;
                         }
-                        
+
                         // Mark session as completed and delete
-                        await updateParsingSession(sessionId, {
+                        await updateParseJob(sessionId, {
                             status: "completed",
                             completedAt: new Date(),
                         });
                         console.log(`[Parse Route] ✅ DB: Marked session ${sessionId} as 'completed'`);
-                        
-                        await deleteCompletedSessions();
+
+                        await deleteCompletedJobs();
                         console.log(`[Parse Route] ✅ DB: Deleted completed sessions (cleanup)`);
-                        
+
                         console.log(`[Parse Route] ✅ Incremental parsing complete: ${linesCompleted} lines`);
-                        
+
                         // Emit final success events and close
                         sendEvent(controller, "progress", { percent: 100, message: "Parsing complete" });
                         sendEvent(controller, "complete", parsed.data);
                         __sseClosed = true;
                         controller.close();
                         return;
-                        
+
                     } else {
                         // === STREAMING PARSING PATH (for shorter plays) ===
                         // Watchdog: emit keepalive every 5s if no activity
@@ -665,16 +732,16 @@ export async function POST(req: NextRequest) {
                 // Save to file-based database
 
                 console.log(`[Parse Route] ✅ Validation passed!`);
-                
+
                 // Save to database
                 try {
                     await savePlay(parsed.data);
                     console.log(`[Parse Route] ✅ Play saved to database: ${parsed.data.id}`);
                 } catch (dbError) {
                     console.error(`[Parse Route] ❌ Failed to save play to database (streaming mode, no session):`, dbError);
-                    sendEvent(controller, "error", { 
+                    sendEvent(controller, "error", {
                         message: `Failed to save play: ${(dbError as Error).message}`,
-                        code: "DB_SAVE_ERROR" 
+                        code: "DB_SAVE_ERROR"
                     });
                     // We still close the stream on failure here.
                     controller.close();

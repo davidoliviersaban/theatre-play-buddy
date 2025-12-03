@@ -113,11 +113,11 @@ The system preserves paragraph indentation and formatting clues from the origina
 - **FR-018**: System MUST validate all LLM-generated data against type-safe schemas before processing
 - **FR-019**: System MUST handle validation failures gracefully and retry or prompt for correction when schema validation fails
 - **FR-020**: System MUST support attributing a single line or direction to multiple characters when they speak or act simultaneously
-- **FR-021**: System MUST use database-generated UUIDs as the canonical primary keys for all entities (Playbook, Character, Act, Scene, Line)
-- **FR-022**: System MAY store LLM-generated IDs as supplementary `llmSourceId` fields for debugging and audit purposes only
-- **FR-023**: System MUST NOT use LLM-generated IDs as primary keys or foreign keys in the database
-- **FR-024**: System MUST create a mapping table during parsing to translate LLM-generated character IDs to database-generated character IDs before persisting line attributions
-- **FR-025**: System MUST handle potential duplicate LLM-generated IDs gracefully, as the LLM cannot guarantee uniqueness or database consistency
+- **FR-021**: System MUST use database-generated UUIDs as the canonical primary keys for all entities (Playbook, Character, Act, Scene, Line) ✅ **COMPLETED**
+- **FR-022**: System MAY store LLM-generated IDs as supplementary `llmSourceId` fields for debugging and audit purposes only ✅ **COMPLETED**
+- **FR-023**: System MUST NOT use LLM-generated IDs as primary keys or foreign keys in the database ✅ **COMPLETED**
+- **FR-024**: System MUST create a mapping table during parsing to translate LLM-generated character IDs to database-generated character IDs before persisting line attributions ✅ **COMPLETED**
+- **FR-025**: System MUST handle potential duplicate LLM-generated IDs gracefully, as the LLM cannot guarantee uniqueness or database consistency ✅ **COMPLETED**
 
 ### Key Entities
 
@@ -208,6 +208,21 @@ This approach ensures type safety, reduces parsing errors, and provides a smooth
 - Document conversion libraries (PDF/DOCX extraction)
 - Progress tracking and real-time updates (React streaming)
 - Existing play data model and storage system
+
+## Future Enhancements
+
+### Job Management System
+
+The current parsing implementation uses a dual-path approach (streaming for short plays, incremental for long plays) with limited job control. A comprehensive job management system redesign is planned to address:
+
+- Unified job queue for all parsing tasks
+- Robust state machine with pause/resume/cancel capabilities
+- Distributed-safe locking for multi-instance deployment
+- Retry logic with exponential backoff
+- Worker pool for controlled concurrency
+- Comprehensive observability (metrics, logs, health checks)
+
+**Status**: Architecture analysis completed. See [PARSING_JOB_ARCHITECTURE.md](../../PARSING_JOB_ARCHITECTURE.md) for detailed design and implementation plan.
 
 ## Out of Scope
 
