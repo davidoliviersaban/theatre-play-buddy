@@ -5,25 +5,23 @@ const isDevelopment = process.env.NODE_ENV === "development";
  * and pino-pretty in development for enhanced formatting
  */
 interface Logger {
-  info: (data: object | string, msg?: string) => void;
-  warn: (data: object | string, msg?: string) => void;
-  error: (data: object | string, msg?: string) => void;
-  debug: (data: object | string, msg?: string) => void;
-  child: (bindings: object) => Logger;
+  info: (data: Record<string, unknown> | string, msg?: string) => void;
+  warn: (data: Record<string, unknown> | string, msg?: string) => void;
+  error: (data: Record<string, unknown> | string, msg?: string) => void;
+  debug: (data: Record<string, unknown> | string, msg?: string) => void;
+  child: (bindings: Record<string, unknown>) => Logger;
 }
 
-function createLogger(bindings: object = {}): Logger {
-  const formatMessage = (data: object | string, msg?: string) => {
-    const prefix = Object.keys(bindings).length > 0
-      ? `[${Object.values(bindings).join(":")}]`
-      : "";
+function createLogger(bindings: Record<string, unknown> = {}): Logger {
+  const formatMessage = (data: Record<string, unknown> | string, msg?: string) => {
+    const prefix = Object.keys(bindings).length > 0 ? `[${Object.values(bindings).join(":")}]` : "";
 
     if (typeof data === "string") {
       return `${prefix} ${data}`;
     }
 
     const message = msg ? `${prefix} ${msg}` : prefix;
-    return { ...bindings, ...data, msg: message };
+    return { ...bindings, ...data, msg: message } as Record<string, unknown>;
   };
 
   return {
@@ -32,7 +30,7 @@ function createLogger(bindings: object = {}): Logger {
       if (typeof formatted === "string") {
         console.info(formatted);
       } else {
-        console.info(formatted.msg || "", formatted);
+        console.info(formatted);
       }
     },
     warn: (data, msg?) => {
@@ -40,7 +38,7 @@ function createLogger(bindings: object = {}): Logger {
       if (typeof formatted === "string") {
         console.warn(formatted);
       } else {
-        console.warn(formatted.msg || "", formatted);
+        console.warn(formatted);
       }
     },
     error: (data, msg?) => {
@@ -48,7 +46,7 @@ function createLogger(bindings: object = {}): Logger {
       if (typeof formatted === "string") {
         console.error(formatted);
       } else {
-        console.error(formatted.msg || "", formatted);
+        console.error(formatted);
       }
     },
     debug: (data, msg?) => {
@@ -57,7 +55,7 @@ function createLogger(bindings: object = {}): Logger {
       if (typeof formatted === "string") {
         console.debug(formatted);
       } else {
-        console.debug(formatted.msg || "", formatted);
+        console.debug(formatted);
       }
     },
     child: (childBindings) => createLogger({ ...bindings, ...childBindings }),

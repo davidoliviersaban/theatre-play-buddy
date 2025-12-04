@@ -6,16 +6,17 @@
 import type { ParseJob } from "@prisma/client";
 import type { JobResult, JobProgress } from "@/jobs/types";
 import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "./incremental/parser";
-import { PlaybookSchema } from "@/lib/play/schemas";
+import { PlaybookSchema, type Playbook, type Line, type Act, type Scene } from "@/lib/play/schemas";
+import type { LLMProvider } from "./lllm-utils";
 import { savePlay } from "@/lib/db/plays-db-prisma";
 import { prisma } from "@/lib/db/prisma";
 
 // Import fixCharacterIdMismatches from session-runner (will be refactored later)
-function fixCharacterIdMismatches(playbook: any): any {
+function fixCharacterIdMismatches(playbook: Playbook): Playbook {
   // Ensure all dialogue lines have proper character attribution
   if (!playbook.acts) return playbook;
 
-  const normalizeDialogue = (line: any) => {
+  const normalizeDialogue = (line: Line & { characters?: Array<{ characterId: string }> }) => {
     if (line.type !== "dialogue") return;
     if (Array.isArray(line.characterIdArray) && line.characterIdArray.length > 0) {
       line.characters = line.characterIdArray.map((id: string) => ({ characterId: id }));
@@ -26,9 +27,9 @@ function fixCharacterIdMismatches(playbook: any): any {
     delete line.characterIdArray;
   };
 
-  for (const act of playbook.acts ?? []) {
-    for (const scene of act.scenes ?? []) {
-      for (const line of scene.lines ?? []) {
+  for (const act of (playbook.acts ?? []) as Act[]) {
+    for (const scene of (act.scenes ?? []) as Scene[]) {
+      for (const line of (scene.lines ?? []) as Line[]) {
         normalizeDialogue(line);
       }
     }
@@ -102,12 +103,12 @@ function restoreContext(currentState: unknown): ParsingContext | null {
 /**
  * Cleanup playbook by removing invalid data
  */
-function cleanupPlaybook(playbook: any): any {
+function cleanupPlaybook(playbook: Playbook): Playbook {
   // Remove any dialogue lines without character attribution
-  for (const act of playbook.acts ?? []) {
-    for (const scene of act.scenes ?? []) {
+  for (const act of (playbook.acts ?? []) as Act[]) {
+    for (const scene of (act.scenes ?? []) as Scene[]) {
       if (!Array.isArray(scene.lines)) continue;
-      scene.lines = scene.lines.filter((line: any) => {
+      scene.lines = scene.lines.filter((line: Line & { characters?: Array<{ characterId: string }>; characterId?: string }) => {
         // Keep stage directions
         if (line.type === "stage_direction") return true;
         // Keep dialogue with at least one character
@@ -140,9 +141,9 @@ export async function parseJobPipeline(
   }
 
   // Step 2: Get configuration
-  const config = job.config as any;
+  const config = job.config as unknown as { chunkSize?: number; llmProvider?: LLMProvider } | null;
   const chunkSize = config?.chunkSize ?? 2500;
-  const llmProvider = config?.llmProvider ?? "anthropic";
+  const llmProvider: LLMProvider = config?.llmProvider ?? "anthropic";
 
   // Step 3: Restore context if resuming
   let context = restoreContext(job.currentState);
@@ -156,7 +157,6 @@ export async function parseJobPipeline(
 
   // Step 4: Parse incrementally with checkpointing
   try {
-    let totalChunks = job.totalChunks ?? 0;
 
     for await (const inc of parsePlayIncrementally(
       text,
@@ -169,7 +169,7 @@ export async function parseJobPipeline(
         await prisma.parseJob.update({
           where: { id: job.id },
           data: {
-            currentState: serialized as any,
+            currentState: serialized as unknown as import("@prisma/client").Prisma.InputJsonValue,
             completedChunks: chunk,
             totalChunks: inc.total,
           },
@@ -186,7 +186,6 @@ export async function parseJobPipeline(
       context ?? undefined
     )) {
       context = inc.context;
-      totalChunks = inc.total;
     }
 
     if (!context) {
@@ -234,6 +233,7 @@ export async function parseJobPipeline(
           currentState: serialized as any,
         },
       }).catch((err) => {
+        // Log and continue; checkpoint failure shouldn't mask original error
         console.error("[Pipeline] Failed to checkpoint on error:", err);
       });
     }

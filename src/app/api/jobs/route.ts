@@ -15,11 +15,11 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const status = searchParams.get("status") as any;
+    const status = searchParams.get("status") as ("queued" | "running" | "retrying" | "paused" | "completed" | "failed" | "cancelled") | null;
     const limit = parseInt(searchParams.get("limit") || "50");
 
     const jobs = await listJobs({
-      status,
+      status: status ?? undefined,
       limit,
     });
 
