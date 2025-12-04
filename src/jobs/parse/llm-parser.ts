@@ -1,25 +1,8 @@
-import { anthropic } from "@ai-sdk/anthropic";
-import { openai } from "@ai-sdk/openai";
 import { generateObject, streamObject } from "ai";
 import { PlaybookSchema } from "@/lib/play/schemas";
-
-export type LLMProvider = "anthropic" | "openai";
-
-export function getDefaultProvider(): LLMProvider {
-    const env = (process.env.DEFAULT_LLM_PROVIDER || "").toLowerCase();
-    if (env === "anthropic") return "anthropic";
-    if (env === "openai") return "openai";
-    if (env === "claude") return "anthropic";
-    if (env.startsWith("gpt")) return "openai";
-    return "openai";
-}
-
-export function getModel(provider: LLMProvider = getDefaultProvider()) {
-    if (provider === "anthropic") {
-        return anthropic("claude-3-5-sonnet-20241022");
-    }
-    return openai("gpt-4.1-mini");
-}
+import { getDefaultProvider, getModel } from "@/jobs/parse/lllm-utils";
+import type { LLMProvider } from "@/jobs/parse/lllm-utils";
+import { jobLogger } from "@/jobs/logger";
 
 function getPrompt(text: string) {
     const prompt = `You are an expert at analyzing play scripts. Extract the following structured information from this play:
@@ -87,11 +70,10 @@ export async function parsePlayStructure(text: string, provider: LLMProvider = g
 export async function* streamPlayStructure(text: string, provider: LLMProvider = getDefaultProvider()) {
     const model = getModel(provider);
 
-    console.log(`[LLM Parser] Starting parsing with provider: ${provider}`);
-    console.log(`[LLM Parser] Text length: ${text.length} characters`);
-    console.log(`[LLM Parser] Text preview (first 500 chars):`, text.substring(0, 500));
+    jobLogger.debug({ component: "llm-parser", event: "start", provider, textLength: text.length }, "[LLM Parser] Starting parsing");
+    jobLogger.debug({ component: "llm-parser", event: "preview", preview: text.substring(0, 500) }, "[LLM Parser] Text preview (first 500 chars)");
 
-    console.log(`[LLM Parser] Calling streamObject...`);
+    jobLogger.debug({ component: "llm-parser", event: "stream_object" }, "[LLM Parser] Calling streamObject...");
 
     const result = streamObject({
         model,
@@ -99,10 +81,10 @@ export async function* streamPlayStructure(text: string, provider: LLMProvider =
         prompt: getPrompt(text),
     });
 
-    console.log(`[LLM Parser] Stream started, awaiting chunks...`);
+    jobLogger.debug({ component: "llm-parser", event: "stream_started" }, "[LLM Parser] Stream started, awaiting chunks...");
 
     const estimatedTokens = Math.ceil(text.length / 4);
-    console.log(`[LLM Parser] Estimated input tokens: ${estimatedTokens}`);
+    jobLogger.debug({ component: "llm-parser", event: "estimated_tokens", estimatedTokens }, "[LLM Parser] Estimated input tokens");
 
     let chunkIndex = 0;
     let hasYielded = false;
@@ -121,40 +103,39 @@ export async function* streamPlayStructure(text: string, provider: LLMProvider =
                     sceneTotal + (scene?.lines?.length || 0), 0) || 0), 0) || 0;
 
             if (currentLinesCount > lastLinesCount) {
-                console.log(`[LLM Parser] lines completed (total: ${currentLinesCount})`);
+                jobLogger.debug({ component: "llm-parser", event: "lines_progress", total: currentLinesCount }, "[LLM Parser] lines completed");
                 lastLinesCount = currentLinesCount;
             }
 
             yield chunk;
         }
 
-        console.log(`[LLM Parser] Partial stream completed. Total chunks: ${chunkIndex}, Final lines: ${lastLinesCount}`);
+        jobLogger.debug({ component: "llm-parser", event: "partial_completed", chunks: chunkIndex, finalLines: lastLinesCount }, "[LLM Parser] Partial stream completed");
     } catch (streamError) {
-        console.error(`[LLM Parser] Error during partial streaming:`, streamError);
+        jobLogger.error({ component: "llm-parser", event: "partial_error", error: String(streamError) }, "[LLM Parser] Error during partial streaming");
     }
 
     try {
-        console.log(`[LLM Parser] Awaiting final object...`);
+        jobLogger.debug({ component: "llm-parser", event: "await_final" }, "[LLM Parser] Awaiting final object...");
         const finalResult = await result.object;
-        console.log(`[LLM Parser] Final object received:`, finalResult ? 'exists' : 'null');
+        jobLogger.debug({ component: "llm-parser", event: "final_received", exists: !!finalResult }, "[LLM Parser] Final object received");
 
         if (!hasYielded && finalResult) {
-            console.log(`[LLM Parser] No chunks streamed, yielding complete final object`);
+            jobLogger.debug({ component: "llm-parser", event: "yield_final" }, "[LLM Parser] No chunks streamed, yielding complete final object");
             yield finalResult;
         }
     } catch (finalError) {
-        console.error(`[LLM Parser] Error getting final object:`, finalError);
+        jobLogger.error({ component: "llm-parser", event: "final_error", error: String(finalError) }, "[LLM Parser] Error getting final object");
 
         if (finalError && typeof finalError === 'object' && 'cause' in finalError) {
             const errorWithCause = finalError as { cause?: { issues?: unknown } };
             const cause = errorWithCause.cause;
             if (cause && 'issues' in cause) {
-                console.error(`[LLM Parser] Schema validation errors:`, JSON.stringify(cause.issues, null, 2));
+                jobLogger.error({ component: "llm-parser", event: "schema_errors", issues: cause.issues }, "[LLM Parser] Schema validation errors");
             }
         }
-
         throw new Error(`LLM final result error: ${(finalError as Error).message}`);
     }
     const totalMs = Date.now() - startTs;
-    console.log(`[LLM Parser] Stream finished in ${totalMs}ms. Last activity ${(Date.now() - lastActivity)}ms ago. Chunks=${chunkIndex}, yielded=${hasYielded}`);
+    jobLogger.debug({ component: "llm-parser", event: "finished", totalMs, lastIdleMs: Date.now() - lastActivity, chunks: chunkIndex, yielded: hasYielded }, "[LLM Parser] Stream finished");
 }

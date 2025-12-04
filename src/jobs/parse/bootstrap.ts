@@ -4,6 +4,7 @@
  */
 
 import { JobWorker } from "@/jobs/worker";
+import { jobLogger } from "@/jobs/logger";
 
 let workers: JobWorker[] = [];
 let shutdownInProgress = false;
@@ -13,11 +14,11 @@ let shutdownInProgress = false;
  */
 export function startWorkers(count: number = 2): JobWorker[] {
   if (workers.length > 0) {
-    console.warn("[Bootstrap] Workers already started, skipping...");
+    jobLogger.warn({ component: "bootstrap", event: "already_started" }, "[Bootstrap] Workers already started, skipping...");
     return workers;
   }
 
-  console.log(`[Bootstrap] Starting ${count} workers...`);
+  jobLogger.info({ component: "bootstrap", event: "start", count }, "[Bootstrap] Starting workers");
 
   for (let i = 0; i < count; i++) {
     const workerId = `worker-${i}-${process.pid}`;
@@ -26,14 +27,14 @@ export function startWorkers(count: number = 2): JobWorker[] {
 
     // Start worker in background
     worker.start().catch((error) => {
-      console.error(`[Bootstrap] Worker ${workerId} crashed:`, error);
+      jobLogger.error({ component: "bootstrap", event: "worker_crashed", workerId, error: String(error) }, "[Bootstrap] Worker crashed");
     });
   }
 
   // Register graceful shutdown handlers
   registerShutdownHandlers();
 
-  console.log(`[Bootstrap] Started ${workers.length} workers`);
+  jobLogger.info({ component: "bootstrap", event: "started", count: workers.length }, "[Bootstrap] Started workers");
   return workers;
 }
 
@@ -42,12 +43,12 @@ export function startWorkers(count: number = 2): JobWorker[] {
  */
 export async function stopWorkers(): Promise<void> {
   if (shutdownInProgress) {
-    console.log("[Bootstrap] Shutdown already in progress...");
+    jobLogger.warn({ component: "bootstrap", event: "shutdown_in_progress" }, "[Bootstrap] Shutdown already in progress...");
     return;
   }
 
   shutdownInProgress = true;
-  console.log(`[Bootstrap] Stopping ${workers.length} workers...`);
+  jobLogger.info({ component: "bootstrap", event: "stopping", count: workers.length }, "[Bootstrap] Stopping workers...");
 
   // Signal all workers to stop
   await Promise.all(workers.map((w) => w.stop()));
@@ -62,7 +63,7 @@ export async function stopWorkers(): Promise<void> {
   }
 
   workers = [];
-  console.log("[Bootstrap] All workers stopped");
+  jobLogger.info({ component: "bootstrap", event: "stopped" }, "[Bootstrap] All workers stopped");
 }
 
 /**
@@ -77,7 +78,7 @@ export function getWorkerCount(): number {
  */
 function registerShutdownHandlers(): void {
   const shutdown = async (signal: string) => {
-    console.log(`[Bootstrap] Received ${signal}, initiating graceful shutdown...`);
+    jobLogger.warn({ component: "bootstrap", event: "signal", signal }, "[Bootstrap] Received signal, initiating graceful shutdown...");
     await stopWorkers();
     process.exit(0);
   };
