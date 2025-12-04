@@ -11,7 +11,7 @@ import { StatCard } from "@/components/ui/stat-card";
 import { fetchPlayById } from "@/lib/api/plays";
 import type { Playbook } from "@/lib/types";
 import { getCurrentCharacterStats } from "@/lib/play-storage";
-import { DailyStatsTable } from "@/components/play/DailyStatsTable";
+import { DailyStatsTable } from "@/components/play/daily-stats-table";
 
 export default function SessionSummaryPage({
   params,

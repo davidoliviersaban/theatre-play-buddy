@@ -1,6 +1,6 @@
 import { generateObject } from "ai";
 import type { Playbook, Line } from "@/lib/play/schemas";
-import { getDefaultProvider, getModel, type LLMProvider } from "../llm-parser";
+import { getDefaultProvider, getModel, type LLMProvider } from "@/jobs/parse/lllm-utils";
 import type { IncrementalParseResult, ParsingContext } from "./types";
 import { IncrementalParseResultSchema } from "./types";
 

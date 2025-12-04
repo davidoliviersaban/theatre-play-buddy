@@ -137,6 +137,22 @@ export function useProgress({ playId, characterId, syncInterval = 20000, enabled
             }
 
             const data = await response.json();
+            // Normalize date fields from API (strings -> Date objects)
+            try {
+                if (data?.characterProgress?.lastPracticedAt && typeof data.characterProgress.lastPracticedAt === 'string') {
+                    data.characterProgress.lastPracticedAt = new Date(data.characterProgress.lastPracticedAt);
+                }
+                if (data?.lineProgress && typeof data.lineProgress === 'object') {
+                    Object.values(data.lineProgress).forEach((lp: unknown) => {
+                        const lineProgress = lp as { lastPracticedAt?: unknown };
+                        if (typeof lineProgress.lastPracticedAt === 'string') {
+                            lineProgress.lastPracticedAt = new Date(lineProgress.lastPracticedAt);
+                        }
+                    });
+                }
+            } catch (normErr) {
+                console.warn('[useProgress] Failed to normalize API dates:', normErr);
+            }
             setProgress(data);
             saveToCache(data);
         } catch (err) {

@@ -3,7 +3,7 @@ import type { Line, Playbook } from "@/lib/types";
 import { calculateProgress } from "@/components/play/progress-bar";
 import { useRef, useEffect } from "react";
 import { StructureProgressHeader } from "@/components/practice/structure-header";
-import { getLineMastery } from "@/lib/play-storage";
+import { getLineMastery as getLocalLineMastery } from "@/lib/play-storage";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import { OPACITY_LEVELS } from "@/lib/ui-constants";
 import { getSpeakerIds } from "@/lib/play/multi-character";
@@ -62,6 +62,11 @@ interface BookViewProps {
   lines: LineWithMetadata[]; // flattened lines with metadata
   currentLineIndex: number;
   viewMode?: "line" | "book"; // used to trigger scroll when switching into book view
+  getLineMastery?: (lineId: string) => {
+    rehearsalCount: number;
+    masteryPercentage: number;
+    lastPracticed: string;
+  } | null;
 }
 
 export function BookView({
@@ -70,6 +75,7 @@ export function BookView({
   lines,
   currentLineIndex,
   viewMode,
+  getLineMastery,
 }: BookViewProps) {
   const currentGroupRef = useRef<HTMLParagraphElement | null>(null);
 
@@ -152,11 +158,13 @@ export function BookView({
                       const lineMasteries = group.lineIndices
                         .map((li) => lines[li])
                         .filter((ln) => ln.type === "dialogue")
-                        .map(
-                          (ln) =>
-                            getLineMastery(play.id, primaryCharId, ln.id)
-                              ?.masteryPercentage ?? 0
-                        );
+                        .map((ln) => {
+                          const dbMastery = getLineMastery?.(ln.id)?.masteryPercentage;
+                          if (typeof dbMastery === "number") return dbMastery;
+                          return (
+                            getLocalLineMastery(play.id, primaryCharId, ln.id)?.masteryPercentage ?? 0
+                          );
+                        });
                       if (lineMasteries.length > 0) {
                         avgMasteryPct = Math.round(
                           lineMasteries.reduce((a, b) => a + b, 0) /
@@ -173,10 +181,14 @@ export function BookView({
                         ? lines[firstLineIdx]
                         : undefined;
                     const indentLevel =
-                      (firstLine as any)?.formatting?.indentLevel || 0;
+                      typeof firstLine?.formatting?.indentLevel === "number"
+                        ? firstLine.formatting.indentLevel
+                        : 0;
                     const hasLineBreak =
-                      (firstLine as any)?.formatting?.preserveLineBreaks ||
-                      false;
+                      typeof firstLine?.formatting?.preserveLineBreaks ===
+                      "boolean"
+                        ? firstLine.formatting.preserveLineBreaks
+                        : false;
 
                     return (
                       <p

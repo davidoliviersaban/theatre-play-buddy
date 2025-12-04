@@ -182,6 +182,7 @@ function PracticePageContent({
             lines={allLines}
             currentLineIndex={currentLineIndex}
             viewMode={viewMode}
+            getLineMastery={getLineMastery}
           />
         )}
       </div>

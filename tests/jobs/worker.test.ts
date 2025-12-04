@@ -2,7 +2,6 @@
  * Unit tests for JobWorker
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { JobWorker } from "@/jobs/worker";
 import { JobQueue } from "@/jobs/queue";

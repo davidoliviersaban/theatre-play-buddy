@@ -14,7 +14,7 @@ export default async function PlayDetailsPage({
   let play;
   try {
     play = await fetchPlayById(id);
-  } catch (error) {
+  } catch {
     return (
       <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-6">
@@ -27,7 +27,7 @@ export default async function PlayDetailsPage({
         <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
           <h1 className="text-2xl font-bold">Play Not Found</h1>
           <p className="text-muted-foreground">
-            The play with ID "{id}" could not be found.
+            The play with ID &quot;{id}&quot; could not be found.
           </p>
           <Button asChild>
             <Link href="/">Return to Home</Link>

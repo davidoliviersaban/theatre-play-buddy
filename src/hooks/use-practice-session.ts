@@ -341,10 +341,12 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
         getLineMastery: (lineId: string) => {
             const progress = dbProgress?.lineProgress[lineId];
             if (!progress) return null;
+            const lp = progress.lastPracticedAt;
+            const iso = typeof lp === 'string' ? lp : lp instanceof Date ? lp.toISOString() : new Date().toISOString();
             return {
                 rehearsalCount: progress.rehearsalCount,
                 masteryPercentage: progress.progressPercent,
-                lastPracticed: progress.lastPracticedAt.toISOString(),
+                lastPracticed: iso,
             };
         },
         masteryUpdateTrigger,
