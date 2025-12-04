@@ -5,9 +5,10 @@ import { Star, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Character, Playbook } from "@/lib/types";
 import { CompletionIcon } from "@/components/ui/completion-icon";
-import { calculateProgress } from "@/components/play/progress-bar";
+import { computeProgressPct } from "@/components/play/progress-bar";
 import { InlineStack } from "@/components/ui/inline-stack";
 import { OPACITY_LEVELS } from "@/lib/ui-constants";
+import { usePracticeSession } from "@/hooks/use-practice-session";
 
 interface ActiveCharacterHeaderProps {
   play: Playbook;
@@ -22,14 +23,15 @@ export function ActiveCharacterHeader({
   isSelectionOpen,
   onToggleSelection,
 }: ActiveCharacterHeaderProps) {
-  const allLines = play.acts.flatMap((a) => a.scenes.flatMap((s) => s.lines));
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => {
     setMounted(true);
   }, []);
-  const progress = mounted
-    ? calculateProgress(allLines, play.id, character.id)
-    : 0;
+  const { allLines, getLineMastery } = usePracticeSession(
+    play,
+    character.id || ""
+  );
+  const progress = mounted ? computeProgressPct(allLines, getLineMastery) : 0;
   return (
     <div
       role="button"

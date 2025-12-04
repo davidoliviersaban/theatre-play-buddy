@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { BookOpen, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,14 +11,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Playbook, PlayMetadata } from "@/lib/types";
+import type { PlayMetadata } from "@/lib/types";
 import { PlayCardStats } from "@/components/play-card-stats";
 import { fetchPlayById } from "@/lib/api/plays";
-import { useEffect, useState, useMemo } from "react";
 import {
   areAllCharactersMastered,
   getMasteredCharacterCount,
 } from "@/lib/utils/character-utils";
+import { prisma } from "@/lib/db/prisma";
+import { createLineMasteryGetterFromData } from "@/lib/play/line-mastery.utils";
 
 interface PlayCardProps {
   play: PlayMetadata;
@@ -43,27 +42,53 @@ const TROPHY_TITLES = {
   silver: "One character mastered",
 } as const;
 
-export function PlayCard({ play }: PlayCardProps) {
-  const [playbook, setPlaybook] = useState<Playbook | null>(null);
+async function fetchProgressData(playId: string) {
+  const userId = "default-user"; // TODO: Get from auth
 
-  useEffect(() => {
-    if (!playbook) {
-      fetchPlayById(play.id).then(setPlaybook);
-    }
-  }, [play.id, playbook]);
+  try {
+    const lineProgress = await prisma.userLineProgress.findMany({
+      where: {
+        userId,
+        playbookId: playId,
+      },
+      select: {
+        lineId: true,
+        rehearsalCount: true,
+        progressPercent: true,
+        lastPracticedAt: true,
+      },
+    });
 
-  // Calculate trophy status from playbook data
-  const status = useMemo(() => {
-    if (!playbook) return "none";
-    const allMastered = areAllCharactersMastered(playbook);
-    if (allMastered) return "gold";
-    const masteredCount = getMasteredCharacterCount(playbook);
-    return masteredCount > 0 ? "silver" : "none";
-  }, [playbook]);
-
-  if (!playbook) {
-    return null;
+    return lineProgress.reduce((map, lp) => {
+      map[lp.lineId] = {
+        rehearsalCount: lp.rehearsalCount,
+        progressPercent: lp.progressPercent,
+        lastPracticedAt: lp.lastPracticedAt,
+      };
+      return map;
+    }, {} as Record<string, { rehearsalCount: number; progressPercent: number; lastPracticedAt: Date }>);
+  } catch (error) {
+    console.error("[PlayCard] Error fetching progress:", error);
+    return {};
   }
+}
+
+export async function PlayCard({ play }: PlayCardProps) {
+  // Fetch playbook and progress data server-side
+  const [playbook, progressData] = await Promise.all([
+    fetchPlayById(play.id),
+    fetchProgressData(play.id),
+  ]);
+
+  const getLineMastery = createLineMasteryGetterFromData(progressData);
+
+  // Calculate trophy status
+  const allMastered = areAllCharactersMastered(playbook, getLineMastery);
+  const status = allMastered
+    ? "gold"
+    : getMasteredCharacterCount(playbook, getLineMastery) > 0
+    ? "silver"
+    : "none";
   return (
     <Card
       className={`relative flex flex-col transition-all hover:border-primary/50 hover:shadow-lg ${BORDER_CLASSES[status]} ${BACKGROUND_CLASSES[status]}`}
@@ -97,7 +122,7 @@ export function PlayCard({ play }: PlayCardProps) {
           </InlineStack>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-          <PlayCardStats play={playbook} />
+          <PlayCardStats play={playbook} getLineMastery={getLineMastery} />
         </div>
       </CardContent>
       <CardFooter>

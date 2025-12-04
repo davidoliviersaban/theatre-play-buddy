@@ -3,11 +3,12 @@ import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import { ArrowLeft, CheckCircle, BarChart, List, BookOpen } from "lucide-react";
 import { CompletionIcon } from "@/components/ui/completion-icon";
-import { calculateProgress } from "@/components/play/progress-bar";
+import { computeProgressPct } from "@/components/play/progress-bar";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { InlineStack } from "@/components/ui/inline-stack";
 import type { Playbook, Character } from "@/lib/types";
+import { usePracticeSession } from "@/hooks/use-practice-session";
 
 interface PracticeHeaderProps {
   play: Playbook;
@@ -39,6 +40,12 @@ export function PracticeHeader({
     getSnapshot,
     getServerSnapshot
   );
+  const { allLines, getLineMastery } = usePracticeSession(
+    play,
+    character.id || ""
+  );
+  const progress = computeProgressPct(allLines, getLineMastery);
+
   const hidden = isHidden
     ? "-translate-y-full opacity-0 pointer-events-none"
     : "translate-y-0 opacity-100";
@@ -68,14 +75,6 @@ export function PracticeHeader({
                 {/* Play progress with checkbox icon */}
                 <InlineStack gap={1} className="ml-3 align-middle">
                   {(() => {
-                    const allLines = play.acts.flatMap((a) =>
-                      a.scenes.flatMap((s) => s.lines)
-                    );
-                    const progress = calculateProgress(
-                      allLines,
-                      play.id,
-                      character.id
-                    );
                     return (
                       <>
                         <CompletionIcon

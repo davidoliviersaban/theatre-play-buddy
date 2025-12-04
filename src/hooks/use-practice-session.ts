@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import type { Playbook, Line } from "@/lib/types";
 import { getLastLineIndex, setLastLineIndex } from "@/lib/play-storage";
 import { useProgress } from "./use-progress-sync";
+import { createLineMasteryGetterFromData } from "@/lib/play/line-mastery.utils";
 
 type LineWithMetadata = Line & {
     __actId: string;
@@ -338,17 +339,9 @@ export function usePracticeSession(play: Playbook, characterId: string, startId?
         showHint,
         toggleHint,
         markLineAsKnown,
-        getLineMastery: (lineId: string) => {
-            const progress = dbProgress?.lineProgress[lineId];
-            if (!progress) return null;
-            const lp = progress.lastPracticedAt;
-            const iso = typeof lp === 'string' ? lp : lp instanceof Date ? lp.toISOString() : new Date().toISOString();
-            return {
-                rehearsalCount: progress.rehearsalCount,
-                masteryPercentage: progress.progressPercent,
-                lastPracticed: iso,
-            };
-        },
+        getLineMastery: dbProgress?.lineProgress 
+            ? createLineMasteryGetterFromData(dbProgress.lineProgress)
+            : () => null,
         masteryUpdateTrigger,
     };
 }

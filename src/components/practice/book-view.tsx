@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
 import type { Line, Playbook } from "@/lib/types";
-import { calculateProgress } from "@/components/play/progress-bar";
+// DB-only progress: compute structure progress from provided getLineMastery
 import { useRef, useEffect } from "react";
 import { StructureProgressHeader } from "@/components/practice/structure-header";
-import { getLineMastery as getLocalLineMastery } from "@/lib/play-storage";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import { OPACITY_LEVELS } from "@/lib/ui-constants";
 import { getSpeakerIds } from "@/lib/play/multi-character";
+import { computeProgressPct } from "../play/progress-bar";
 
 // Extended line type used in practice session (flattened with metadata)
 type LineWithMetadata = Line & {
@@ -62,7 +62,7 @@ interface BookViewProps {
   lines: LineWithMetadata[]; // flattened lines with metadata
   currentLineIndex: number;
   viewMode?: "line" | "book"; // used to trigger scroll when switching into book view
-  getLineMastery?: (lineId: string) => {
+  getLineMastery: (lineId: string) => {
     rehearsalCount: number;
     masteryPercentage: number;
     lastPracticed: string;
@@ -99,10 +99,9 @@ export function BookView({
         <div key={act.id}>
           <StructureProgressHeader
             title={act.title}
-            progress={calculateProgress(
+            progress={computeProgressPct(
               act.scenes.flatMap((s) => s.lines),
-              play.id,
-              characterId
+              getLineMastery
             )}
             type="act"
             className="mb-2"
@@ -121,11 +120,7 @@ export function BookView({
                 <div key={scene.id}>
                   <StructureProgressHeader
                     title={scene.title}
-                    progress={calculateProgress(
-                      scene.lines,
-                      play.id,
-                      characterId
-                    )}
+                    progress={computeProgressPct(scene.lines, getLineMastery)}
                     type="scene"
                     className="mb-3"
                   />
@@ -158,13 +153,9 @@ export function BookView({
                       const lineMasteries = group.lineIndices
                         .map((li) => lines[li])
                         .filter((ln) => ln.type === "dialogue")
-                        .map((ln) => {
-                          const dbMastery = getLineMastery?.(ln.id)?.masteryPercentage;
-                          if (typeof dbMastery === "number") return dbMastery;
-                          return (
-                            getLocalLineMastery(play.id, primaryCharId, ln.id)?.masteryPercentage ?? 0
-                          );
-                        });
+                        .map(
+                          (ln) => getLineMastery(ln.id)?.masteryPercentage ?? 0
+                        );
                       if (lineMasteries.length > 0) {
                         avgMasteryPct = Math.round(
                           lineMasteries.reduce((a, b) => a + b, 0) /
@@ -180,14 +171,16 @@ export function BookView({
                       firstLineIdx !== undefined
                         ? lines[firstLineIdx]
                         : undefined;
+                    // Optional formatting hints may exist on lines; guard access
                     const indentLevel =
-                      typeof firstLine?.formatting?.indentLevel === "number"
-                        ? firstLine.formatting.indentLevel
+                      typeof (firstLine as any)?.formatting?.indentLevel ===
+                      "number"
+                        ? (firstLine as any).formatting.indentLevel
                         : 0;
                     const hasLineBreak =
-                      typeof firstLine?.formatting?.preserveLineBreaks ===
-                      "boolean"
-                        ? firstLine.formatting.preserveLineBreaks
+                      typeof (firstLine as any)?.formatting
+                        ?.preserveLineBreaks === "boolean"
+                        ? (firstLine as any).formatting.preserveLineBreaks
                         : false;
 
                     return (

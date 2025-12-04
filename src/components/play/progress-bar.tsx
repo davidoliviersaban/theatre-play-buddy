@@ -65,29 +65,5 @@ export function ProgressBar({
   );
 }
 
-import type { Line } from "@/lib/types";
-import { getLineMastery } from "@/lib/play-storage";
-
-// Progress is merged with mastery: compute average mastery percentage across character's lines
-export function calculateProgress(
-  lines: Array<Line>,
-  playId: string,
-  characterId?: string
-): number {
-  if (!characterId) return 0;
-  if (typeof window === "undefined") return 0;
-
-  // Only consider dialogue lines belonging to the character
-  const characterLines = lines.filter(
-    (l) => l.characterId === characterId && l.type === "dialogue"
-  );
-  if (characterLines.length === 0) return 0;
-
-  let total = 0;
-  for (const line of characterLines) {
-    const mastery = getLineMastery(playId, characterId, line.id);
-    total += mastery?.masteryPercentage ?? 0;
-  }
-  const avg = total / characterLines.length;
-  return Math.round(avg);
-}
+// Re-export for backwards compatibility
+export { computeProgressPct } from "@/lib/utils/progress-utils";

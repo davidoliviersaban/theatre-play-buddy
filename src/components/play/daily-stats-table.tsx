@@ -1,5 +1,5 @@
 "use client";
-import React, { useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
 import { getDailyStatsForPlay } from "@/lib/play-storage";
 
 export function DailyStatsTable({ playId }: { playId: string }) {

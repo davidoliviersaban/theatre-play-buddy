@@ -1,5 +1,3 @@
-"use client";
-
 import type { PlayMetadata } from "@/lib/types";
 import { PlayCard } from "@/components/home/play-card";
 

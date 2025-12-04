@@ -5,26 +5,28 @@ import { PlayCircle } from "lucide-react";
 import { IconButton } from "@/components/ui/icon-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SceneListItem } from "./scene-list-item";
-import { ProgressBar, calculateProgress } from "./progress-bar";
+import { computeProgressPct, ProgressBar } from "./progress-bar";
 import { CompletionIcon } from "@/components/ui/completion-icon";
 import type { Act, Character } from "@/lib/types";
+import { usePracticeSession } from "@/hooks/use-practice-session";
+import type { Playbook } from "@/lib/types";
 
 interface ActCardProps {
+  play: Playbook;
   act: Act;
-  playId: string;
   activeCharacter?: Character;
 }
 
-export function ActCard({ act, playId, activeCharacter }: ActCardProps) {
+export function ActCard({ act, play, activeCharacter }: ActCardProps) {
   // Calculate act progress for selected character
   const actLines = act.scenes.flatMap((s) =>
     s.lines.filter((l) => l.characterId === activeCharacter?.id)
   );
-  const actProgress = calculateProgress(
-    act.scenes.flatMap((s) => s.lines),
-    playId,
-    activeCharacter?.id
+  const { getLineMastery } = usePracticeSession(
+    play,
+    activeCharacter?.id || ""
   );
+  const actProgress = computeProgressPct(actLines, getLineMastery);
 
   return (
     <Card>
@@ -50,7 +52,7 @@ export function ActCard({ act, playId, activeCharacter }: ActCardProps) {
           <Link
             href={
               activeCharacter
-                ? `/practice/${playId}?character=${activeCharacter.id}&start=${act.id}`
+                ? `/practice/${play.id}?character=${activeCharacter.id}&start=${act.id}`
                 : "#"
             }
           >
@@ -64,17 +66,16 @@ export function ActCard({ act, playId, activeCharacter }: ActCardProps) {
             const sceneLines = scene.lines.filter(
               (l) => l.characterId === activeCharacter?.id
             );
-            const sceneProgress = calculateProgress(
-              scene.lines,
-              playId,
-              activeCharacter?.id
+            const sceneProgress = computeProgressPct(
+              sceneLines,
+              getLineMastery
             );
 
             return (
               <SceneListItem
                 key={scene.id}
                 scene={scene}
-                playId={playId}
+                playId={play.id}
                 activeCharacter={activeCharacter}
                 sceneProgress={sceneProgress}
                 hasCharacterLines={sceneLines.length > 0}

@@ -53,8 +53,8 @@ export function PlayDetailsClient({ play }: PlayDetailsClientProps) {
               play.acts.map((act) => (
                 <ActCard
                   key={act.id}
+                  play={play}
                   act={act}
-                  playId={play.id}
                   activeCharacter={activeCharacter}
                 />
               ))

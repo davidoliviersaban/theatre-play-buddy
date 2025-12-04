@@ -1,10 +1,11 @@
 import type { Playbook } from "@/lib/types";
-import { calculateProgress } from "@/components/play/progress-bar";
+// DB-only progress: compute structure progress from provided getLineMastery
 import {
   LineCard,
   type LineWithMetadata,
 } from "@/components/practice/line-card";
 import { getSpeakerIds } from "@/lib/play/multi-character";
+import { computeProgressPct } from "../play/progress-bar";
 
 // Use LineWithMetadata from extracted component to keep types consistent
 
@@ -79,8 +80,8 @@ export function LineByLineView({
             const sceneLines = lines.filter(
               (l) => l.__sceneId === line.__sceneId
             );
-            actProgress = calculateProgress(actLines, play.id, characterId);
-            sceneProgress = calculateProgress(sceneLines, play.id, characterId);
+            actProgress = computeProgressPct(actLines, getLineMastery);
+            sceneProgress = computeProgressPct(sceneLines, getLineMastery);
           }
 
           // stage is derived from mastery inside LineCard; local stage state is no longer used

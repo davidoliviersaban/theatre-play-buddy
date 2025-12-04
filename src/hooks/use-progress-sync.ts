@@ -51,76 +51,25 @@ export function useProgress({ playId, characterId, syncInterval = 20000, enabled
     const [isLoading, setIsLoading] = useState(true);
     const [isSyncing, setIsSyncing] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    
+
     const syncTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
     const pendingUpdatesRef = useRef<Map<string, Partial<LineProgress>>>(new Map());
 
+    // DB-only mode: do not persist cache/pending updates to localStorage
     const cacheKey = `${CACHE_PREFIX}${playId}:${characterId}`;
     const pendingKey = `${PENDING_PREFIX}${playId}:${characterId}`;
 
     // Load from localStorage cache
-    const loadFromCache = useCallback(() => {
-        if (typeof window === "undefined") return null;
-        try {
-            const cached = localStorage.getItem(cacheKey);
-            if (cached) {
-                const data = JSON.parse(cached);
-                // Convert date strings back to Date objects
-                if (data.characterProgress?.lastPracticedAt) {
-                    data.characterProgress.lastPracticedAt = new Date(data.characterProgress.lastPracticedAt);
-                }
-                Object.values(data.lineProgress || {}).forEach((lp: unknown) => {
-                    const lineProgress = lp as Partial<LineProgress>;
-                    if (lineProgress.lastPracticedAt && typeof lineProgress.lastPracticedAt === 'string') {
-                        lineProgress.lastPracticedAt = new Date(lineProgress.lastPracticedAt) as unknown as Date;
-                    }
-                });
-                return data;
-            }
-        } catch (err) {
-            console.error("[useProgress] Failed to load from cache:", err);
-        }
-        return null;
-    }, [cacheKey]);
+    const loadFromCache = useCallback(() => null, []);
 
     // Save to localStorage cache
-    const saveToCache = useCallback((data: ProgressData) => {
-        if (typeof window === "undefined") return;
-        try {
-            localStorage.setItem(cacheKey, JSON.stringify(data));
-        } catch (err) {
-            console.error("[useProgress] Failed to save to cache:", err);
-        }
-    }, [cacheKey]);
+    const saveToCache = useCallback((_data: ProgressData) => { }, []);
 
     // Load pending updates from localStorage
-    const loadPendingUpdates = useCallback(() => {
-        if (typeof window === "undefined") return;
-        try {
-            const pending = localStorage.getItem(pendingKey);
-            if (pending) {
-                const updates = JSON.parse(pending);
-                pendingUpdatesRef.current = new Map(Object.entries(updates));
-            }
-        } catch (err) {
-            console.error("[useProgress] Failed to load pending updates:", err);
-        }
-    }, [pendingKey]);
+    const loadPendingUpdates = useCallback(() => { }, []);
 
     // Save pending updates to localStorage
-    const savePendingUpdates = useCallback(() => {
-        if (typeof window === "undefined") return;
-        try {
-            const updates = Object.fromEntries(pendingUpdatesRef.current);
-            if (Object.keys(updates).length > 0) {
-                localStorage.setItem(pendingKey, JSON.stringify(updates));
-            } else {
-                localStorage.removeItem(pendingKey);
-            }
-        } catch (err) {
-            console.error("[useProgress] Failed to save pending updates:", err);
-        }
-    }, [pendingKey]);
+    const savePendingUpdates = useCallback(() => { }, []);
 
     // Fetch progress from API
     const fetchProgress = useCallback(async () => {
@@ -131,7 +80,7 @@ export function useProgress({ playId, characterId, syncInterval = 20000, enabled
             setError(null);
 
             const response = await fetch(`/api/progress?playId=${playId}&characterId=${characterId}`);
-            
+
             if (!response.ok) {
                 throw new Error(`Failed to fetch progress: ${response.statusText}`);
             }
@@ -154,16 +103,13 @@ export function useProgress({ playId, characterId, syncInterval = 20000, enabled
                 console.warn('[useProgress] Failed to normalize API dates:', normErr);
             }
             setProgress(data);
-            saveToCache(data);
+            // DB-only mode: no local cache
         } catch (err) {
             console.error("[useProgress] Error fetching progress:", err);
             setError((err as Error).message);
-            
+
             // Try to load from cache if API fails
-            const cached = loadFromCache();
-            if (cached) {
-                setProgress(cached);
-            }
+            // DB-only mode: no cache fallback
         } finally {
             setIsLoading(false);
         }
@@ -266,15 +212,7 @@ export function useProgress({ playId, characterId, syncInterval = 20000, enabled
     useEffect(() => {
         if (!enabled) return;
 
-        // Load from cache first for instant display
-        const cached = loadFromCache();
-        if (cached) {
-            setProgress(cached);
-            setIsLoading(false);
-        }
-
-        // Load pending updates
-        loadPendingUpdates();
+        // DB-only mode: skip local cache and pending updates
 
         // Then fetch from API
         fetchProgress();

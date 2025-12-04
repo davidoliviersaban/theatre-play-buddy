@@ -4,16 +4,17 @@ import * as React from "react";
 import { Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CompletionIcon } from "@/components/ui/completion-icon";
-import { calculateProgress } from "@/components/play/progress-bar";
+import { computeProgressPct } from "@/components/play/progress-bar";
 import { cn } from "@/lib/utils";
 import { InlineStack } from "@/components/ui/inline-stack";
 import { OPACITY_LEVELS } from "@/lib/ui-constants";
 import type { Character, Playbook } from "@/lib/types";
 import {
   getAllLines,
-  getLearnedLinesCount,
   getTotalLinesCount,
+  countLearnedLines,
 } from "@/lib/utils/character-utils";
+import { usePracticeSession } from "@/hooks/use-practice-session";
 
 interface CharacterSelectionPanelProps {
   play: Playbook;
@@ -28,6 +29,8 @@ export function CharacterSelectionPanel({
   activeCharacterId,
   onSelect,
 }: CharacterSelectionPanelProps) {
+  const { getLineMastery } = usePracticeSession(play, activeCharacterId || "");
+
   return (
     <div className="mt-6 pt-6">
       <h4 className="mb-4 text-base font-semibold">Character Selection</h4>
@@ -35,9 +38,9 @@ export function CharacterSelectionPanel({
         {characters.map((char) => {
           const isActive = char.id === activeCharacterId;
           const allLines = getAllLines(play, char.id);
-          const progress = calculateProgress(allLines, play.id, char.id);
+          const progress = computeProgressPct(allLines, getLineMastery);
           const totalLines = getTotalLinesCount(play, char.id);
-          const learnedLines = getLearnedLinesCount(play, char.id);
+          const learnedLines = countLearnedLines(play, char.id, getLineMastery);
 
           return (
             <div
