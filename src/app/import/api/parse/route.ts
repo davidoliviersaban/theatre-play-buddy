@@ -1,7 +1,8 @@
+import { getDefaultProvider } from "@/jobs/parse/lllm-utils";
 import { NextRequest, NextResponse } from "next/server";
 import { extractTextFromPDF, extractTextFromDOCX, extractTextFromTXT } from "@/lib/play/extractors";
 import { PlaybookSchema, type Playbook } from "@/lib/play/schemas";
-import { streamPlayStructure, getDefaultProvider, parsePlayStructure } from "@/jobs/parse/llm-parser";
+import { streamPlayStructure, parsePlayStructure } from "@/jobs/parse/llm-parser";
 import { parsePlayIncrementally, contextToPlaybook, type ParsingContext } from "@/jobs/parse/incremental/parser";
 import { savePlay } from "@/lib/db/plays-db-prisma";
 import { createParseJob, updateParseJob, deleteCompletedJobs } from "@/lib/db/parse-job-db";
