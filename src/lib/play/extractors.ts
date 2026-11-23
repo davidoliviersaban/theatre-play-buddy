@@ -1,4 +1,4 @@
-import pdfParse from "pdf-parse";
+import { PDFParse } from "pdf-parse";
 import mammoth from "mammoth";
 
 export interface FormattingMetadata {
@@ -7,14 +7,17 @@ export interface FormattingMetadata {
 }
 
 export async function extractTextFromPDF(buffer: Buffer): Promise<string> {
+    const parser = new PDFParse({ data: new Uint8Array(buffer) });
     try {
-        const data = await pdfParse(buffer);
+        const data = await parser.getText();
         if (!data.text) {
             throw new Error("PDF parsing succeeded but no text was extracted");
         }
         return data.text;
     } catch (error) {
         throw new Error(`PDF extraction failed: ${(error as Error).message}`);
+    } finally {
+        await parser.destroy();
     }
 }
 
