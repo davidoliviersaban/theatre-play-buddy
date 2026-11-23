@@ -1,6 +1,7 @@
 import { generateObject, streamObject } from "ai";
 import { PlaybookSchema } from "@/lib/play/schemas";
-import { getDefaultProvider, getModel, structuredOutputProviderOptions } from "@/jobs/parse/lllm-utils";
+import { getDefaultProvider, getModel } from "@/jobs/parse/lllm-utils";
+import { strictOutputSchema } from "@/jobs/parse/strict-output-schema";
 import type { LLMProvider } from "@/jobs/parse/lllm-utils";
 import { jobLogger } from "@/jobs/logger";
 
@@ -60,9 +61,8 @@ export async function parsePlayStructure(text: string, provider: LLMProvider = g
 
     const result = await generateObject({
         model,
-        schema: PlaybookSchema,
+        schema: strictOutputSchema(PlaybookSchema),
         prompt: getPrompt(text),
-        providerOptions: structuredOutputProviderOptions,
     });
 
     return result.object;
@@ -78,9 +78,8 @@ export async function* streamPlayStructure(text: string, provider: LLMProvider =
 
     const result = streamObject({
         model,
-        schema: PlaybookSchema,
+        schema: strictOutputSchema(PlaybookSchema),
         prompt: getPrompt(text),
-        providerOptions: structuredOutputProviderOptions,
     });
 
     jobLogger.debug({ component: "llm-parser", event: "stream_started" }, "[LLM Parser] Stream started, awaiting chunks...");

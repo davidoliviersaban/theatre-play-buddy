@@ -1,6 +1,7 @@
 import { generateObject } from "ai";
 import type { Playbook, Line } from "@/lib/play/schemas";
-import { getDefaultProvider, getModel, structuredOutputProviderOptions, type LLMProvider } from "@/jobs/parse/lllm-utils";
+import { getDefaultProvider, getModel, type LLMProvider } from "@/jobs/parse/lllm-utils";
+import { strictOutputSchema } from "@/jobs/parse/strict-output-schema";
 import type { IncrementalParseResult, ParsingContext } from "./types";
 import { IncrementalParseResultSchema } from "./types";
 
@@ -74,9 +75,8 @@ TEXT CHUNK TO PARSE:
 ${chunk}`;
     const result = await generateObject({
         model,
-        schema: IncrementalParseResultSchema,
+        schema: strictOutputSchema(IncrementalParseResultSchema),
         prompt,
-        providerOptions: structuredOutputProviderOptions,
     });
     return result.object;
 }
