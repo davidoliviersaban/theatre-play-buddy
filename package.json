@@ -27,7 +27,7 @@
     "ai": "^7.0.179",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.555.0",
+    "lucide-react": "^1.78.0",
     "mammoth": "^1.7.1",
     "next": "16.4.6",
     "pdf-parse": "^1.1.1",
