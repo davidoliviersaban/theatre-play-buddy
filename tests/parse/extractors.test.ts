@@ -11,19 +11,22 @@ import {
   extractTextFromTXT,
 } from '@/lib/play/extractors';
 
-// Mock pdf-parse
-jest.mock('pdf-parse', () => {
-  return jest.fn((buffer: Buffer) => {
-    const content = buffer.toString('utf8');
-    if (content.includes('EMPTY_PDF')) {
-      return Promise.resolve({ text: '' });
-    }
-    if (content.includes('ERROR_PDF')) {
-      return Promise.reject(new Error('PDF parsing failed'));
-    }
-    return Promise.resolve({ text: content.replace('PDF:', '') });
-  });
-});
+// Mock pdf-parse (v2 class API)
+jest.mock('pdf-parse', () => ({
+  PDFParse: jest.fn().mockImplementation(({ data }: { data: Uint8Array }) => ({
+    getText: () => {
+      const content = Buffer.from(data).toString('utf8');
+      if (content.includes('EMPTY_PDF')) {
+        return Promise.resolve({ text: '' });
+      }
+      if (content.includes('ERROR_PDF')) {
+        return Promise.reject(new Error('PDF parsing failed'));
+      }
+      return Promise.resolve({ text: content.replace('PDF:', '') });
+    },
+    destroy: () => Promise.resolve(),
+  })),
+}));
 
 // Mock mammoth
 jest.mock('mammoth', () => ({
