@@ -8,6 +8,8 @@ import { ParsingSessions } from "@/components/home/parsing-sessions";
 import { getActiveJobs, getFailedJobs } from "@/lib/db/parse-job-db";
 import { ParsingSession } from "@/components/home/parsing-sessions";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const { plays } = await fetchAllPlays();
   const [activeSessions, failedSessions] = await Promise.all([
