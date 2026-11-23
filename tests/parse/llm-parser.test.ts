@@ -328,7 +328,7 @@ describe('Integration: Upload → Parse → Persist → Render', () => {
       expect(result.success).toBe(false);
 
       if (!result.success) {
-        const errors = result.error.errors;
+        const errors = result.error.issues;
         expect(errors.length).toBeGreaterThan(0);
         expect(errors.some((e) => e.path.includes('title'))).toBe(true);
       }

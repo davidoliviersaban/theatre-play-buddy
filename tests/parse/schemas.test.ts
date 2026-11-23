@@ -162,7 +162,7 @@ describe('LineSchema', () => {
       const result = LineSchema.safeParse(line);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors[0].message).toContain(
+        expect(result.error.issues[0].message).toContain(
           'Dialogue must have characterId or characterIdArray'
         );
       }
@@ -217,7 +217,7 @@ describe('LineSchema', () => {
       const result = LineSchema.safeParse(line);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors[0].message).toContain(
+        expect(result.error.issues[0].message).toContain(
           'Dialogue must have characterId or characterIdArray'
         );
       }
@@ -528,7 +528,7 @@ describe('Nested validation', () => {
     const result = PlaybookSchema.safeParse(playbook);
     expect(result.success).toBe(false);
     if (!result.success) {
-      const error = result.error.errors[0];
+      const error = result.error.issues[0];
       expect(error.path).toContain('acts');
       expect(error.path).toContain('scenes');
       expect(error.path).toContain('lines');

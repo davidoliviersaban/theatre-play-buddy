@@ -19,12 +19,12 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^1.0.0",
-    "@ai-sdk/openai": "^1.0.0",
+    "@ai-sdk/anthropic": "^4.0.107",
+    "@ai-sdk/openai": "^4.0.122",
     "@prisma/adapter-pg": "^7.0.1",
     "@radix-ui/react-progress": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
-    "ai": "^4.0.0",
+    "ai": "^7.0.179",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.555.0",
@@ -36,7 +36,7 @@
     "react-dom": "19.2.0",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.23.8"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@prisma/client": "^7.0.1",
