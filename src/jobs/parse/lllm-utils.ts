@@ -18,8 +18,3 @@ export function getModel(provider: LLMProvider = getDefaultProvider()) {
     }
     return openai("gpt-4.1-mini");
 }
-
-// Our schemas use optional fields, which OpenAI strict structured outputs reject (#2).
-export const structuredOutputProviderOptions = {
-    openai: { strictJsonSchema: false },
-};

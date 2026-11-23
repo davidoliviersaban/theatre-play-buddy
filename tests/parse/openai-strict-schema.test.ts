@@ -17,11 +17,13 @@ function findResponseFormat(body: unknown): { strict?: boolean; schema: JsonSche
     return undefined;
 }
 
-// What OpenAI rejects: strict mode on while an object does not list all its properties in `required`.
+// OpenAI only guarantees schema-conforming answers in strict mode, and strict mode rejects
+// any object that does not list all its properties in `required`.
 function rejectionReasons(body: unknown): string[] {
     const format = findResponseFormat(body);
     if (!format) return ["no json_schema response format in the request"];
-    return format.strict ? strictViolations(format.schema) : [];
+    if (!format.strict) return ["strict mode is off: answers are not guaranteed to match the schema"];
+    return strictViolations(format.schema);
 }
 
 // OpenAI strict structured outputs: every object lists all its properties in `required`.
@@ -60,12 +62,12 @@ describe("structured output sent to OpenAI", () => {
         process.env.OPENAI_API_KEY = "test-key";
     });
 
-    it("full-play parsing sends a structured-output request OpenAI accepts", async () => {
+    it("full-play parsing sends a strict schema OpenAI accepts", async () => {
         const body = await captureOpenAIRequest(() => parsePlayStructure(SCENE, "openai"));
         expect(rejectionReasons(body)).toEqual([]);
     });
 
-    it("incremental parsing sends a structured-output request OpenAI accepts", async () => {
+    it("incremental parsing sends a strict schema OpenAI accepts", async () => {
         const body = await captureOpenAIRequest(async () => {
             for await (const step of parsePlayIncrementally(SCENE, "openai")) void step;
         });
